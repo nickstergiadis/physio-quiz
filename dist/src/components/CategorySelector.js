@@ -4,17 +4,19 @@ import { getQuestionPool } from '../utils/quizEngine.js';
 
 const QUIZ_LENGTH_OPTIONS = [5, 10, 15, 20];
 
-function createLabel(text) {
+function createLabel(text, htmlFor) {
   const label = document.createElement('label');
   label.className = 'field-label';
+  label.htmlFor = htmlFor;
   label.textContent = text;
   return label;
 }
 
-function createSelect(name) {
+function createSelect(name, id) {
   const select = document.createElement('select');
   select.className = 'input';
   select.name = name;
+  select.id = id;
   return select;
 }
 
@@ -29,8 +31,8 @@ export function categorySelector({
   const grid = document.createElement('div');
   grid.className = 'setup-grid';
 
-  const modeLabel = createLabel('Mode');
-  const modeSelect = createSelect('mode');
+  const modeLabel = createLabel('Mode', 'mode');
+  const modeSelect = createSelect('mode', 'mode');
   [
     { value: 'normal', label: 'Standard Mode' },
     { value: 'clinical-reasoning', label: 'Clinical Reasoning Mode' }
@@ -41,8 +43,8 @@ export function categorySelector({
     modeSelect.appendChild(option);
   });
 
-  const categoryLabel = createLabel('Category');
-  const categorySelect = createSelect('category');
+  const categoryLabel = createLabel('Category', 'category');
+  const categorySelect = createSelect('category', 'category');
   ['all', ...quizCategories].forEach((value) => {
     const option = document.createElement('option');
     option.value = value;
@@ -50,8 +52,8 @@ export function categorySelector({
     categorySelect.appendChild(option);
   });
 
-  const difficultyLabel = createLabel('Difficulty');
-  const difficultySelect = createSelect('difficulty');
+  const difficultyLabel = createLabel('Difficulty', 'difficulty');
+  const difficultySelect = createSelect('difficulty', 'difficulty');
   ['all', ...difficultyLevels].forEach((value) => {
     const option = document.createElement('option');
     option.value = value;
@@ -59,8 +61,8 @@ export function categorySelector({
     difficultySelect.appendChild(option);
   });
 
-  const lengthLabel = createLabel('Quiz Length');
-  const lengthSelect = createSelect('length');
+  const lengthLabel = createLabel('Quiz Length', 'length');
+  const lengthSelect = createSelect('length', 'length');
   QUIZ_LENGTH_OPTIONS.forEach((value) => {
     const option = document.createElement('option');
     option.value = String(value);
@@ -68,8 +70,8 @@ export function categorySelector({
     lengthSelect.appendChild(option);
   });
 
-  const orderLabel = createLabel('Question Order');
-  const orderSelect = createSelect('order');
+  const orderLabel = createLabel('Question Order', 'order');
+  const orderSelect = createSelect('order', 'order');
   [
     { value: 'shuffled', label: 'Shuffled' },
     { value: 'fixed', label: 'Fixed (by question ID)' }
@@ -87,9 +89,11 @@ export function categorySelector({
 
   const availability = document.createElement('p');
   availability.className = 'question-progress';
+  availability.setAttribute('aria-live', 'polite');
 
   const errorText = document.createElement('p');
   errorText.className = 'setup-error';
+  errorText.setAttribute('aria-live', 'polite');
 
   function resolveSelection() {
     return {

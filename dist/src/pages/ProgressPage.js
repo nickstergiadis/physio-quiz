@@ -22,12 +22,25 @@ function createHistoryRow(entry) {
   const row = document.createElement('article');
   row.className = 'history-item';
 
-  row.innerHTML = `
-    <p><strong>${new Date(entry.completedAt).toLocaleString()}</strong></p>
-    <p>Category filter: ${entry.filters.category === 'all' ? 'All Categories' : titleCase(entry.filters.category)}</p>
-    <p>Difficulty filter: ${entry.filters.difficulty === 'all' ? 'All Difficulty Levels' : titleCase(entry.filters.difficulty)}</p>
-    <p>Score: ${entry.score.correct}/${entry.score.total} (${entry.score.percent}%)</p>
-  `;
+  const completed = document.createElement('p');
+  const completedStrong = document.createElement('strong');
+  completedStrong.textContent = new Date(entry.completedAt).toLocaleString();
+  completed.appendChild(completedStrong);
+
+  const category = document.createElement('p');
+  category.textContent = `Category filter: ${
+    entry.filters.category === 'all' ? 'All Categories' : titleCase(entry.filters.category)
+  }`;
+
+  const difficulty = document.createElement('p');
+  difficulty.textContent = `Difficulty filter: ${
+    entry.filters.difficulty === 'all' ? 'All Difficulty Levels' : titleCase(entry.filters.difficulty)
+  }`;
+
+  const score = document.createElement('p');
+  score.textContent = `Score: ${entry.score.correct}/${entry.score.total} (${entry.score.percent}%)`;
+
+  row.append(completed, category, difficulty, score);
 
   return row;
 }
@@ -78,12 +91,22 @@ export function progressPage({ history }) {
   metrics.categoryPerformance.forEach((category) => {
     const row = document.createElement('article');
     row.className = 'history-item';
-    row.innerHTML = `
-      <p><strong>${titleCase(category.category)}</strong></p>
-      <p>Average score: ${category.averagePercent}%</p>
-      <p>Questions correct: ${category.correct}/${category.total}</p>
-      <p>Attempts seen: ${category.attempts}</p>
-    `;
+
+    const name = document.createElement('p');
+    const nameStrong = document.createElement('strong');
+    nameStrong.textContent = titleCase(category.category);
+    name.appendChild(nameStrong);
+
+    const average = document.createElement('p');
+    average.textContent = `Average score: ${category.averagePercent}%`;
+
+    const correct = document.createElement('p');
+    correct.textContent = `Questions correct: ${category.correct}/${category.total}`;
+
+    const attempts = document.createElement('p');
+    attempts.textContent = `Attempts seen: ${category.attempts}`;
+
+    row.append(name, average, correct, attempts);
     categorySection.appendChild(row);
   });
 
