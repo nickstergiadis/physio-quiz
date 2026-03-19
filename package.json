@@ -1,0 +1,10 @@
+{
+  "name": "physio-quiz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/main.js && node --check src/app.js && node --check src/types/quizSchema.js && node --check src/data/questionBank.js && node --check src/utils/quizEngine.js && node --check src/utils/storage.js && node --check src/components/ui/button.js && node --check src/components/ui/card.js && node --check src/components/CategorySelector.js && node --check src/components/QuestionRenderer.js && node --check src/pages/HomePage.js && node --check src/pages/QuizPage.js && node --check src/pages/ResultsPage.js && node --check src/pages/ProgressPage.js",
+    "build": "node scripts/build.mjs"
+  }
+}
