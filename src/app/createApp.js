@@ -2,7 +2,7 @@ import { homePage } from '../pages/HomePage.js';
 import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
-import { getQuestions, calculateScore } from '../utils/quizEngine.js';
+import { getQuestions, calculateScore, buildQuestionReview } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, readRoute, writeRoute } from './router.js';
@@ -55,17 +55,38 @@ export function createApp(root) {
 
   function startQuiz(filters) {
     state.filters = filters;
-    state.questions = getQuestions({ ...filters, limit: 5 });
+    state.questions = getQuestions({ ...filters, limit: 10 });
     state.currentIndex = 0;
     state.answers = {};
     persistSession();
     setRoute(ROUTES.quiz);
   }
 
-  function selectAnswer(questionId, optionId) {
-    state.answers[questionId] = optionId;
+  function selectAnswer(questionId, optionIndex) {
+    state.answers[questionId] = optionIndex;
     persistSession();
     render();
+  }
+
+  function previousQuestion() {
+    if (state.currentIndex > 0) {
+      state.currentIndex -= 1;
+      persistSession();
+      render();
+    }
+  }
+
+  function submitQuiz() {
+    const score = calculateScore(state.answers, state.questions);
+    pushHistory({
+      completedAt: new Date().toISOString(),
+      filters: state.filters,
+      score
+    });
+
+    state.history = loadHistory();
+    clearSession();
+    setRoute(ROUTES.results);
   }
 
   function nextQuestion() {
@@ -76,15 +97,7 @@ export function createApp(root) {
       return;
     }
 
-    const score = calculateScore(state.answers, state.questions);
-    pushHistory({
-      completedAt: new Date().toISOString(),
-      filters: state.filters,
-      score
-    });
-    state.history = loadHistory();
-    clearSession();
-    setRoute(ROUTES.results);
+    submitQuiz();
   }
 
   function restart() {
@@ -107,7 +120,8 @@ export function createApp(root) {
           answers: state.answers,
           currentIndex: state.currentIndex,
           onSelectAnswer: selectAnswer,
-          onNext: nextQuestion
+          onNext: nextQuestion,
+          onPrevious: previousQuestion
         })
       );
       return;
@@ -115,11 +129,11 @@ export function createApp(root) {
 
     if (route === ROUTES.results) {
       const score = calculateScore(state.answers, state.questions);
+      const review = buildQuestionReview(state.questions, state.answers);
       main.appendChild(
         resultsPage({
           score,
-          questions: state.questions,
-          answers: state.answers,
+          review,
           onRestart: restart
         })
       );

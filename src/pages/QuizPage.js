@@ -1,6 +1,6 @@
 import { renderQuestion } from '../components/QuestionRenderer.js';
 
-export function quizPage({ questions, answers, currentIndex, onSelectAnswer, onNext }) {
+export function quizPage({ questions, answers, currentIndex, onSelectAnswer, onNext, onPrevious }) {
   const question = questions[currentIndex];
   if (!question) {
     const empty = document.createElement('p');
@@ -12,8 +12,10 @@ export function quizPage({ questions, answers, currentIndex, onSelectAnswer, onN
     question,
     index: currentIndex,
     total: questions.length,
-    selectedOptionId: answers[question.id],
-    onSelect: (optionId) => onSelectAnswer(question.id, optionId),
-    onNext
+    selectedOption: answers[question.id],
+    onSelect: (optionIndex) => onSelectAnswer(question.id, optionIndex),
+    onNext,
+    onPrevious,
+    canGoPrevious: currentIndex > 0
   });
 }
