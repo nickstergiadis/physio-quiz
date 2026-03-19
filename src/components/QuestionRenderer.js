@@ -36,6 +36,7 @@ export function renderQuestion({
       className: 'option-btn',
       onClick: () => onSelect(optionIndex)
     });
+    optionBtn.setAttribute('aria-pressed', String(selectedOption === optionIndex));
     options.appendChild(optionBtn);
   });
 

@@ -1,3 +1,5 @@
+import { createAttemptId } from './id.js';
+
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
 const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
 const DEV_QUESTION_DRAFTS_KEY = 'physio_quiz_dev_questions_v1';
@@ -59,7 +61,7 @@ function sanitizeCategoryStats(value) {
 function sanitizeHistoryEntry(entry) {
   if (!isRecord(entry)) return null;
 
-  const id = typeof entry.id === 'string' ? entry.id : `attempt-${crypto.randomUUID()}`;
+  const id = typeof entry.id === 'string' ? entry.id : createAttemptId();
   const completedAt = (() => {
     if (typeof entry.completedAt !== 'string') return new Date().toISOString();
     const parsed = new Date(entry.completedAt);

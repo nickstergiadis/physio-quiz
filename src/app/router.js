@@ -6,10 +6,15 @@ export const ROUTES = {
   admin: '/admin-dev'
 };
 
+export function isKnownRoute(route) {
+  return Object.values(ROUTES).includes(route);
+}
+
 export function readRoute() {
-  return location.hash.replace('#', '') || ROUTES.home;
+  const raw = location.hash.replace('#', '') || ROUTES.home;
+  return isKnownRoute(raw) ? raw : ROUTES.home;
 }
 
 export function writeRoute(route) {
-  location.hash = route;
+  location.hash = isKnownRoute(route) ? route : ROUTES.home;
 }
