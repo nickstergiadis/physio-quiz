@@ -1,72 +1,69 @@
 import { isValidQuestion, QUIZ_CATEGORIES, DIFFICULTY_LEVELS } from './schema/quizSchema.js';
 
 /** @type {import('./schema/quizSchema.js').QuizQuestion[]} */
-export const questionBank = [
-  {
-    id: 'q-001',
-    category: 'musculoskeletal',
-    difficulty: 'easy',
-    stem: 'Which structure is most commonly involved in lateral epicondylalgia?',
-    options: [
-      { id: 'a', label: 'Flexor carpi radialis tendon' },
-      { id: 'b', label: 'Extensor carpi radialis brevis tendon' },
-      { id: 'c', label: 'Ulnar collateral ligament' },
-      { id: 'd', label: 'Biceps tendon' }
-    ],
-    correctOptionId: 'b',
-    explanation: 'Lateral epicondylalgia most frequently involves the ECRB tendon due to repetitive wrist extension load.',
-    tags: ['elbow', 'tendon']
-  },
-  {
-    id: 'q-002',
-    category: 'clinical-reasoning',
-    difficulty: 'medium',
-    stem: 'A patient has acute low back pain with no red flags and high fear of movement. What is the best first approach?',
-    options: [
-      { id: 'a', label: 'Strict bed rest for 1 week' },
-      { id: 'b', label: 'Immediate MRI and specialist referral' },
-      { id: 'c', label: 'Reassurance, education, and graded activity exposure' },
-      { id: 'd', label: 'Avoid all painful movement indefinitely' }
-    ],
-    correctOptionId: 'c',
-    explanation: 'For uncomplicated acute low back pain, education plus gradual return to movement improves outcomes and confidence.',
-    tags: ['lumbar-spine', 'pain-science']
-  },
-  {
-    id: 'q-003',
-    category: 'assessment',
-    difficulty: 'medium',
-    stem: 'Which test cluster is commonly used to increase confidence in ACL injury diagnosis?',
-    options: [
-      { id: 'a', label: 'Lachman, anterior drawer, pivot shift' },
-      { id: 'b', label: 'McMurray, Apley compression, Thessaly' },
-      { id: 'c', label: 'Patellar grind and Clarke test' },
-      { id: 'd', label: 'Ober and Thomas tests' }
-    ],
-    correctOptionId: 'a',
-    explanation: 'A cluster including Lachman and pivot shift is frequently used to improve diagnostic confidence for ACL rupture.',
-    tags: ['knee', 'sports']
-  },
-  {
-    id: 'q-004',
-    category: 'exercise-prescription',
-    difficulty: 'hard',
-    stem: 'In early-stage rotator cuff tendinopathy, which loading strategy is generally appropriate?',
-    options: [
-      { id: 'a', label: 'High-load eccentric work to failure daily' },
-      { id: 'b', label: 'Pain-guided isometric/isotonic loading with progressive volume' },
-      { id: 'c', label: 'Immobilization for 6 weeks' },
-      { id: 'd', label: 'Only passive modalities' }
-    ],
-    correctOptionId: 'b',
-    explanation: 'Pain-guided progressive loading is commonly used early to restore capacity while managing irritability.',
-    tags: ['shoulder', 'load-management']
-  }
+const rawQuestionBank = [
+  // Shoulder
+  { id: 'shoulder-001', category: 'shoulder', difficulty: 'easy', question: 'Which muscle is most associated with initiating shoulder abduction?', options: ['Teres major', 'Supraspinatus', 'Latissimus dorsi', 'Subscapularis'], correctAnswer: 1, explanation: 'Supraspinatus initiates the first phase of abduction before the deltoid becomes dominant.', tags: ['rotator cuff'] },
+  { id: 'shoulder-002', category: 'shoulder', difficulty: 'medium', question: 'A positive painful arc between 60° and 120° most commonly suggests:', options: ['Adhesive capsulitis', 'Subacromial pain syndrome', 'AC joint instability', 'Posterior dislocation'], correctAnswer: 1, explanation: 'Painful arc in mid-range is classically associated with subacromial pain mechanisms.', tags: ['assessment'] },
+  { id: 'shoulder-003', category: 'shoulder', difficulty: 'medium', question: 'Which test is commonly used to assess subscapularis function?', options: ['Empty can test', 'Lift-off test', 'Sulcus sign', 'Neer test'], correctAnswer: 1, explanation: 'The lift-off test challenges internal rotation strength linked to subscapularis function.', tags: ['clinical test'] },
+  { id: 'shoulder-004', category: 'shoulder', difficulty: 'hard', question: 'In early rotator cuff tendinopathy rehab, the best initial loading strategy is:', options: ['Complete rest until pain-free', 'High-load overhead presses daily', 'Pain-monitored progressive loading', 'Only passive modalities'], correctAnswer: 2, explanation: 'Progressive, pain-monitored loading supports tissue capacity and symptom control.', tags: ['rehab'] },
+  { id: 'shoulder-005', category: 'shoulder', difficulty: 'easy', question: 'Scapular upward rotation during elevation is primarily produced by:', options: ['Upper and lower trapezius with serratus anterior', 'Rhomboids only', 'Pectoralis minor only', 'Biceps brachii'], correctAnswer: 0, explanation: 'A force couple of trapezius and serratus anterior drives normal upward rotation.', tags: ['biomechanics'] },
+
+  // Knee
+  { id: 'knee-001', category: 'knee', difficulty: 'easy', question: 'Which ligament is most directly assessed with the Lachman test?', options: ['PCL', 'MCL', 'ACL', 'LCL'], correctAnswer: 2, explanation: 'Lachman is the primary physical exam test for ACL integrity.', tags: ['acl'] },
+  { id: 'knee-002', category: 'knee', difficulty: 'medium', question: 'A traumatic non-contact pivot injury with immediate swelling most suggests:', options: ['Patellar tendinopathy', 'ACL rupture', 'Pes anserine bursitis', 'ITB syndrome'], correctAnswer: 1, explanation: 'Mechanism plus rapid effusion strongly raises suspicion for ACL injury.', tags: ['history'] },
+  { id: 'knee-003', category: 'knee', difficulty: 'medium', question: 'Which exercise is often used early after ACL reconstruction to restore quadriceps activation?', options: ['Deep jump squats', 'Open-chain knee extension at max load', 'Quadriceps sets and straight-leg raises', 'Heavy leg press below 60° only'], correctAnswer: 2, explanation: 'Quad sets and SLRs are common early-stage options to regain control safely.', tags: ['post-op'] },
+  { id: 'knee-004', category: 'knee', difficulty: 'hard', question: 'For patellofemoral pain, which factor is most consistently supported in management?', options: ['Routine arthroscopy', 'Exercise therapy targeting hip and knee', 'Long-term immobilization', 'Avoiding all squatting forever'], correctAnswer: 1, explanation: 'Guidelines emphasize progressive exercise, often including hip and knee strengthening.', tags: ['pfp'] },
+  { id: 'knee-005', category: 'knee', difficulty: 'easy', question: 'The meniscus functions primarily to:', options: ['Produce knee extension torque', 'Improve load distribution and joint stability', 'Limit all tibial rotation', 'Attach quadriceps to tibia'], correctAnswer: 1, explanation: 'Menisci help distribute load, absorb shock, and contribute to stability.', tags: ['anatomy'] },
+
+  // Low back
+  { id: 'lowback-001', category: 'low back', difficulty: 'easy', question: 'In uncomplicated acute low back pain, first-line advice is generally to:', options: ['Remain on strict bed rest for 7 days', 'Stay active and resume tolerated movement', 'Get urgent MRI immediately', 'Stop all exercise permanently'], correctAnswer: 1, explanation: 'Early return to movement and activity is linked with better outcomes.', tags: ['guidelines'] },
+  { id: 'lowback-002', category: 'low back', difficulty: 'medium', question: 'Which symptom is a red flag requiring urgent medical referral?', options: ['Pain with prolonged sitting', 'Morning stiffness < 15 minutes', 'New urinary retention with saddle anesthesia', 'Pain after lifting'], correctAnswer: 2, explanation: 'Urinary retention and saddle anesthesia can indicate cauda equina syndrome.', tags: ['red flags'] },
+  { id: 'lowback-003', category: 'low back', difficulty: 'medium', question: 'Which intervention has the best evidence for many persistent low back pain presentations?', options: ['Passive electrotherapy alone', 'Education plus graded exercise', 'Permanent lumbar brace use', 'Complete avoidance of bending'], correctAnswer: 1, explanation: 'Combined education and active rehabilitation is widely recommended.', tags: ['management'] },
+  { id: 'lowback-004', category: 'low back', difficulty: 'hard', question: 'Centralization of symptoms during repeated movement testing is often interpreted as:', options: ['A poor prognostic sign', 'Unrelated to treatment response', 'A potentially favorable directional response', 'Automatic indication for surgery'], correctAnswer: 2, explanation: 'Symptom centralization may guide directional preference-based care.', tags: ['mckenzie'] },
+  { id: 'lowback-005', category: 'low back', difficulty: 'easy', question: 'A common goal in early low back rehab is to improve:', options: ['Fear and avoidance behaviors', 'Movement confidence and function', 'Dependence on imaging', 'Tolerance to prolonged rest'], correctAnswer: 1, explanation: 'Improving confidence and function is central in modern low back management.', tags: ['function'] },
+
+  // Ankle
+  { id: 'ankle-001', category: 'ankle', difficulty: 'easy', question: 'The most commonly injured ligament in a lateral ankle sprain is:', options: ['Deltoid ligament', 'Calcaneofibular ligament', 'Anterior talofibular ligament', 'Spring ligament'], correctAnswer: 2, explanation: 'ATFL is typically the first and most frequent structure injured.', tags: ['sprain'] },
+  { id: 'ankle-002', category: 'ankle', difficulty: 'medium', question: 'After acute ankle sprain, early rehab should usually include:', options: ['Rigid immobilization for 8 weeks', 'Pain-guided mobility and loading progression', 'No weight-bearing for all grades', 'Only ultrasound treatment'], correctAnswer: 1, explanation: 'Early protected loading and mobility can reduce chronic instability risk.', tags: ['rehab'] },
+  { id: 'ankle-003', category: 'ankle', difficulty: 'medium', question: 'Which test helps assess syndesmotic injury?', options: ['Talar tilt test', 'Thompson test', 'Squeeze test', 'Anterior drawer elbow test'], correctAnswer: 2, explanation: 'The squeeze test is commonly used in high ankle sprain evaluation.', tags: ['assessment'] },
+  { id: 'ankle-004', category: 'ankle', difficulty: 'hard', question: 'Persistent episodes of giving way months after sprain most suggest:', options: ['Chronic ankle instability', 'Tarsal tunnel syndrome', 'Acute fracture', 'Plantar fasciitis'], correctAnswer: 0, explanation: 'Recurrent instability episodes are characteristic of chronic ankle instability.', tags: ['chronic'] },
+  { id: 'ankle-005', category: 'ankle', difficulty: 'easy', question: 'A key return-to-sport criterion after ankle sprain is:', options: ['No swelling ever again', 'Symmetrical hop and balance performance', 'Normal MRI only', 'Pain-free at complete rest only'], correctAnswer: 1, explanation: 'Functional symmetry and confidence are important readiness markers.', tags: ['return to sport'] },
+
+  // Cervical spine
+  { id: 'cervical-001', category: 'cervical spine', difficulty: 'easy', question: 'Which muscle group is often targeted for endurance training in neck pain rehab?', options: ['Superficial neck extensors only', 'Deep neck flexors', 'Upper trapezius only', 'Masseter'], correctAnswer: 1, explanation: 'Deep neck flexor endurance deficits are common in neck pain populations.', tags: ['exercise'] },
+  { id: 'cervical-002', category: 'cervical spine', difficulty: 'medium', question: 'Cervical radiculopathy may present with:', options: ['Diffuse abdominal pain', 'Arm pain with dermatomal paresthesia', 'Isolated ankle swelling', 'Bilateral knee locking'], correctAnswer: 1, explanation: 'Neck-related nerve root irritation often causes radiating arm symptoms.', tags: ['neuro'] },
+  { id: 'cervical-003', category: 'cervical spine', difficulty: 'medium', question: 'Which test cluster can improve confidence for cervical radiculopathy?', options: ['Lachman + pivot shift', 'Spurling + distraction + ULTT findings', 'Thompson + squeeze tests', 'Apley + McMurray'], correctAnswer: 1, explanation: 'A combination of provocation and relief tests can strengthen clinical suspicion.', tags: ['cluster'] },
+  { id: 'cervical-004', category: 'cervical spine', difficulty: 'hard', question: 'In WAD grade II management, early best practice usually emphasizes:', options: ['Prolonged cervical collar use', 'Reassurance and graded active movement', 'Surgical fixation', 'Strict inactivity'], correctAnswer: 1, explanation: 'Active approaches with education are preferred over prolonged immobilization.', tags: ['whiplash'] },
+  { id: 'cervical-005', category: 'cervical spine', difficulty: 'easy', question: 'A common ergonomic strategy for desk-related neck pain is:', options: ['Monitor below knee level', 'Frequent posture variation and movement breaks', 'Locking neck in extension', 'Only passive manual therapy'], correctAnswer: 1, explanation: 'Regular movement breaks and ergonomic setup reduce sustained loading.', tags: ['ergonomics'] },
+
+  // Exercise prescription
+  { id: 'exrx-001', category: 'exercise prescription', difficulty: 'easy', question: 'The principle of progressive overload means:', options: ['Keeping load unchanged forever', 'Gradually increasing training demand over time', 'Training only when pain is zero', 'Avoiding strength work'], correctAnswer: 1, explanation: 'Tissues adapt when dose increases are planned and tolerable.', tags: ['principles'] },
+  { id: 'exrx-002', category: 'exercise prescription', difficulty: 'medium', question: 'For many strength goals, a practical starting dosage range is:', options: ['1 set monthly', '2-4 sets of 6-12 reps', '100 reps to failure daily', 'No rest between sessions'], correctAnswer: 1, explanation: 'Moderate set-rep ranges are commonly used for strength and hypertrophy progress.', tags: ['dosage'] },
+  { id: 'exrx-003', category: 'exercise prescription', difficulty: 'medium', question: 'Using a pain-monitoring model in rehab usually means:', options: ['Any pain means tissue damage', 'Some tolerable pain can be acceptable during loading', 'Pain should be ignored completely', 'Only passive care should be used'], correctAnswer: 1, explanation: 'Tolerable, non-escalating pain can be acceptable in many rehab contexts.', tags: ['pain monitoring'] },
+  { id: 'exrx-004', category: 'exercise prescription', difficulty: 'hard', question: 'When adherence is poor, the best first adjustment is often to:', options: ['Increase complexity', 'Reduce dosage and co-design realistic goals', 'Stop exercise entirely', 'Blame motivation only'], correctAnswer: 1, explanation: 'A simpler, patient-centered plan often improves adherence and outcomes.', tags: ['adherence'] },
+  { id: 'exrx-005', category: 'exercise prescription', difficulty: 'easy', question: 'A SMART rehab goal should be:', options: ['Vague and open-ended', 'Specific, measurable, achievable, relevant, and time-bound', 'Set only by clinician', 'Impossible to complete'], correctAnswer: 1, explanation: 'SMART goals support shared decision-making and progress tracking.', tags: ['goal setting'] },
+
+  // Clinical reasoning
+  { id: 'reasoning-001', category: 'clinical reasoning', difficulty: 'easy', question: 'The first step in clinical reasoning is typically to:', options: ['Select treatment before assessment', 'Generate and test hypotheses from history and exam', 'Order imaging for everyone', 'Ignore patient goals'], correctAnswer: 1, explanation: 'Reasoning begins with hypothesis generation and iterative testing.', tags: ['process'] },
+  { id: 'reasoning-002', category: 'clinical reasoning', difficulty: 'medium', question: 'If symptoms and signs conflict with your initial diagnosis, you should:', options: ['Ignore inconsistent findings', 'Reassess and revise your hypothesis', 'Continue same plan unchanged', 'Discharge immediately'], correctAnswer: 1, explanation: 'Updating hypotheses when data changes is central to sound reasoning.', tags: ['hypothesis testing'] },
+  { id: 'reasoning-003', category: 'clinical reasoning', difficulty: 'medium', question: 'Shared decision-making in rehab primarily involves:', options: ['Clinician making all decisions alone', 'Integrating evidence, clinician expertise, and patient values', 'Following imaging findings only', 'Avoiding discussion of options'], correctAnswer: 1, explanation: 'Best practice combines evidence with preferences and context.', tags: ['sdm'] },
+  { id: 'reasoning-004', category: 'clinical reasoning', difficulty: 'hard', question: 'A patient improving in pain but worsening in function should prompt:', options: ['Automatic discharge', 'A broader reassessment of barriers and goals', 'Ignoring function metrics', 'Stopping outcome tracking'], correctAnswer: 1, explanation: 'Divergent outcomes suggest unaddressed functional or psychosocial barriers.', tags: ['outcomes'] },
+  { id: 'reasoning-005', category: 'clinical reasoning', difficulty: 'easy', question: 'Which outcome measure behavior improves clinical reasoning quality?', options: ['Use no measures', 'Track baseline and follow-up with validated tools', 'Use random, changing tools each visit', 'Only document severe cases'], correctAnswer: 1, explanation: 'Consistent outcome tracking supports better decisions over time.', tags: ['measurement'] }
 ];
 
-if (!questionBank.every(isValidQuestion)) {
-  throw new Error('Question bank contains invalid question schema.');
+function dedupeById(questions) {
+  const seen = new Set();
+  return questions.filter((question) => {
+    if (seen.has(question.id)) return false;
+    seen.add(question.id);
+    return true;
+  });
 }
+
+export const questionBank = dedupeById(rawQuestionBank).filter(isValidQuestion);
+
+export const invalidQuestionCount = rawQuestionBank.length - questionBank.length;
 
 export const quizCategories = QUIZ_CATEGORIES;
 export const difficultyLevels = DIFFICULTY_LEVELS;

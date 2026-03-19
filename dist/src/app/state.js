@@ -1,5 +1,17 @@
 import { loadHistory, loadSession } from '../utils/storage.js';
 import { ROUTES, readRoute } from './router.js';
+import { isValidQuestion } from '../data/schema/quizSchema.js';
+
+function isRecord(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function sanitizeAnswers(value) {
+  if (!isRecord(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter(([, answer]) => Number.isInteger(answer) && answer >= 0 && answer < 4)
+  );
+}
 
 export function createInitialState() {
   const state = {
@@ -12,12 +24,22 @@ export function createInitialState() {
   };
 
   const restored = loadSession();
-  if (restored) {
-    state.filters = restored.filters;
-    state.questions = restored.questions;
-    state.currentIndex = restored.currentIndex;
-    state.answers = restored.answers;
-    if (state.route === ROUTES.home) {
+  if (restored && isRecord(restored)) {
+    state.filters = isRecord(restored.filters)
+      ? {
+          category: typeof restored.filters.category === 'string' ? restored.filters.category : 'all',
+          difficulty: typeof restored.filters.difficulty === 'string' ? restored.filters.difficulty : 'all'
+        }
+      : state.filters;
+
+    state.questions = Array.isArray(restored.questions) ? restored.questions.filter(isValidQuestion) : [];
+
+    const restoredIndex = Number.isInteger(restored.currentIndex) ? restored.currentIndex : 0;
+    state.currentIndex = Math.max(0, Math.min(restoredIndex, Math.max(state.questions.length - 1, 0)));
+
+    state.answers = sanitizeAnswers(restored.answers);
+
+    if (state.route === ROUTES.home && state.questions.length) {
       state.route = ROUTES.quiz;
     }
   }

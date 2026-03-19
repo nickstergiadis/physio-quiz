@@ -1,24 +1,52 @@
 import { questionBank } from '../data/questionBank.js';
 
-export function getQuestions({ category, difficulty, limit = 5 }) {
+function shuffle(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+export function getQuestions({ category, difficulty, limit = 10 }) {
   let pool = questionBank;
+
   if (category && category !== 'all') {
     pool = pool.filter((q) => q.category === category);
   }
+
   if (difficulty && difficulty !== 'all') {
     pool = pool.filter((q) => q.difficulty === difficulty);
   }
-  return pool.slice(0, limit);
+
+  if (!pool.length) {
+    return [];
+  }
+
+  return shuffle(pool).slice(0, Math.max(1, limit));
 }
 
 export function calculateScore(answers, questions) {
-  const correct = questions.reduce(
-    (count, q) => count + (answers[q.id] === q.correctOptionId ? 1 : 0),
-    0
-  );
+  const correct = questions.reduce((count, question) => {
+    return count + (answers[question.id] === question.correctAnswer ? 1 : 0);
+  }, 0);
+
+  const total = questions.length;
   return {
     correct,
-    total: questions.length,
-    percent: questions.length ? Math.round((correct / questions.length) * 100) : 0
+    total,
+    percent: total ? Math.round((correct / total) * 100) : 0
   };
+}
+
+export function buildQuestionReview(questions, answers) {
+  return questions.map((question) => {
+    const selectedAnswer = answers[question.id];
+    return {
+      ...question,
+      selectedAnswer,
+      isCorrect: selectedAnswer === question.correctAnswer
+    };
+  });
 }

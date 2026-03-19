@@ -7,14 +7,14 @@ export function homePage({ onStart }) {
 
   const intro = document.createElement('p');
   intro.textContent =
-    'Test musculoskeletal knowledge, clinical reasoning, assessment, diagnosis, treatment planning, and exercise prescription with focused quiz sessions.';
+    'Choose a physiotherapy category and difficulty, then run through one question at a time with full answer explanations at the end.';
 
   const highlights = document.createElement('ul');
   highlights.className = 'feature-list';
   highlights.innerHTML = `
-    <li>Multiple-choice questions with explanations</li>
-    <li>Category and difficulty filtering</li>
-    <li>Progress history stored locally</li>
+    <li>Categories: shoulder, knee, low back, ankle, cervical spine, exercise prescription, and clinical reasoning</li>
+    <li>4-option multiple-choice questions with next/previous navigation</li>
+    <li>Automatic scoring, answer review, and local progress history</li>
   `;
 
   const selector = categorySelector({ onStart });

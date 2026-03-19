@@ -1,11 +1,14 @@
 import { card } from '../components/ui/card.js';
 import { button } from '../components/ui/button.js';
 
-function getOptionLabel(question, optionId) {
-  return question.options.find((option) => option.id === optionId)?.label ?? optionId;
+function getOptionLabel(question, answerIndex) {
+  if (answerIndex === undefined || answerIndex === null || answerIndex < 0) {
+    return 'Not answered';
+  }
+  return question.options[answerIndex] ?? 'Invalid answer';
 }
 
-export function resultsPage({ score, questions, answers, onRestart }) {
+export function resultsPage({ score, review, onRestart }) {
   const body = document.createElement('div');
   body.className = 'stack';
 
@@ -15,20 +18,18 @@ export function resultsPage({ score, questions, answers, onRestart }) {
 
   body.appendChild(summary);
 
-  questions.forEach((q) => {
-    const item = document.createElement('article');
-    item.className = 'result-item';
-    const chosen = answers[q.id];
-    const isCorrect = chosen === q.correctOptionId;
+  review.forEach((item) => {
+    const result = document.createElement('article');
+    result.className = 'result-item';
 
-    item.innerHTML = `
-      <h3>${q.stem}</h3>
-      <p><strong>Your answer:</strong> ${chosen ? getOptionLabel(q, chosen) : 'Not answered'} ${isCorrect ? '✅' : '❌'}</p>
-      <p><strong>Correct answer:</strong> ${getOptionLabel(q, q.correctOptionId)}</p>
-      <p><strong>Explanation:</strong> ${q.explanation}</p>
+    result.innerHTML = `
+      <h3>${item.question}</h3>
+      <p><strong>Your answer:</strong> ${getOptionLabel(item, item.selectedAnswer)} ${item.isCorrect ? '✅' : '❌'}</p>
+      <p><strong>Correct answer:</strong> ${getOptionLabel(item, item.correctAnswer)}</p>
+      <p><strong>Explanation:</strong> ${item.explanation}</p>
     `;
 
-    body.appendChild(item);
+    body.appendChild(result);
   });
 
   body.appendChild(button({ label: 'Start New Quiz', onClick: onRestart }));
