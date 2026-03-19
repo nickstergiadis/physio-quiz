@@ -26,15 +26,21 @@ export function resultsPage({ score, review, onRestart }) {
     heading.textContent = item.question;
 
     const userAnswer = document.createElement('p');
-    userAnswer.innerHTML = `<strong>Your answer:</strong> `;
+    const userLabel = document.createElement('strong');
+    userLabel.textContent = 'Your answer: ';
+    userAnswer.appendChild(userLabel);
     userAnswer.append(`${getOptionLabel(item, item.selectedAnswer)} ${item.isCorrect ? '✅' : '❌'}`);
 
     const correctAnswer = document.createElement('p');
-    correctAnswer.innerHTML = '<strong>Correct answer:</strong> ';
+    const correctLabel = document.createElement('strong');
+    correctLabel.textContent = 'Correct answer: ';
+    correctAnswer.appendChild(correctLabel);
     correctAnswer.append(getOptionLabel(item, item.correctAnswer));
 
     const explanation = document.createElement('p');
-    explanation.innerHTML = '<strong>Explanation:</strong> ';
+    const explanationLabel = document.createElement('strong');
+    explanationLabel.textContent = 'Explanation: ';
+    explanation.appendChild(explanationLabel);
     explanation.append(item.explanation);
 
     result.append(heading, userAnswer, correctAnswer, explanation);

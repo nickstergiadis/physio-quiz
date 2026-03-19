@@ -22,11 +22,6 @@ export function getQuestionPool({ mode = 'normal', category, difficulty, questio
   );
 }
 
-export function getQuestions({ mode = 'normal', category, difficulty, order = 'shuffled', limit = 10, questionSource }) {
-  const pool = getQuestionPool({ mode, category, difficulty, questionSource });
-  return selectQuizLength(resolveQuestionOrder(pool, order), limit);
-}
-
 export function buildQuizSession(config = {}) {
   const normalized = {
     mode: config.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',

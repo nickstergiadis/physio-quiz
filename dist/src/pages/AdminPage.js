@@ -1,6 +1,7 @@
 import { card } from '../components/ui/card.js';
 import { button } from '../components/ui/button.js';
 import { DIFFICULTY_LEVELS, QUIZ_CATEGORIES, isValidQuestion } from '../data/schema/quizSchema.js';
+import { createAttemptId } from '../utils/id.js';
 
 const QUIZ_MODES = ['normal', 'clinical-reasoning'];
 
@@ -53,7 +54,7 @@ function normalizeQuestion(formValues) {
     : tags.filter((tag) => tag !== 'clinical-reasoning');
 
   return {
-    id: `dev-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+    id: createAttemptId('dev'),
     category: formValues.category,
     difficulty: formValues.difficulty,
     question: formValues.question.trim(),

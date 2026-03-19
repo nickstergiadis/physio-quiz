@@ -1,25 +1,26 @@
 # Physio Quiz
 
-A lightweight single-page physiotherapy quiz app for students and clinicians. It runs fully in the browser (no backend required), supports category/difficulty filters, and stores progress locally.
+## App summary
 
-## What this app is
+Physio Quiz is a lightweight, static single-page physiotherapy training app built with vanilla JavaScript. Learners can run quick MCQ sessions, review explanations, and track progress locally in the browser without a backend.
 
-Physio Quiz is a vanilla JavaScript training app that delivers multiple-choice questions across common MSK and exercise-prescription topics. It includes two learning modes:
+## Feature list
 
-- **Standard mode** for mixed recall/application
-- **Clinical reasoning mode** for case-style questions
-
-## Features
-
-- Filter by **mode, category, difficulty, quiz length, and question order**
-- Step-by-step quiz flow with previous/next navigation
-- End-of-quiz score summary and question-by-question review
-- Local progress dashboard:
-  - average score
-  - strongest/weakest categories
-  - recent activity and streak metrics
-- Local dev/admin page for drafting additional questions in browser storage
-- Question schema validation and duplicate-question ID protection
+- Quiz setup with filters for:
+  - mode (`normal` or `clinical-reasoning`)
+  - category
+  - difficulty
+  - quiz length
+  - question order (`shuffled` or `fixed`)
+- Guided question flow with Previous/Next navigation
+- End-of-quiz scoring and per-question review with explanation text
+- Progress dashboard with:
+  - overall average score
+  - strongest and weakest categories
+  - streak and recent activity metrics
+  - recent attempt history
+- Local dev/admin screen for drafting questions in browser storage
+- Schema validation and duplicate-id filtering for question safety
 
 ## Local setup
 
@@ -28,106 +29,117 @@ Physio Quiz is a vanilla JavaScript training app that delivers multiple-choice q
 - Node.js 18+
 - npm 9+
 
-### Install
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### Run locally (static)
+## Run and build steps
 
-Because this app is a static SPA, you can serve it with any static server after build.
+### Static checks
 
 ```bash
 npm run check
+```
+
+### Test suite
+
+```bash
+npm test
+```
+
+### Production build
+
+```bash
 npm run build
+```
+
+Build output is written to `dist/`.
+
+### Run the built app locally
+
+```bash
 npx serve dist
 ```
 
-Then open the URL printed by `serve` (commonly `http://localhost:3000`).
+Then open the local URL printed by `serve` (often `http://localhost:3000`).
 
-## Environment and configuration
+## Deployment steps
 
-This app currently has **no required runtime environment variables**.
+1. Install dependencies: `npm install`
+2. Run validation: `npm run check && npm test`
+3. Build: `npm run build`
+4. Deploy the contents of `dist/` to any static host (Netlify, Vercel static, GitHub Pages, Cloudflare Pages, S3/CloudFront, etc.)
+5. Smoke test in production:
+   - start a quiz
+   - answer and submit
+   - confirm results/progress pages render
 
-Configuration is code-based:
+> Routing note: the app uses hash routes (`#/quiz`, `#/progress`), so deep-link rewrite rules are not required.
 
-- Core app routes/state: `src/app/`
-- Question content: `src/data/questions/`
-- Question schema/allowed categories+difficulties: `src/data/schema/quizSchema.js`
-- Build output behavior: `scripts/build.mjs`
+## Environment and configuration requirements
 
-### Local storage keys used
+The app currently requires **no runtime environment variables**.
+
+Configuration lives in source code:
+
+- app shell/router/state: `src/app/`
+- question schema/constants: `src/data/schema/quizSchema.js`
+- question content: `src/data/questions/`
+- build pipeline: `scripts/build.mjs`
+
+### Browser storage keys
 
 - `physio_quiz_session`
 - `physio_quiz_progress_v1`
 - `physio_quiz_dev_questions_v1`
 
-If needed for a clean test run, clear these keys in browser storage.
+Clear these keys if you need a clean local test state.
 
-## Build and deploy instructions
+## How to add new questions
 
-### Build
+Use either method below.
 
-```bash
-npm run check
-npm run build
-```
+### Method A: via dev/admin page (quickest)
 
-Build creates a deployable `dist/` directory containing `index.html` + `src/` assets.
+1. Open `#/admin-dev`.
+2. Complete all fields (category, difficulty, mode, question, options, explanation, tags).
+3. Click **Preview question**.
+4. Click **Save question**.
 
-### Deploy (static hosting)
+Saved questions persist in localStorage on that browser only.
 
-Deploy the contents of `dist/` to any static host:
+### Method B: commit to source-controlled question bank
 
-- Netlify
-- Vercel (static)
-- GitHub Pages
-- Cloudflare Pages
-- S3 + CloudFront
+1. Add question objects to:
+   - `src/data/questions/normalQuestions.js` (normal mode), or
+   - `src/data/questions/clinicalReasoningQuestions.js` (case-based mode)
+2. Ensure each object satisfies `isValidQuestion` in `src/data/schema/quizSchema.js`.
+3. Ensure each `id` is unique.
+4. Run `npm run check && npm test && npm run build`.
 
-### SPA routing note
+## Accessibility basics (current baseline)
 
-This app uses **hash routing** (`#/quiz`, `#/progress`, etc.), so no server rewrite rules are required for deep links.
+- Proper label/input associations in setup/admin forms
+- Visible keyboard focus styles via `:focus-visible`
+- Live regions for setup availability and error feedback
+- Active navigation state announced with `aria-current`
+- Answer options expose pressed state with `aria-pressed`
 
-## Accessibility notes
+## Performance basics (current baseline)
 
-Current baseline improvements include:
-
-- Explicit `<label for>` associations on filter controls
-- Visible `:focus-visible` outlines for links, buttons, and inputs
-- Live-region announcements for availability/error helper text in setup form
-
-## Manual QA checklist (MVP readiness)
-
-Run through this before shipping:
-
-- Start quizzes with:
-  - both modes (`normal`, `clinical-reasoning`)
-  - each category + "all"
-  - each difficulty + "all"
-  - both order modes (`shuffled`, `fixed`)
-- Confirm setup availability text updates and prevents starting when no questions match.
-- Complete a full quiz and verify:
-  - previous/next navigation
-  - score math and per-question correctness
-  - explanation text appears for every reviewed question
-- Refresh during an in-progress quiz and confirm session resumes.
-- Complete multiple quizzes, refresh, and verify Progress dashboard metrics still load.
-- Add one malformed object to dev-question localStorage and verify app does not crash (invalid objects are ignored).
-
-## Performance notes
-
-- Fully static assets; no runtime API calls
-- Small JS modules and simple DOM rendering
-- LocalStorage access is guarded to fail gracefully when storage is unavailable
+- Fully static bundle (no runtime API calls)
+- Small module graph and direct DOM rendering
+- Graceful localStorage guards for restricted-storage environments
+- Built output is plain static assets for CDN caching
 
 ## Future roadmap
 
-- Authentication + role-based protection for admin tooling
-- Import/export question banks (JSON)
-- Timed mode and adaptive quizzes
-- Keyboard shortcuts for faster answering
-- Basic analytics event hooks (privacy-safe)
-- Unit tests for quiz engine and storage utilities
+- Authentication + role-based admin controls
+- Import/export for question banks
+- Timed quiz mode and adaptive selection
+- Keyboard shortcuts and richer accessibility support
+- Optional analytics hooks (privacy-conscious)
+- Expanded automated tests (UI and integration)
 - Optional TypeScript migration for stricter safety

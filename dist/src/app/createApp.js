@@ -3,6 +3,7 @@ import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
 import { adminPage } from '../pages/AdminPage.js';
+import { createAttemptId } from '../utils/id.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory, saveDevQuestions } from '../utils/storage.js';
 import { createInitialState } from './state.js';
@@ -12,6 +13,7 @@ import { questionBank } from '../data/questionBank.js';
 function navLink(path, label) {
   const link = document.createElement('a');
   link.href = `#${path}`;
+  link.dataset.route = path;
   link.textContent = label;
   link.className = 'nav-link';
   return link;
@@ -112,7 +114,7 @@ export function createApp(root) {
     const categoryStats = calculateCategoryScore(state.answers, state.questions);
 
     pushHistory({
-      id: `attempt-${crypto.randomUUID()}`,
+      id: createAttemptId(),
       completedAt: new Date().toISOString(),
       filters: state.filters,
       score,
@@ -148,6 +150,9 @@ export function createApp(root) {
   function render() {
     main.innerHTML = '';
     const route = state.route;
+    nav.querySelectorAll('.nav-link').forEach((link) => {
+      link.setAttribute('aria-current', link.dataset.route === route ? 'page' : 'false');
+    });
 
     if (route === ROUTES.quiz) {
       if (!state.questions.length) {
