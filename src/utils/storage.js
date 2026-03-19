@@ -7,7 +7,16 @@ export function saveSession(session) {
 
 export function loadSession() {
   const raw = localStorage.getItem(QUIZ_SESSION_KEY);
-  return raw ? JSON.parse(raw) : null;
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    localStorage.removeItem(QUIZ_SESSION_KEY);
+    return null;
+  }
 }
 
 export function clearSession() {
@@ -22,5 +31,15 @@ export function pushHistory(entry) {
 
 export function loadHistory() {
   const raw = localStorage.getItem(QUIZ_HISTORY_KEY);
-  return raw ? JSON.parse(raw) : [];
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    localStorage.removeItem(QUIZ_HISTORY_KEY);
+    return [];
+  }
 }
