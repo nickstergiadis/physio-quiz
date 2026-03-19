@@ -1,7 +1,7 @@
 import { card } from '../components/ui/card.js';
 import { categorySelector } from '../components/CategorySelector.js';
 
-export function homePage({ onStart }) {
+export function homePage({ onStart, initialFilters, startError = '' }) {
   const content = document.createElement('div');
   content.className = 'stack';
 
@@ -18,7 +18,7 @@ export function homePage({ onStart }) {
     <li>Automatic scoring, answer review, and local progress history</li>
   `;
 
-  const selector = categorySelector({ onStart });
+  const selector = categorySelector({ onStart, initialFilters, startError });
 
   content.append(intro, highlights, selector);
 

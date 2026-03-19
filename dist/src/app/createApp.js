@@ -2,7 +2,7 @@ import { homePage } from '../pages/HomePage.js';
 import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
-import { getQuestions, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
+import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, readRoute, writeRoute } from './router.js';
@@ -54,8 +54,16 @@ export function createApp(root) {
   }
 
   function startQuiz(filters) {
-    state.filters = filters;
-    state.questions = getQuestions({ ...filters, limit: 10 });
+    const session = buildQuizSession(filters);
+    if (!session.questions.length) {
+      state.startError = 'No questions match this setup. Try broader filters or a different mode.';
+      render();
+      return;
+    }
+
+    state.startError = '';
+    state.filters = session.filters;
+    state.questions = session.questions;
     state.currentIndex = 0;
     state.answers = {};
     persistSession();
@@ -105,10 +113,11 @@ export function createApp(root) {
   }
 
   function restart() {
-    state.filters = { mode: 'normal', category: 'all', difficulty: 'all' };
+    state.filters = { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' };
     state.questions = [];
     state.currentIndex = 0;
     state.answers = {};
+    state.startError = '';
     clearSession();
     setRoute(ROUTES.home);
   }
@@ -149,7 +158,7 @@ export function createApp(root) {
       return;
     }
 
-    main.appendChild(homePage({ onStart: startQuiz }));
+    main.appendChild(homePage({ onStart: startQuiz, initialFilters: state.filters, startError: state.startError }));
   }
 
   window.addEventListener('hashchange', () => {

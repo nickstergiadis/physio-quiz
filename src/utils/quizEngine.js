@@ -4,21 +4,44 @@ import {
   filterQuestionsByDifficulty,
   filterQuestionsByMode,
   randomizeQuestionOrder,
+  sortQuestionsById,
   selectQuizLength
 } from './questionBankUtils.js';
 
-export function getQuestions({ mode = 'normal', category, difficulty, limit = 10 }) {
-  const pool = selectQuizLength(
-    randomizeQuestionOrder(
-      filterQuestionsByDifficulty(
-        filterQuestionsByCategory(filterQuestionsByMode(questionBank, mode), category),
-        difficulty
-      )
-    ),
-    limit
-  );
+function resolveQuestionOrder(questions, order = 'shuffled') {
+  return order === 'fixed' ? sortQuestionsById(questions) : randomizeQuestionOrder(questions);
+}
 
-  return pool;
+export function getQuestionPool({ mode = 'normal', category, difficulty }) {
+  return filterQuestionsByDifficulty(
+    filterQuestionsByCategory(filterQuestionsByMode(questionBank, mode), category),
+    difficulty
+  );
+}
+
+export function getQuestions({ mode = 'normal', category, difficulty, order = 'shuffled', limit = 10 }) {
+  const pool = getQuestionPool({ mode, category, difficulty });
+  return selectQuizLength(resolveQuestionOrder(pool, order), limit);
+}
+
+export function buildQuizSession(config = {}) {
+  const normalized = {
+    mode: config.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
+    category: typeof config.category === 'string' ? config.category : 'all',
+    difficulty: typeof config.difficulty === 'string' ? config.difficulty : 'all',
+    length: [5, 10, 15, 20].includes(config.length) ? config.length : 10,
+    order: config.order === 'fixed' ? 'fixed' : 'shuffled'
+  };
+  const pool = getQuestionPool(normalized);
+  const effectiveLength = Math.min(normalized.length, pool.length);
+  const questions = selectQuizLength(resolveQuestionOrder(pool, normalized.order), effectiveLength);
+
+  return {
+    filters: normalized,
+    availableCount: pool.length,
+    effectiveLength,
+    questions
+  };
 }
 
 export function calculateScore(answers, questions) {
