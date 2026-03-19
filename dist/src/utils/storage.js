@@ -37,10 +37,13 @@ function sanitizeHistoryEntry(entry) {
   const completedAt = typeof entry.completedAt === 'string' ? entry.completedAt : new Date().toISOString();
   const filters = isRecord(entry.filters)
     ? {
+        mode: entry.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
         category: typeof entry.filters.category === 'string' ? entry.filters.category : 'all',
-        difficulty: typeof entry.filters.difficulty === 'string' ? entry.filters.difficulty : 'all'
+        difficulty: typeof entry.filters.difficulty === 'string' ? entry.filters.difficulty : 'all',
+        length: [5, 10, 15, 20].includes(entry.filters.length) ? entry.filters.length : 10,
+        order: entry.filters.order === 'fixed' ? 'fixed' : 'shuffled'
       }
-    : { category: 'all', difficulty: 'all' };
+    : { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' };
 
   return {
     id,

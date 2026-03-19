@@ -44,6 +44,10 @@ export function randomizeQuestionOrder(questions) {
   return copy;
 }
 
+export function sortQuestionsById(questions) {
+  return [...questions].sort((left, right) => left.id.localeCompare(right.id));
+}
+
 export function selectQuizLength(questions, limit = 10) {
   return questions.slice(0, Math.max(1, limit));
 }
