@@ -287,15 +287,15 @@ export const NORMAL_QUESTION_SETS = {
       "id": "ankle-001",
       "category": "ankle",
       "difficulty": "easy",
-      "question": "What mechanism most commonly causes injury to the anterior talofibular ligament (ATFL)?",
+      "question": "A player lands from a rebound onto another athlete's foot and rolls into inversion with slight plantarflexion. Which structure is most likely injured first in a typical lateral ankle sprain?",
       "options": [
-        "Forced dorsiflexion with external rotation",
-        "Inversion with plantarflexion",
-        "Direct blow to anterior tibia",
-        "Hyperextension during sprinting"
+        "Anterior talofibular ligament (ATFL)",
+        "Deltoid ligament",
+        "Syndesmotic complex (AITFL/interosseous membrane)",
+        "Posterior cruciate ligament"
       ],
-      "correctAnswer": 1,
-      "explanation": "ATFL injury is most often associated with inversion and plantarflexion mechanisms.",
+      "correctAnswer": 0,
+      "explanation": "In a classic inversion-plantarflexion mechanism, the ATFL is usually the first and most commonly injured lateral ligament.",
       "tags": [
         "anatomy",
         "sports physio"
@@ -415,8 +415,8 @@ export const NORMAL_QUESTION_SETS = {
     {
       "id": "cervical-003",
       "category": "cervical spine",
-      "difficulty": "medium",
-      "question": "For desk-related neck pain with low irritability, which initial plan is most appropriate?",
+      "difficulty": "easy",
+      "question": "For desk-related neck pain with low irritability and no neurologic deficits, which initial plan is most appropriate?",
       "options": [
         "Prolonged collar immobilization",
         "Manual therapy only for 6 weeks",
@@ -424,7 +424,7 @@ export const NORMAL_QUESTION_SETS = {
         "Avoid all strengthening"
       ],
       "correctAnswer": 2,
-      "explanation": "A multimodal active approach improves capacity and reduces sustained postural load.",
+      "explanation": "An active plan combining exercise plus workload/posture coaching is usually more effective than passive-only care.",
       "tags": [
         "treatment planning",
         "exercise prescription"
@@ -491,15 +491,15 @@ export const NORMAL_QUESTION_SETS = {
       "id": "exrx-002",
       "category": "exercise prescription",
       "difficulty": "medium",
-      "question": "For early strength rebuilding in outpatient rehab, which dosage is generally a practical starting point?",
+      "question": "For early strength rebuilding in outpatient rehab, which dosage is generally a practical starting point for many patients?",
       "options": [
         "1 set monthly",
-        "2-4 sets of 6-12 reps at a tolerable effort",
+        "2-4 sets of 6-12 reps at a tolerable effort (about RPE 5-7), 2-3 days/week",
         "100 reps to failure daily",
         "No rest days"
       ],
       "correctAnswer": 1,
-      "explanation": "Moderate set-rep schemes with planned progression are commonly effective and clinically practical.",
+      "explanation": "Moderate volume and effort with rest days is a practical starting dose before progressive overload.",
       "tags": [
         "dosage",
         "exercise-based rehab"
@@ -508,7 +508,7 @@ export const NORMAL_QUESTION_SETS = {
     {
       "id": "exrx-003",
       "category": "exercise prescription",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "question": "Which strategy most improves adherence when a home program feels overwhelming?",
       "options": [
         "Add more exercises to improve variety",
@@ -517,7 +517,7 @@ export const NORMAL_QUESTION_SETS = {
         "Use generic handouts without discussion"
       ],
       "correctAnswer": 1,
-      "explanation": "Shared planning and simplified dosing usually improve follow-through better than increasing complexity.",
+      "explanation": "Adherence improves when plans are simple, meaningful, and realistically matched to the patient's routine.",
       "tags": [
         "adherence",
         "clinical reasoning"
