@@ -2,7 +2,8 @@ export const ROUTES = {
   home: '/',
   quiz: '/quiz',
   results: '/results',
-  progress: '/progress'
+  progress: '/progress',
+  admin: '/admin-dev'
 };
 
 export function readRoute() {

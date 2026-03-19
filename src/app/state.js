@@ -1,4 +1,4 @@
-import { loadHistory, loadSession } from '../utils/storage.js';
+import { loadDevQuestions, loadHistory, loadSession } from '../utils/storage.js';
 import { ROUTES, readRoute } from './router.js';
 import { isValidQuestion } from '../data/schema/quizSchema.js';
 
@@ -21,6 +21,7 @@ export function createInitialState() {
     currentIndex: 0,
     answers: {},
     history: loadHistory(),
+    devQuestions: loadDevQuestions().filter(isValidQuestion),
     startError: ''
   };
 
