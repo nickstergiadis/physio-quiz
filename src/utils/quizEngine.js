@@ -1,36 +1,24 @@
 import { questionBank } from '../data/questionBank.js';
-
-function shuffle(items) {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
+import {
+  filterQuestionsByCategory,
+  filterQuestionsByDifficulty,
+  filterQuestionsByMode,
+  randomizeQuestionOrder,
+  selectQuizLength
+} from './questionBankUtils.js';
 
 export function getQuestions({ mode = 'normal', category, difficulty, limit = 10 }) {
-  let pool = questionBank;
+  const pool = selectQuizLength(
+    randomizeQuestionOrder(
+      filterQuestionsByDifficulty(
+        filterQuestionsByCategory(filterQuestionsByMode(questionBank, mode), category),
+        difficulty
+      )
+    ),
+    limit
+  );
 
-  if (mode === 'clinical-reasoning') {
-    pool = pool.filter((q) => q.tags?.includes('clinical-reasoning'));
-  } else {
-    pool = pool.filter((q) => !q.tags?.includes('clinical-reasoning'));
-  }
-
-  if (category && category !== 'all') {
-    pool = pool.filter((q) => q.category === category);
-  }
-
-  if (difficulty && difficulty !== 'all') {
-    pool = pool.filter((q) => q.difficulty === difficulty);
-  }
-
-  if (!pool.length) {
-    return [];
-  }
-
-  return shuffle(pool).slice(0, Math.max(1, limit));
+  return pool;
 }
 
 export function calculateScore(answers, questions) {
