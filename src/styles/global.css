@@ -124,6 +124,13 @@ textarea.input {
   cursor: pointer;
 }
 
+.btn:focus-visible,
+.input:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: var(--primary);
   color: white;
@@ -131,6 +138,11 @@ textarea.input {
 
 .btn-primary:hover {
   background: var(--primary-strong);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {

@@ -6,6 +6,31 @@ const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
 const HISTORY_LIMIT = 50;
 const PROGRESS_VERSION = 1;
 
+function safeGetItem(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function safeRemoveItem(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // Ignore storage removal failures (e.g. storage disabled).
+  }
+}
+
 function isRecord(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -64,7 +89,7 @@ function createProgressDocument(history) {
 }
 
 function saveHistory(history) {
-  localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify(createProgressDocument(history)));
+  safeSetItem(QUIZ_PROGRESS_KEY, JSON.stringify(createProgressDocument(history)));
 }
 
 function readLegacyHistory(raw) {
@@ -78,31 +103,31 @@ function readLegacyHistory(raw) {
 }
 
 function migrateLegacyHistory() {
-  const legacyV2Raw = localStorage.getItem(LEGACY_QUIZ_HISTORY_KEY_V2);
+  const legacyV2Raw = safeGetItem(LEGACY_QUIZ_HISTORY_KEY_V2);
   if (legacyV2Raw) {
     const migrated = readLegacyHistory(legacyV2Raw);
     if (migrated) {
       saveHistory(migrated);
     }
-    localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY_V2);
+    safeRemoveItem(LEGACY_QUIZ_HISTORY_KEY_V2);
   }
 
-  const legacyRaw = localStorage.getItem(LEGACY_QUIZ_HISTORY_KEY);
+  const legacyRaw = safeGetItem(LEGACY_QUIZ_HISTORY_KEY);
   if (legacyRaw) {
     const migrated = readLegacyHistory(legacyRaw);
     if (migrated) {
       saveHistory(migrated);
     }
-    localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY);
+    safeRemoveItem(LEGACY_QUIZ_HISTORY_KEY);
   }
 }
 
 export function saveSession(session) {
-  localStorage.setItem(QUIZ_SESSION_KEY, JSON.stringify(session));
+  safeSetItem(QUIZ_SESSION_KEY, JSON.stringify(session));
 }
 
 export function loadSession() {
-  const raw = localStorage.getItem(QUIZ_SESSION_KEY);
+  const raw = safeGetItem(QUIZ_SESSION_KEY);
   if (!raw) {
     return null;
   }
@@ -110,13 +135,13 @@ export function loadSession() {
   try {
     return JSON.parse(raw);
   } catch {
-    localStorage.removeItem(QUIZ_SESSION_KEY);
+    safeRemoveItem(QUIZ_SESSION_KEY);
     return null;
   }
 }
 
 export function clearSession() {
-  localStorage.removeItem(QUIZ_SESSION_KEY);
+  safeRemoveItem(QUIZ_SESSION_KEY);
 }
 
 export function pushHistory(entry) {
@@ -130,7 +155,7 @@ export function pushHistory(entry) {
 export function loadHistory() {
   migrateLegacyHistory();
 
-  const raw = localStorage.getItem(QUIZ_PROGRESS_KEY);
+  const raw = safeGetItem(QUIZ_PROGRESS_KEY);
   if (!raw) {
     return [];
   }
@@ -148,17 +173,17 @@ export function loadHistory() {
 
     return parsed.attempts.map(sanitizeHistoryEntry).filter(Boolean);
   } catch {
-    localStorage.removeItem(QUIZ_PROGRESS_KEY);
+    safeRemoveItem(QUIZ_PROGRESS_KEY);
     return [];
   }
 }
 
 export function saveDevQuestions(questions) {
-  localStorage.setItem(DEV_QUESTION_DRAFTS_KEY, JSON.stringify(questions));
+  safeSetItem(DEV_QUESTION_DRAFTS_KEY, JSON.stringify(questions));
 }
 
 export function loadDevQuestions() {
-  const raw = localStorage.getItem(DEV_QUESTION_DRAFTS_KEY);
+  const raw = safeGetItem(DEV_QUESTION_DRAFTS_KEY);
   if (!raw) {
     return [];
   }
@@ -167,7 +192,7 @@ export function loadDevQuestions() {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    localStorage.removeItem(DEV_QUESTION_DRAFTS_KEY);
+    safeRemoveItem(DEV_QUESTION_DRAFTS_KEY);
     return [];
   }
 }

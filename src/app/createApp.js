@@ -22,6 +22,11 @@ function combinedQuestionBank(devQuestions) {
 }
 
 export function createApp(root) {
+  if (!root) {
+    console.error('App root element not found.');
+    return;
+  }
+
   const state = createInitialState();
 
   const appShell = document.createElement('div');
@@ -34,6 +39,7 @@ export function createApp(root) {
 
   const nav = document.createElement('nav');
   nav.className = 'nav';
+  nav.setAttribute('aria-label', 'Primary');
   nav.append(
     navLink(ROUTES.home, 'Home'),
     navLink(ROUTES.quiz, 'Quiz'),
@@ -141,7 +147,7 @@ export function createApp(root) {
 
   function render() {
     main.innerHTML = '';
-    const route = readRoute();
+    const route = state.route;
 
     if (route === ROUTES.quiz) {
       main.appendChild(

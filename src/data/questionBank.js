@@ -16,7 +16,5 @@ const dedupedQuestionBank = dedupeQuestionsById(rawQuestionBank);
 
 export const questionBank = validateQuestionObjects(dedupedQuestionBank);
 
-export const invalidQuestionCount = rawQuestionBank.length - questionBank.length;
-
 export const quizCategories = QUIZ_CATEGORIES;
 export const difficultyLevels = DIFFICULTY_LEVELS;

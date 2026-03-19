@@ -12,15 +12,15 @@ function resolveQuestionOrder(questions, order = 'shuffled') {
   return order === 'fixed' ? sortQuestionsById(questions) : randomizeQuestionOrder(questions);
 }
 
-export function getQuestionPool({ mode = 'normal', category, difficulty }) {
+export function getQuestionPool({ mode = 'normal', category, difficulty, questionSource = questionBank }) {
   return filterQuestionsByDifficulty(
-    filterQuestionsByCategory(filterQuestionsByMode(questionBank, mode), category),
+    filterQuestionsByCategory(filterQuestionsByMode(questionSource, mode), category),
     difficulty
   );
 }
 
-export function getQuestions({ mode = 'normal', category, difficulty, order = 'shuffled', limit = 10 }) {
-  const pool = getQuestionPool({ mode, category, difficulty });
+export function getQuestions({ mode = 'normal', category, difficulty, order = 'shuffled', limit = 10, questionSource }) {
+  const pool = getQuestionPool({ mode, category, difficulty, questionSource });
   return selectQuizLength(resolveQuestionOrder(pool, order), limit);
 }
 
@@ -32,7 +32,10 @@ export function buildQuizSession(config = {}) {
     length: [5, 10, 15, 20].includes(config.length) ? config.length : 10,
     order: config.order === 'fixed' ? 'fixed' : 'shuffled'
   };
-  const pool = getQuestionPool(normalized);
+  const pool = getQuestionPool({
+    ...normalized,
+    questionSource: Array.isArray(config.questionSource) ? config.questionSource : questionBank
+  });
   const effectiveLength = Math.min(normalized.length, pool.length);
   const questions = selectQuizLength(resolveQuestionOrder(pool, normalized.order), effectiveLength);
 
