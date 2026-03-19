@@ -23,7 +23,8 @@ function createSelect(name, id) {
 export function categorySelector({
   onStart,
   initialFilters = { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' },
-  startError = ''
+  startError = '',
+  questionSource
 }) {
   const form = document.createElement('form');
   form.className = 'setup-form stack';
@@ -107,7 +108,7 @@ export function categorySelector({
 
   function updateAvailability() {
     const selection = resolveSelection();
-    const available = getQuestionPool(selection).length;
+    const available = getQuestionPool({ ...selection, questionSource }).length;
     const requested = selection.length;
     const questionWord = available === 1 ? 'question' : 'questions';
 

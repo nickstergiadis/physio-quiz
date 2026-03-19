@@ -45,6 +45,7 @@ function calculateStreak(history) {
   }
 
   const todayKey = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const dayMs = 24 * 60 * 60 * 1000;
 
   let streak = 0;
@@ -61,10 +62,10 @@ function calculateStreak(history) {
   }
 
   const activeToday = uniqueDays[0] === todayKey;
-  const adjustedCurrent = activeToday ? streak : Math.max(streak - 1, 0);
+  const current = activeToday || uniqueDays[0] === yesterday ? streak : 0;
 
   return {
-    current: adjustedCurrent,
+    current,
     activeToday,
     lastAttemptDate: uniqueDays[0]
   };
