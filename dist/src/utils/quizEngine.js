@@ -50,3 +50,25 @@ export function buildQuestionReview(questions, answers) {
     };
   });
 }
+
+export function calculateCategoryScore(answers, questions) {
+  const summary = {};
+
+  questions.forEach((question) => {
+    const key = question.category || 'uncategorized';
+    if (!summary[key]) {
+      summary[key] = { correct: 0, total: 0, percent: 0 };
+    }
+
+    summary[key].total += 1;
+    if (answers[question.id] === question.correctAnswer) {
+      summary[key].correct += 1;
+    }
+  });
+
+  Object.values(summary).forEach((item) => {
+    item.percent = item.total ? Math.round((item.correct / item.total) * 100) : 0;
+  });
+
+  return summary;
+}
