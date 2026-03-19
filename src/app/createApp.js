@@ -2,10 +2,12 @@ import { homePage } from '../pages/HomePage.js';
 import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
+import { adminPage } from '../pages/AdminPage.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
-import { saveSession, clearSession, pushHistory, loadHistory } from '../utils/storage.js';
+import { saveSession, clearSession, pushHistory, loadHistory, saveDevQuestions } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, readRoute, writeRoute } from './router.js';
+import { questionBank } from '../data/questionBank.js';
 
 function navLink(path, label) {
   const link = document.createElement('a');
@@ -13,6 +15,10 @@ function navLink(path, label) {
   link.textContent = label;
   link.className = 'nav-link';
   return link;
+}
+
+function combinedQuestionBank(devQuestions) {
+  return [...questionBank, ...devQuestions];
 }
 
 export function createApp(root) {
@@ -28,7 +34,12 @@ export function createApp(root) {
 
   const nav = document.createElement('nav');
   nav.className = 'nav';
-  nav.append(navLink(ROUTES.home, 'Home'), navLink(ROUTES.quiz, 'Quiz'), navLink(ROUTES.progress, 'Progress'));
+  nav.append(
+    navLink(ROUTES.home, 'Home'),
+    navLink(ROUTES.quiz, 'Quiz'),
+    navLink(ROUTES.progress, 'Progress'),
+    navLink(ROUTES.admin, 'Admin (Dev)')
+  );
 
   header.append(title, nav);
 
@@ -54,7 +65,7 @@ export function createApp(root) {
   }
 
   function startQuiz(filters) {
-    const session = buildQuizSession(filters);
+    const session = buildQuizSession({ ...filters, questionSource: combinedQuestionBank(state.devQuestions) });
     if (!session.questions.length) {
       state.startError = 'No questions match this setup. Try broader filters or a different mode.';
       render();
@@ -68,6 +79,12 @@ export function createApp(root) {
     state.answers = {};
     persistSession();
     setRoute(ROUTES.quiz);
+  }
+
+  function addDevQuestion(question) {
+    state.devQuestions.unshift(question);
+    saveDevQuestions(state.devQuestions);
+    render();
   }
 
   function selectAnswer(questionId, optionIndex) {
@@ -155,6 +172,16 @@ export function createApp(root) {
 
     if (route === ROUTES.progress) {
       main.appendChild(progressPage({ history: state.history }));
+      return;
+    }
+
+    if (route === ROUTES.admin) {
+      main.appendChild(
+        adminPage({
+          onSaveQuestion: addDevQuestion,
+          existingQuestions: state.devQuestions
+        })
+      );
       return;
     }
 

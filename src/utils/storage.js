@@ -1,5 +1,6 @@
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
 const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
+const DEV_QUESTION_DRAFTS_KEY = 'physio_quiz_dev_questions_v1';
 const LEGACY_QUIZ_HISTORY_KEY_V2 = 'physio_quiz_history_v2';
 const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
 const HISTORY_LIMIT = 50;
@@ -148,6 +149,25 @@ export function loadHistory() {
     return parsed.attempts.map(sanitizeHistoryEntry).filter(Boolean);
   } catch {
     localStorage.removeItem(QUIZ_PROGRESS_KEY);
+    return [];
+  }
+}
+
+export function saveDevQuestions(questions) {
+  localStorage.setItem(DEV_QUESTION_DRAFTS_KEY, JSON.stringify(questions));
+}
+
+export function loadDevQuestions() {
+  const raw = localStorage.getItem(DEV_QUESTION_DRAFTS_KEY);
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    localStorage.removeItem(DEV_QUESTION_DRAFTS_KEY);
     return [];
   }
 }

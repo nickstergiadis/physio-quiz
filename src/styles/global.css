@@ -111,6 +111,11 @@ body {
   background: #fff;
 }
 
+textarea.input {
+  resize: vertical;
+  min-height: 110px;
+}
+
 .btn {
   border: 0;
   border-radius: 10px;
@@ -216,6 +221,32 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.8rem;
+}
+
+.dev-notice {
+  margin: 0;
+  border: 1px dashed #b6c5d6;
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: #f8fbff;
+  color: #194569;
+  font-weight: 600;
+}
+
+.preview-box {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  background: #fbfdff;
+}
+
+.preview-box h3 {
+  margin: 0;
+}
+
+.preview-correct {
+  color: #0c5a18;
+  font-weight: 700;
 }
 
 @media (max-width: 640px) {
