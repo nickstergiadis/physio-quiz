@@ -1,6 +1,6 @@
-import { isValidQuestion } from '../types/quizSchema.js';
+import { isValidQuestion, QUIZ_CATEGORIES, DIFFICULTY_LEVELS } from './schema/quizSchema.js';
 
-/** @type {import('../types/quizSchema.js').QuizQuestion[]} */
+/** @type {import('./schema/quizSchema.js').QuizQuestion[]} */
 export const questionBank = [
   {
     id: 'q-001',
@@ -68,13 +68,5 @@ if (!questionBank.every(isValidQuestion)) {
   throw new Error('Question bank contains invalid question schema.');
 }
 
-export const quizCategories = [
-  'musculoskeletal',
-  'clinical-reasoning',
-  'assessment',
-  'diagnosis',
-  'treatment-planning',
-  'exercise-prescription'
-];
-
-export const difficultyLevels = ['easy', 'medium', 'hard'];
+export const quizCategories = QUIZ_CATEGORIES;
+export const difficultyLevels = DIFFICULTY_LEVELS;

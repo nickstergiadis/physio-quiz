@@ -1,6 +1,10 @@
 import { card } from '../components/ui/card.js';
 import { button } from '../components/ui/button.js';
 
+function getOptionLabel(question, optionId) {
+  return question.options.find((option) => option.id === optionId)?.label ?? optionId;
+}
+
 export function resultsPage({ score, questions, answers, onRestart }) {
   const body = document.createElement('div');
   body.className = 'stack';
@@ -19,7 +23,8 @@ export function resultsPage({ score, questions, answers, onRestart }) {
 
     item.innerHTML = `
       <h3>${q.stem}</h3>
-      <p><strong>Your answer:</strong> ${chosen ?? 'Not answered'} ${isCorrect ? '✅' : '❌'}</p>
+      <p><strong>Your answer:</strong> ${chosen ? getOptionLabel(q, chosen) : 'Not answered'} ${isCorrect ? '✅' : '❌'}</p>
+      <p><strong>Correct answer:</strong> ${getOptionLabel(q, q.correctOptionId)}</p>
       <p><strong>Explanation:</strong> ${q.explanation}</p>
     `;
 

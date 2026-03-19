@@ -7,11 +7,19 @@ export function homePage({ onStart }) {
 
   const intro = document.createElement('p');
   intro.textContent =
-    'Strengthen musculoskeletal assessment, diagnosis, treatment planning, and exercise prescription through focused quiz sessions.';
+    'Test musculoskeletal knowledge, clinical reasoning, assessment, diagnosis, treatment planning, and exercise prescription with focused quiz sessions.';
+
+  const highlights = document.createElement('ul');
+  highlights.className = 'feature-list';
+  highlights.innerHTML = `
+    <li>Multiple-choice questions with explanations</li>
+    <li>Category and difficulty filtering</li>
+    <li>Progress history stored locally</li>
+  `;
 
   const selector = categorySelector({ onStart });
 
-  content.append(intro, selector);
+  content.append(intro, highlights, selector);
 
   return card({ title: 'Physio Quiz', body: content });
 }
