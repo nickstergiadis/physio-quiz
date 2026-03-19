@@ -5,6 +5,23 @@ export function categorySelector({ onStart }) {
   const form = document.createElement('form');
   form.className = 'stack';
 
+  const modeLabel = document.createElement('label');
+  modeLabel.className = 'field-label';
+  modeLabel.textContent = 'Quiz Mode';
+
+  const modeSelect = document.createElement('select');
+  modeSelect.className = 'input';
+  modeSelect.name = 'mode';
+  [
+    { value: 'normal', label: 'Normal Quiz Mode' },
+    { value: 'clinical-reasoning', label: 'Clinical Reasoning Mode' }
+  ].forEach(({ value, label }) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    modeSelect.appendChild(option);
+  });
+
   const categoryLabel = document.createElement('label');
   categoryLabel.className = 'field-label';
   categoryLabel.textContent = 'Category';
@@ -38,11 +55,12 @@ export function categorySelector({ onStart }) {
   submit.className = 'btn btn-primary';
   submit.textContent = 'Start Quiz';
 
-  form.append(categoryLabel, categorySelect, difficultyLabel, difficultySelect, submit);
+  form.append(modeLabel, modeSelect, categoryLabel, categorySelect, difficultyLabel, difficultySelect, submit);
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     onStart({
+      mode: modeSelect.value,
       category: categorySelect.value,
       difficulty: difficultySelect.value
     });

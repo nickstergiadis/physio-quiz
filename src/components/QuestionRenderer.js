@@ -22,6 +22,10 @@ export function renderQuestion({
   stem.className = 'question-stem';
   stem.textContent = question.question;
 
+  const tagRow = document.createElement('p');
+  tagRow.className = 'question-tags';
+  tagRow.textContent = question.tags?.length ? `Tags: ${question.tags.join(', ')}` : '';
+
   const options = document.createElement('div');
   options.className = 'stack';
 
@@ -54,7 +58,11 @@ export function renderQuestion({
   });
 
   controls.append(previousButton, nextButton);
-  wrapper.append(progress, stem, options, controls);
+  wrapper.append(progress, stem);
+  if (tagRow.textContent) {
+    wrapper.appendChild(tagRow);
+  }
+  wrapper.append(options, controls);
 
-  return card({ title: 'Clinical Quiz', body: wrapper });
+  return card({ title: 'Physio Quiz', body: wrapper });
 }

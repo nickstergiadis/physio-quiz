@@ -16,7 +16,7 @@ function sanitizeAnswers(value) {
 export function createInitialState() {
   const state = {
     route: readRoute(),
-    filters: { category: 'all', difficulty: 'all' },
+    filters: { mode: 'normal', category: 'all', difficulty: 'all' },
     questions: [],
     currentIndex: 0,
     answers: {},
@@ -27,6 +27,7 @@ export function createInitialState() {
   if (restored && isRecord(restored)) {
     state.filters = isRecord(restored.filters)
       ? {
+          mode: restored.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
           category: typeof restored.filters.category === 'string' ? restored.filters.category : 'all',
           difficulty: typeof restored.filters.difficulty === 'string' ? restored.filters.difficulty : 'all'
         }
