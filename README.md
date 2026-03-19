@@ -98,6 +98,24 @@ Current baseline improvements include:
 - Visible `:focus-visible` outlines for links, buttons, and inputs
 - Live-region announcements for availability/error helper text in setup form
 
+## Manual QA checklist (MVP readiness)
+
+Run through this before shipping:
+
+- Start quizzes with:
+  - both modes (`normal`, `clinical-reasoning`)
+  - each category + "all"
+  - each difficulty + "all"
+  - both order modes (`shuffled`, `fixed`)
+- Confirm setup availability text updates and prevents starting when no questions match.
+- Complete a full quiz and verify:
+  - previous/next navigation
+  - score math and per-question correctness
+  - explanation text appears for every reviewed question
+- Refresh during an in-progress quiz and confirm session resumes.
+- Complete multiple quizzes, refresh, and verify Progress dashboard metrics still load.
+- Add one malformed object to dev-question localStorage and verify app does not crash (invalid objects are ignored).
+
 ## Performance notes
 
 - Fully static assets; no runtime API calls

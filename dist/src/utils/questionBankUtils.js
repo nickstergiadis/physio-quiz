@@ -1,7 +1,9 @@
 import { isValidQuestion } from '../data/schema/quizSchema.js';
 
 function isClinicalReasoningQuestion(question) {
-  return question.tags?.includes('clinical-reasoning');
+  if (!question || typeof question !== 'object') return false;
+  const tags = Array.isArray(question.tags) ? question.tags : [];
+  return question.category === 'clinical reasoning' || tags.includes('clinical-reasoning');
 }
 
 export function validateQuestionObjects(questions) {
@@ -11,6 +13,7 @@ export function validateQuestionObjects(questions) {
 export function dedupeQuestionsById(questions) {
   const seen = new Set();
   return questions.filter((question) => {
+    if (!question || typeof question !== 'object' || typeof question.id !== 'string') return false;
     if (seen.has(question.id)) return false;
     seen.add(question.id);
     return true;
