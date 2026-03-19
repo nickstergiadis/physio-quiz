@@ -9,8 +9,14 @@ function shuffle(items) {
   return copy;
 }
 
-export function getQuestions({ category, difficulty, limit = 10 }) {
+export function getQuestions({ mode = 'normal', category, difficulty, limit = 10 }) {
   let pool = questionBank;
+
+  if (mode === 'clinical-reasoning') {
+    pool = pool.filter((q) => q.tags?.includes('clinical-reasoning'));
+  } else {
+    pool = pool.filter((q) => !q.tags?.includes('clinical-reasoning'));
+  }
 
   if (category && category !== 'all') {
     pool = pool.filter((q) => q.category === category);

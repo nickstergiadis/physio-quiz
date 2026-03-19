@@ -105,7 +105,7 @@ export function createApp(root) {
   }
 
   function restart() {
-    state.filters = { category: 'all', difficulty: 'all' };
+    state.filters = { mode: 'normal', category: 'all', difficulty: 'all' };
     state.questions = [];
     state.currentIndex = 0;
     state.answers = {};
