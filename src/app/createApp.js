@@ -2,7 +2,7 @@ import { homePage } from '../pages/HomePage.js';
 import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
-import { getQuestions, calculateScore, buildQuestionReview } from '../utils/quizEngine.js';
+import { getQuestions, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, readRoute, writeRoute } from './router.js';
@@ -78,10 +78,14 @@ export function createApp(root) {
 
   function submitQuiz() {
     const score = calculateScore(state.answers, state.questions);
+    const categoryStats = calculateCategoryScore(state.answers, state.questions);
+
     pushHistory({
+      id: `attempt-${crypto.randomUUID()}`,
       completedAt: new Date().toISOString(),
       filters: state.filters,
-      score
+      score,
+      categoryStats
     });
 
     state.history = loadHistory();
