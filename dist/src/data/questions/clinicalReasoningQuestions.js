@@ -68,20 +68,21 @@ export const CLINICAL_REASONING_QUESTION_SETS = {
       "id": "reasoning-012",
       "category": "shoulder",
       "difficulty": "medium",
-      "question": "Patient scenario: A 47-year-old office worker has 7 months of lateral elbow pain worsened by gripping and keyboard-heavy days. No traumatic event; resisted wrist extension reproduces familiar pain.\n\nWhich diagnosis is most likely?",
+      "question": "Patient scenario: A 23-year-old rugby player reports repeated episodes of the shoulder “slipping out” during abduction-external rotation after a first traumatic dislocation 4 months ago. Strength is near normal between episodes.\n\nWhich diagnosis best fits this pattern?",
       "options": [
-        "Cervical radiculopathy",
-        "Lateral elbow tendinopathy",
-        "Acute radial head fracture",
-        "Systemic inflammatory arthritis flare"
+        "Adhesive capsulitis",
+        "Recurrent traumatic anterior shoulder instability",
+        "Calcific tendinopathy only",
+        "Cervical myelopathy"
       ],
       "correctAnswer": 1,
-      "explanation": "Gradual load-related lateral elbow pain with gripping and resisted wrist extension is typical of lateral elbow tendinopathy. Management usually centers on load modification and progressive strengthening.",
+      "explanation": "Recurrent apprehension/subluxation in the abduction-external rotation position after a traumatic first event is most consistent with recurrent anterior instability.",
       "tags": [
         "clinical-reasoning",
-        "tendinopathy",
+        "instability",
         "diagnosis",
-        "chronic"
+        "shoulder",
+        "sport"
       ]
     }
   ],
@@ -334,6 +335,63 @@ export const CLINICAL_REASONING_QUESTION_SETS = {
         "clinical-reasoning",
         "exercise progression",
         "acute vs chronic"
+      ]
+    },
+    {
+      "id": "reasoning-017",
+      "category": "clinical reasoning",
+      "difficulty": "easy",
+      "question": "Patient scenario: A patient with low back pain asks, \"Should I wait until pain is zero before moving more?\" Neurologic screen and red-flag screen are negative.\n\nWhat is the most useful response?",
+      "options": [
+        "Yes—avoid all painful movement until completely pain-free",
+        "No—use symptom-guided movement and gradually build activity tolerance",
+        "Only bed rest is safe in the first month",
+        "You need MRI before any exercise can begin"
+      ],
+      "correctAnswer": 1,
+      "explanation": "For most uncomplicated MSK presentations, early symptom-guided movement and progressive loading improve recovery and confidence.",
+      "tags": [
+        "clinical-reasoning",
+        "education",
+        "load-management"
+      ]
+    },
+    {
+      "id": "reasoning-018",
+      "category": "clinical reasoning",
+      "difficulty": "hard",
+      "question": "Patient scenario: A runner with Achilles tendinopathy improves pain but still has marked side-to-side deficit on single-leg heel raise endurance and avoids faster running.\n\nWhat is the best readiness decision?",
+      "options": [
+        "Clear full return because resting pain is low",
+        "Continue graded tendon loading and progressive return-to-run stages until functional deficits narrow",
+        "Stop all tendon loading to avoid flare-ups",
+        "Use imaging findings alone to clear return to sport"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Return-to-sport should consider symptom behavior, capacity deficits, and progressive exposure—not pain at rest alone.",
+      "tags": [
+        "clinical-reasoning",
+        "return-to-sport",
+        "tendinopathy"
+      ]
+    },
+    {
+      "id": "reasoning-019",
+      "category": "clinical reasoning",
+      "difficulty": "medium",
+      "question": "Patient scenario: A patient with knee OA says, \"Exercise means more joint damage.\" They have activity-related pain that settles within 24 hours and no inflammatory red flags.\n\nWhich reasoning-based plan is best?",
+      "options": [
+        "Avoid strengthening to protect cartilage",
+        "Use education plus graded strengthening and walking exposure with clear flare-up rules",
+        "Recommend passive modalities as the only long-term treatment",
+        "Discharge because symptoms are chronic"
+      ],
+      "correctAnswer": 1,
+      "explanation": "For OA, education and graded exercise improve pain and function; tolerable short-lived pain does not automatically indicate harm.",
+      "tags": [
+        "clinical-reasoning",
+        "osteoarthritis",
+        "behavior-change"
       ]
     }
   ]
