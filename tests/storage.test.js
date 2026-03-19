@@ -51,6 +51,22 @@ test('history entries are sanitized when persisted', () => {
   assert.equal(history[0].categoryStats.broken, undefined);
 });
 
+test('history entries normalize invalid completedAt strings', () => {
+  installMemoryStorage();
+
+  pushHistory({
+    id: 'attempt-date-test',
+    completedAt: 'not-a-date',
+    filters: { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' },
+    score: { correct: 1, total: 1 },
+    categoryStats: {}
+  });
+
+  const history = loadHistory();
+  assert.equal(history.length, 1);
+  assert.equal(Number.isNaN(new Date(history[0].completedAt).getTime()), false);
+});
+
 test('saveSession and loadSession retain session payload', () => {
   installMemoryStorage();
   const payload = {

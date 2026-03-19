@@ -8,85 +8,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "shoulder-001",
       "category": "shoulder",
       "difficulty": "easy",
-      "question": "Which muscle is most associated with initiating shoulder abduction?",
+      "question": "During shoulder elevation, which movement fault most commonly increases subacromial load in symptomatic rotator cuff presentations?",
       "options": [
-        "Teres major",
-        "Supraspinatus",
-        "Latissimus dorsi",
-        "Subscapularis"
+        "Early excessive scapular upward rotation",
+        "Reduced posterior tilt and upward rotation of the scapula",
+        "Excessive thoracic extension",
+        "Increased humeral external rotation"
       ],
       "correctAnswer": 1,
-      "explanation": "Supraspinatus initiates the first phase of abduction before the deltoid becomes dominant.",
+      "explanation": "Reduced scapular posterior tilt/upward rotation can reduce clearance and increase tendon compression during elevation.",
       "tags": [
-        "rotator cuff"
+        "anatomy",
+        "biomechanics"
       ]
     },
     {
       "id": "shoulder-002",
       "category": "shoulder",
       "difficulty": "medium",
-      "question": "A positive painful arc between 60° and 120° most commonly suggests:",
+      "question": "A 48-year-old carpenter has lateral shoulder pain for 4 months, painful arc, and pain-limited but nearly full passive ROM. Which finding most strongly shifts your differential toward adhesive capsulitis instead of rotator cuff related shoulder pain?",
       "options": [
-        "Adhesive capsulitis",
-        "Subacromial pain syndrome",
-        "AC joint instability",
-        "Posterior dislocation"
+        "Pain with resisted abduction",
+        "Pain when sleeping on the shoulder",
+        "Marked passive external rotation restriction with firm capsular end-feel",
+        "Symptoms after overhead work"
       ],
-      "correctAnswer": 1,
-      "explanation": "Painful arc in mid-range is classically associated with subacromial pain mechanisms.",
+      "correctAnswer": 2,
+      "explanation": "Adhesive capsulitis is characterized by substantial passive ROM restriction, especially external rotation, not only pain-provoked active testing.",
       "tags": [
-        "assessment"
+        "assessment",
+        "differential diagnosis"
       ]
     },
     {
       "id": "shoulder-003",
       "category": "shoulder",
       "difficulty": "medium",
-      "question": "Which test is commonly used to assess subscapularis function?",
+      "question": "For irritable rotator cuff tendinopathy in week 1-2, which exercise plan is most appropriate?",
       "options": [
-        "Empty can test",
-        "Lift-off test",
-        "Sulcus sign",
-        "Neer test"
+        "Daily heavy overhead press to fatigue",
+        "Pain-monitored isometrics plus low-load elevation below aggravating range",
+        "No shoulder loading for 6 weeks",
+        "Only passive modalities and no home program"
       ],
       "correctAnswer": 1,
-      "explanation": "The lift-off test challenges internal rotation strength linked to subscapularis function.",
+      "explanation": "Early pain-modulated loading builds tolerance while limiting flare-ups and preserves confidence and function.",
       "tags": [
-        "clinical test"
+        "treatment planning",
+        "exercise prescription"
       ]
     },
     {
       "id": "shoulder-004",
       "category": "shoulder",
       "difficulty": "hard",
-      "question": "In early rotator cuff tendinopathy rehab, the best initial loading strategy is:",
+      "question": "A volleyball player 5 months after shoulder instability rehab is pain-free in ADLs but anxious with overhead spikes. Which return-to-sport criterion is most defensible before unrestricted play?",
       "options": [
-        "Complete rest until pain-free",
-        "High-load overhead presses daily",
-        "Pain-monitored progressive loading",
-        "Only passive modalities"
+        "Pain-free rest only",
+        "Equal passive ROM only",
+        "Symmetrical shoulder strength/endurance with successful sport-specific plyometric progression",
+        "Normal ultrasound appearance of the cuff"
       ],
       "correctAnswer": 2,
-      "explanation": "Progressive, pain-monitored loading supports tissue capacity and symptom control.",
+      "explanation": "Return decisions should include capacity testing and graded sport-specific exposure, not symptoms at rest alone.",
       "tags": [
-        "rehab"
+        "return to sport",
+        "sports physio"
       ]
     },
     {
       "id": "shoulder-005",
       "category": "shoulder",
       "difficulty": "easy",
-      "question": "Scapular upward rotation during elevation is primarily produced by:",
+      "question": "Following a traumatic shoulder injury, which presentation is most concerning for urgent medical referral?",
       "options": [
-        "Upper and lower trapezius with serratus anterior",
-        "Rhomboids only",
-        "Pectoralis minor only",
-        "Biceps brachii"
+        "Painful arc without trauma",
+        "Night pain after increased training volume",
+        "Acute loss of active elevation with relatively preserved passive ROM",
+        "Mild pain only with end-range stretching"
       ],
-      "correctAnswer": 0,
-      "explanation": "A force couple of trapezius and serratus anterior drives normal upward rotation.",
+      "correctAnswer": 2,
+      "explanation": "Major active weakness after trauma can indicate acute full-thickness cuff tear or other structural injury needing timely specialist review.",
       "tags": [
-        "biomechanics"
+        "red flags",
+        "contraindications"
       ]
     }
   ],
@@ -96,85 +101,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "knee-001",
       "category": "knee",
       "difficulty": "easy",
-      "question": "Which ligament is most directly assessed with the Lachman test?",
+      "question": "Which history pattern most strongly supports ACL rupture over isolated MCL sprain?",
       "options": [
-        "PCL",
-        "MCL",
-        "ACL",
-        "LCL"
+        "Direct valgus blow with localized medial tenderness and no effusion",
+        "Non-contact pivot with pop, rapid effusion, and early instability",
+        "Gradual anterior knee pain with stairs",
+        "Pain only after prolonged kneeling"
       ],
-      "correctAnswer": 2,
-      "explanation": "Lachman is the primary physical exam test for ACL integrity.",
+      "correctAnswer": 1,
+      "explanation": "A pivoting mechanism plus rapid swelling and giving-way is classic for ACL injury.",
       "tags": [
-        "acl"
+        "assessment",
+        "differential diagnosis"
       ]
     },
     {
       "id": "knee-002",
       "category": "knee",
       "difficulty": "medium",
-      "question": "A traumatic non-contact pivot injury with immediate swelling most suggests:",
+      "question": "In early ACL reconstruction rehab (week 3-6), which objective should usually be prioritized before plyometrics?",
       "options": [
-        "Patellar tendinopathy",
-        "ACL rupture",
-        "Pes anserine bursitis",
-        "ITB syndrome"
+        "Maximal single-leg hop distance",
+        "Full extension, minimal effusion, and improved quadriceps activation",
+        "Running speed over 20 meters",
+        "Deep loaded pivoting drills"
       ],
       "correctAnswer": 1,
-      "explanation": "Mechanism plus rapid effusion strongly raises suspicion for ACL injury.",
+      "explanation": "Early phase progression is driven by impairment milestones (extension, swelling, quad control) before high-impact work.",
       "tags": [
-        "history"
+        "ortho rehab",
+        "treatment planning"
       ]
     },
     {
       "id": "knee-003",
       "category": "knee",
       "difficulty": "medium",
-      "question": "Which exercise is often used early after ACL reconstruction to restore quadriceps activation?",
+      "question": "A runner with patellofemoral pain reports pain 4/10 during squats that returns to baseline by next morning. How should this guide exercise progression?",
       "options": [
-        "Deep jump squats",
-        "Open-chain knee extension at max load",
-        "Quadriceps sets and straight-leg raises",
-        "Heavy leg press below 60° only"
+        "Stop all squatting immediately",
+        "Continue and progress load gradually within symptom-monitoring limits",
+        "Only use passive therapy for 4 weeks",
+        "Delay all strengthening until completely pain-free"
       ],
-      "correctAnswer": 2,
-      "explanation": "Quad sets and SLRs are common early-stage options to regain control safely.",
+      "correctAnswer": 1,
+      "explanation": "Many PFP programs allow tolerable, short-lived pain while load is progressed according to irritability and recovery.",
       "tags": [
-        "post-op"
+        "exercise prescription",
+        "sports physio"
       ]
     },
     {
       "id": "knee-004",
       "category": "knee",
       "difficulty": "hard",
-      "question": "For patellofemoral pain, which factor is most consistently supported in management?",
+      "question": "A 58-year-old with knee OA has fear of stairs and reduced activity tolerance. Which plan best matches evidence-based outpatient physio?",
       "options": [
-        "Routine arthroscopy",
-        "Exercise therapy targeting hip and knee",
-        "Long-term immobilization",
-        "Avoiding all squatting forever"
+        "Long-term rest with analgesics only",
+        "Progressive strength plus step-down retraining and graded walking exposure",
+        "Immediate referral for arthroscopy",
+        "Avoid any exercise that reproduces symptoms"
       ],
       "correctAnswer": 1,
-      "explanation": "Guidelines emphasize progressive exercise, often including hip and knee strengthening.",
+      "explanation": "For knee OA, education with progressive strengthening and functional task exposure improves pain and participation.",
       "tags": [
-        "pfp"
+        "treatment planning",
+        "exercise-based rehab"
       ]
     },
     {
       "id": "knee-005",
       "category": "knee",
-      "difficulty": "easy",
-      "question": "The meniscus functions primarily to:",
+      "difficulty": "hard",
+      "question": "After ACL reconstruction, which criterion set is most appropriate for return to cutting sport?",
       "options": [
-        "Produce knee extension torque",
-        "Improve load distribution and joint stability",
-        "Limit all tibial rotation",
-        "Attach quadriceps to tibia"
+        "Time since surgery only",
+        "No effusion plus >90% limb symmetry on hop and strength tests with psychological readiness",
+        "Full ROM only",
+        "Surgeon clearance without functional testing"
       ],
       "correctAnswer": 1,
-      "explanation": "Menisci help distribute load, absorb shock, and contribute to stability.",
+      "explanation": "Return-to-sport decisions should combine physical capacity, knee status, and confidence/readiness measures.",
       "tags": [
-        "anatomy"
+        "return to sport",
+        "assessment"
       ]
     }
   ],
@@ -184,85 +194,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "lowback-001",
       "category": "low back",
       "difficulty": "easy",
-      "question": "In uncomplicated acute low back pain, first-line advice is generally to:",
+      "question": "In an acute nonspecific low back pain case without red flags, what is the most appropriate first-line advice?",
       "options": [
-        "Remain on strict bed rest for 7 days",
-        "Stay active and resume tolerated movement",
-        "Get urgent MRI immediately",
-        "Stop all exercise permanently"
+        "Strict bed rest for one week",
+        "Stay active, reassure, and resume tolerated function early",
+        "Urgent MRI before movement",
+        "Avoid trunk flexion permanently"
       ],
       "correctAnswer": 1,
-      "explanation": "Early return to movement and activity is linked with better outcomes.",
+      "explanation": "Guideline-consistent care emphasizes reassurance and early graded activity over rest and routine imaging.",
       "tags": [
-        "guidelines"
+        "treatment planning",
+        "contraindications"
       ]
     },
     {
       "id": "lowback-002",
       "category": "low back",
       "difficulty": "medium",
-      "question": "Which symptom is a red flag requiring urgent medical referral?",
+      "question": "Which presentation should trigger same-day emergency referral rather than routine rehab?",
       "options": [
-        "Pain with prolonged sitting",
-        "Morning stiffness < 15 minutes",
-        "New urinary retention with saddle anesthesia",
-        "Pain after lifting"
+        "Back pain aggravated by prolonged sitting",
+        "Unilateral leg pain after lifting",
+        "New urinary retention with saddle anesthesia and progressive bilateral symptoms",
+        "Morning stiffness easing after movement"
       ],
       "correctAnswer": 2,
-      "explanation": "Urinary retention and saddle anesthesia can indicate cauda equina syndrome.",
+      "explanation": "This symptom cluster is concerning for cauda equina syndrome and requires urgent medical management.",
       "tags": [
-        "red flags"
+        "red flags",
+        "differential diagnosis"
       ]
     },
     {
       "id": "lowback-003",
       "category": "low back",
       "difficulty": "medium",
-      "question": "Which intervention has the best evidence for many persistent low back pain presentations?",
+      "question": "A patient fears bending after an episode of back pain but neurologic screening is normal. What is the best communication strategy?",
       "options": [
-        "Passive electrotherapy alone",
-        "Education plus graded exercise",
-        "Permanent lumbar brace use",
-        "Complete avoidance of bending"
+        "Confirm bending is dangerous for all patients",
+        "Use reassurance and graded exposure to feared movements",
+        "Avoid discussing activity until pain is zero",
+        "Recommend permanent lumbar bracing"
       ],
       "correctAnswer": 1,
-      "explanation": "Combined education and active rehabilitation is widely recommended.",
+      "explanation": "Reducing fear-avoidance through education and graded exposure supports functional recovery.",
       "tags": [
-        "management"
+        "clinical reasoning",
+        "exercise-based rehab"
       ]
     },
     {
       "id": "lowback-004",
       "category": "low back",
       "difficulty": "hard",
-      "question": "Centralization of symptoms during repeated movement testing is often interpreted as:",
+      "question": "Repeated movement testing centralizes leg pain from calf to buttock. What is the most appropriate interpretation?",
       "options": [
-        "A poor prognostic sign",
-        "Unrelated to treatment response",
-        "A potentially favorable directional response",
-        "Automatic indication for surgery"
+        "Worsening neurologic status requiring immediate surgery",
+        "Potentially favorable directional response to guide exercise selection",
+        "Finding is clinically irrelevant",
+        "Absolute contraindication to exercise"
       ],
-      "correctAnswer": 2,
-      "explanation": "Symptom centralization may guide directional preference-based care.",
+      "correctAnswer": 1,
+      "explanation": "Centralization can help identify a directional preference and self-management strategy in selected patients.",
       "tags": [
-        "mckenzie"
+        "assessment",
+        "differential diagnosis"
       ]
     },
     {
       "id": "lowback-005",
       "category": "low back",
-      "difficulty": "easy",
-      "question": "A common goal in early low back rehab is to improve:",
+      "difficulty": "hard",
+      "question": "A 72-year-old with known osteoporosis develops sudden focal thoracolumbar pain after lifting a light grocery bag. Best next step?",
       "options": [
-        "Fear and avoidance behaviors",
-        "Movement confidence and function",
-        "Dependence on imaging",
-        "Tolerance to prolonged rest"
+        "Start high-load deadlifts immediately",
+        "Suspect vertebral compression fracture and arrange prompt medical assessment",
+        "Treat as routine muscle strain only",
+        "Prescribe running intervals"
       ],
       "correctAnswer": 1,
-      "explanation": "Improving confidence and function is central in modern low back management.",
+      "explanation": "Age, osteoporosis, and low-load sudden focal pain are red flags for possible vertebral compression fracture.",
       "tags": [
-        "function"
+        "red flags",
+        "contraindications"
       ]
     }
   ],
@@ -272,85 +287,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "ankle-001",
       "category": "ankle",
       "difficulty": "easy",
-      "question": "The most commonly injured ligament in a lateral ankle sprain is:",
+      "question": "What mechanism most commonly causes injury to the anterior talofibular ligament (ATFL)?",
       "options": [
-        "Deltoid ligament",
-        "Calcaneofibular ligament",
-        "Anterior talofibular ligament",
-        "Spring ligament"
+        "Forced dorsiflexion with external rotation",
+        "Inversion with plantarflexion",
+        "Direct blow to anterior tibia",
+        "Hyperextension during sprinting"
       ],
-      "correctAnswer": 2,
-      "explanation": "ATFL is typically the first and most frequent structure injured.",
+      "correctAnswer": 1,
+      "explanation": "ATFL injury is most often associated with inversion and plantarflexion mechanisms.",
       "tags": [
-        "sprain"
+        "anatomy",
+        "sports physio"
       ]
     },
     {
       "id": "ankle-002",
       "category": "ankle",
       "difficulty": "medium",
-      "question": "After acute ankle sprain, early rehab should usually include:",
+      "question": "In the first week after a lateral ankle sprain, which program is usually most appropriate?",
       "options": [
-        "Rigid immobilization for 8 weeks",
-        "Pain-guided mobility and loading progression",
-        "No weight-bearing for all grades",
-        "Only ultrasound treatment"
+        "Complete non-weight-bearing until all pain resolves",
+        "Protected weight-bearing, ROM, and early balance retraining as tolerated",
+        "Heavy plyometrics on day 2",
+        "Passive modalities only"
       ],
       "correctAnswer": 1,
-      "explanation": "Early protected loading and mobility can reduce chronic instability risk.",
+      "explanation": "Early progressive loading and neuromuscular work improve recovery compared with prolonged immobilization in many sprains.",
       "tags": [
-        "rehab"
+        "treatment planning",
+        "exercise prescription"
       ]
     },
     {
       "id": "ankle-003",
       "category": "ankle",
       "difficulty": "medium",
-      "question": "Which test helps assess syndesmotic injury?",
+      "question": "Which finding most increases suspicion of syndesmotic injury rather than isolated lateral sprain?",
       "options": [
-        "Talar tilt test",
-        "Thompson test",
-        "Squeeze test",
-        "Anterior drawer elbow test"
+        "Tenderness only over ATFL",
+        "Pain with squeeze test and external rotation stress",
+        "Immediate pain relief with hopping",
+        "Isolated plantar heel pain"
       ],
-      "correctAnswer": 2,
-      "explanation": "The squeeze test is commonly used in high ankle sprain evaluation.",
+      "correctAnswer": 1,
+      "explanation": "Pain provoked by squeeze/external rotation tests supports syndesmotic involvement.",
       "tags": [
-        "assessment"
+        "assessment",
+        "differential diagnosis"
       ]
     },
     {
       "id": "ankle-004",
       "category": "ankle",
       "difficulty": "hard",
-      "question": "Persistent episodes of giving way months after sprain most suggest:",
+      "question": "A field athlete is 6 weeks post ankle sprain and wants to return to matches. Which criterion is most useful for readiness decisions?",
       "options": [
-        "Chronic ankle instability",
-        "Tarsal tunnel syndrome",
-        "Acute fracture",
-        "Plantar fasciitis"
+        "No tenderness to palpation only",
+        "Symmetrical hop, balance, and change-of-direction control with confidence",
+        "Ankle circumference equal at rest only",
+        "Normal X-ray only"
       ],
-      "correctAnswer": 0,
-      "explanation": "Recurrent instability episodes are characteristic of chronic ankle instability.",
+      "correctAnswer": 1,
+      "explanation": "Functional performance and confidence under sport-like demands are key for return-to-sport decision-making.",
       "tags": [
-        "chronic"
+        "return to sport",
+        "sports physio"
       ]
     },
     {
       "id": "ankle-005",
       "category": "ankle",
-      "difficulty": "easy",
-      "question": "A key return-to-sport criterion after ankle sprain is:",
+      "difficulty": "hard",
+      "question": "Which finding after ankle trauma should prompt urgent imaging referral based on Ottawa-style screening principles?",
       "options": [
-        "No swelling ever again",
-        "Symmetrical hop and balance performance",
-        "Normal MRI only",
-        "Pain-free at complete rest only"
+        "Mild swelling with full weight-bearing",
+        "Inability to bear weight for four steps plus posterior malleolar tenderness",
+        "Pain only during jogging",
+        "Pain improved after taping"
       ],
       "correctAnswer": 1,
-      "explanation": "Functional symmetry and confidence are important readiness markers.",
+      "explanation": "Bony tenderness in malleolar zones with inability to bear weight raises fracture suspicion and indicates imaging.",
       "tags": [
-        "return to sport"
+        "red flags",
+        "contraindications"
       ]
     }
   ],
@@ -360,85 +380,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "cervical-001",
       "category": "cervical spine",
       "difficulty": "easy",
-      "question": "Which muscle group is often targeted for endurance training in neck pain rehab?",
+      "question": "In persistent neck pain, training which muscle group often improves motor control and endurance?",
       "options": [
-        "Superficial neck extensors only",
+        "Masseter",
         "Deep neck flexors",
-        "Upper trapezius only",
-        "Masseter"
+        "Latissimus dorsi",
+        "Gluteus medius"
       ],
       "correctAnswer": 1,
-      "explanation": "Deep neck flexor endurance deficits are common in neck pain populations.",
+      "explanation": "Deep neck flexor endurance deficits are common and are frequently targeted in exercise-based neck rehab.",
       "tags": [
-        "exercise"
+        "anatomy",
+        "exercise-based rehab"
       ]
     },
     {
       "id": "cervical-002",
       "category": "cervical spine",
       "difficulty": "medium",
-      "question": "Cervical radiculopathy may present with:",
+      "question": "Which clinical picture most supports cervical radiculopathy over rotator cuff pathology?",
       "options": [
-        "Diffuse abdominal pain",
-        "Arm pain with dermatomal paresthesia",
-        "Isolated ankle swelling",
-        "Bilateral knee locking"
+        "Pain only with overhead pressing",
+        "Arm pain/paresthesia in a dermatomal pattern and positive Spurling test",
+        "Night pain when lying on shoulder only",
+        "Weakness only during external rotation testing"
       ],
       "correctAnswer": 1,
-      "explanation": "Neck-related nerve root irritation often causes radiating arm symptoms.",
+      "explanation": "Dermatomal sensory symptoms with positive nerve root provocation supports radiculopathy.",
       "tags": [
-        "neuro"
+        "differential diagnosis",
+        "assessment"
       ]
     },
     {
       "id": "cervical-003",
       "category": "cervical spine",
       "difficulty": "medium",
-      "question": "Which test cluster can improve confidence for cervical radiculopathy?",
+      "question": "For desk-related neck pain with low irritability, which initial plan is most appropriate?",
       "options": [
-        "Lachman + pivot shift",
-        "Spurling + distraction + ULTT findings",
-        "Thompson + squeeze tests",
-        "Apley + McMurray"
+        "Prolonged collar immobilization",
+        "Manual therapy only for 6 weeks",
+        "Graded cervical/scapular exercise plus workstation and movement-break coaching",
+        "Avoid all strengthening"
       ],
-      "correctAnswer": 1,
-      "explanation": "A combination of provocation and relief tests can strengthen clinical suspicion.",
+      "correctAnswer": 2,
+      "explanation": "A multimodal active approach improves capacity and reduces sustained postural load.",
       "tags": [
-        "cluster"
+        "treatment planning",
+        "exercise prescription"
       ]
     },
     {
       "id": "cervical-004",
       "category": "cervical spine",
       "difficulty": "hard",
-      "question": "In WAD grade II management, early best practice usually emphasizes:",
+      "question": "Which presentation is most concerning for cervical myelopathy and warrants urgent medical referral?",
       "options": [
-        "Prolonged cervical collar use",
-        "Reassurance and graded active movement",
-        "Surgical fixation",
-        "Strict inactivity"
+        "Unilateral neck pain after poor sleep",
+        "Hand clumsiness, gait disturbance, and bilateral upper motor neuron signs",
+        "Local tenderness over upper trapezius",
+        "Pain with end-range rotation only"
       ],
       "correctAnswer": 1,
-      "explanation": "Active approaches with education are preferred over prolonged immobilization.",
+      "explanation": "Progressive bilateral neurologic signs and gait/hand dexterity changes are red flags for cord involvement.",
       "tags": [
-        "whiplash"
+        "red flags",
+        "contraindications"
       ]
     },
     {
       "id": "cervical-005",
       "category": "cervical spine",
-      "difficulty": "easy",
-      "question": "A common ergonomic strategy for desk-related neck pain is:",
+      "difficulty": "hard",
+      "question": "A contact-sport athlete is returning after neck pain. Which criterion best supports return-to-play?",
       "options": [
-        "Monitor below knee level",
-        "Frequent posture variation and movement breaks",
-        "Locking neck in extension",
-        "Only passive manual therapy"
+        "Pain-free at rest only",
+        "Near-normal cervical strength, full painless ROM, and no neurologic deficits during sport-specific loading",
+        "Normal MRI alone",
+        "One week since symptoms began"
       ],
       "correctAnswer": 1,
-      "explanation": "Regular movement breaks and ergonomic setup reduce sustained loading.",
+      "explanation": "Return-to-play decisions should include symptom resolution plus objective physical and neurologic readiness.",
       "tags": [
-        "ergonomics"
+        "return to sport",
+        "sports physio"
       ]
     }
   ],
@@ -448,85 +473,90 @@ export const NORMAL_QUESTION_SETS = {
       "id": "exrx-001",
       "category": "exercise prescription",
       "difficulty": "easy",
-      "question": "The principle of progressive overload means:",
+      "question": "A patient with rotator cuff pain flares after every session. Which dosage adjustment is most appropriate first?",
       "options": [
-        "Keeping load unchanged forever",
-        "Gradually increasing training demand over time",
-        "Training only when pain is zero",
-        "Avoiding strength work"
+        "Double the load and keep frequency unchanged",
+        "Reduce volume/intensity and progress using symptom response",
+        "Stop all exercise indefinitely",
+        "Switch to passive treatment only"
       ],
       "correctAnswer": 1,
-      "explanation": "Tissues adapt when dose increases are planned and tolerable.",
+      "explanation": "Dose calibration using symptom response is central to adherence and progressive loading in rehab.",
       "tags": [
-        "principles"
+        "exercise prescription",
+        "treatment planning"
       ]
     },
     {
       "id": "exrx-002",
       "category": "exercise prescription",
       "difficulty": "medium",
-      "question": "For many strength goals, a practical starting dosage range is:",
+      "question": "For early strength rebuilding in outpatient rehab, which dosage is generally a practical starting point?",
       "options": [
         "1 set monthly",
-        "2-4 sets of 6-12 reps",
+        "2-4 sets of 6-12 reps at a tolerable effort",
         "100 reps to failure daily",
-        "No rest between sessions"
+        "No rest days"
       ],
       "correctAnswer": 1,
-      "explanation": "Moderate set-rep ranges are commonly used for strength and hypertrophy progress.",
+      "explanation": "Moderate set-rep schemes with planned progression are commonly effective and clinically practical.",
       "tags": [
-        "dosage"
+        "dosage",
+        "exercise-based rehab"
       ]
     },
     {
       "id": "exrx-003",
       "category": "exercise prescription",
       "difficulty": "medium",
-      "question": "Using a pain-monitoring model in rehab usually means:",
+      "question": "Which strategy most improves adherence when a home program feels overwhelming?",
       "options": [
-        "Any pain means tissue damage",
-        "Some tolerable pain can be acceptable during loading",
-        "Pain should be ignored completely",
-        "Only passive care should be used"
+        "Add more exercises to improve variety",
+        "Co-design a shorter plan tied to the patient's goals and routine",
+        "Delay all exercise until motivation improves",
+        "Use generic handouts without discussion"
       ],
       "correctAnswer": 1,
-      "explanation": "Tolerable, non-escalating pain can be acceptable in many rehab contexts.",
+      "explanation": "Shared planning and simplified dosing usually improve follow-through better than increasing complexity.",
       "tags": [
-        "pain monitoring"
+        "adherence",
+        "clinical reasoning"
       ]
     },
     {
       "id": "exrx-004",
       "category": "exercise prescription",
       "difficulty": "hard",
-      "question": "When adherence is poor, the best first adjustment is often to:",
+      "question": "A post-op knee patient reports pain up to 4/10 during exercise that settles by next day with no increased swelling. Best interpretation?",
       "options": [
-        "Increase complexity",
-        "Reduce dosage and co-design realistic goals",
-        "Stop exercise entirely",
-        "Blame motivation only"
+        "Automatic sign of tissue damage",
+        "Likely acceptable training response within pain-monitoring limits",
+        "Absolute contraindication to strengthening",
+        "Reason to discharge from rehab"
       ],
       "correctAnswer": 1,
-      "explanation": "A simpler, patient-centered plan often improves adherence and outcomes.",
+      "explanation": "In many protocols, tolerable pain that settles within 24 hours can be acceptable for progression if joint response remains stable.",
       "tags": [
-        "adherence"
+        "pain monitoring",
+        "ortho rehab"
       ]
     },
     {
       "id": "exrx-005",
       "category": "exercise prescription",
-      "difficulty": "easy",
-      "question": "A SMART rehab goal should be:",
+      "difficulty": "hard",
+      "question": "Which progression model best prepares patients for return-to-function in physically demanding work?",
       "options": [
-        "Vague and open-ended",
-        "Specific, measurable, achievable, relevant, and time-bound",
-        "Set only by clinician",
-        "Impossible to complete"
+        "Open-chain isolation only",
+        "Stepwise progression from impairment work to task-specific loaded patterns",
+        "Manual therapy only",
+        "Random exercise selection each session"
       ],
       "correctAnswer": 1,
-      "explanation": "SMART goals support shared decision-making and progress tracking.",
+      "explanation": "Bridging from base strength to specific work tasks supports transfer to real-world performance demands.",
       "tags": [
-        "goal setting"
+        "return to function",
+        "treatment planning"
       ]
     }
   ]

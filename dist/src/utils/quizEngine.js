@@ -1,5 +1,6 @@
 import { questionBank } from '../data/questionBank.js';
 import {
+  dedupeQuestionsById,
   filterQuestionsByCategory,
   filterQuestionsByDifficulty,
   filterQuestionsByMode,
@@ -14,7 +15,7 @@ function resolveQuestionOrder(questions, order = 'shuffled') {
 }
 
 export function getQuestionPool({ mode = 'normal', category, difficulty, questionSource = questionBank }) {
-  const validQuestions = validateQuestionObjects(Array.isArray(questionSource) ? questionSource : []);
+  const validQuestions = dedupeQuestionsById(validateQuestionObjects(Array.isArray(questionSource) ? questionSource : []));
   return filterQuestionsByDifficulty(
     filterQuestionsByCategory(filterQuestionsByMode(validQuestions, mode), category),
     difficulty

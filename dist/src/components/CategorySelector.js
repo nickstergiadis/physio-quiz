@@ -95,6 +95,7 @@ export function categorySelector({
   const errorText = document.createElement('p');
   errorText.className = 'setup-error';
   errorText.setAttribute('aria-live', 'polite');
+  let activeStartError = startError;
 
   function resolveSelection() {
     return {
@@ -106,7 +107,11 @@ export function categorySelector({
     };
   }
 
-  function updateAvailability() {
+  function updateAvailability({ clearError = false } = {}) {
+    if (clearError) {
+      activeStartError = '';
+    }
+
     const selection = resolveSelection();
     const available = getQuestionPool({ ...selection, questionSource }).length;
     const requested = selection.length;
@@ -125,7 +130,7 @@ export function categorySelector({
       availability.textContent = `${available} ${questionWord} available for this setup.`;
     }
     submit.disabled = false;
-    errorText.textContent = startError;
+    errorText.textContent = activeStartError;
   }
 
   modeSelect.value = initialFilters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal';
@@ -152,7 +157,7 @@ export function categorySelector({
   form.append(grid, availability, errorText, submit);
 
   [modeSelect, categorySelect, difficultySelect, lengthSelect, orderSelect].forEach((select) => {
-    select.addEventListener('change', updateAvailability);
+    select.addEventListener('change', () => updateAvailability({ clearError: true }));
   });
 
   form.addEventListener('submit', (event) => {

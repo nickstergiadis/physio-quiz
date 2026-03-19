@@ -60,7 +60,11 @@ function sanitizeHistoryEntry(entry) {
   if (!isRecord(entry)) return null;
 
   const id = typeof entry.id === 'string' ? entry.id : `attempt-${crypto.randomUUID()}`;
-  const completedAt = typeof entry.completedAt === 'string' ? entry.completedAt : new Date().toISOString();
+  const completedAt = (() => {
+    if (typeof entry.completedAt !== 'string') return new Date().toISOString();
+    const parsed = new Date(entry.completedAt);
+    return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+  })();
   const filters = isRecord(entry.filters)
     ? {
         mode: entry.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
