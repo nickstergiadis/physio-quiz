@@ -1,11 +1,5 @@
 import { quizCategories, difficultyLevels } from '../data/questionBank.js';
-
-function titleCase(value) {
-  return value
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
-}
+import { titleCase } from '../utils/format/titleCase.js';
 
 export function categorySelector({ onStart }) {
   const form = document.createElement('form');
