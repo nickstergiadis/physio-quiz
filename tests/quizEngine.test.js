@@ -86,6 +86,18 @@ test('getQuestionPool supports clinical category items and ignores malformed que
   assert.deepEqual(clinicalPool.map((q) => q.id).sort(), ['q2', 'q4']);
 });
 
+test('getQuestionPool deduplicates questions by id', () => {
+  const duplicateSource = [
+    SAMPLE_QUESTIONS[0],
+    { ...SAMPLE_QUESTIONS[0], question: 'Duplicate should be removed' },
+    SAMPLE_QUESTIONS[2]
+  ];
+
+  const pool = getQuestionPool({ mode: 'normal', questionSource: duplicateSource });
+  assert.deepEqual(pool.map((q) => q.id).sort(), ['q1', 'q3']);
+  assert.equal(pool.length, 2);
+});
+
 test('calculateScore and category breakdown are correct', () => {
   const questions = [SAMPLE_QUESTIONS[0], SAMPLE_QUESTIONS[2]];
   const answers = { q1: 1, q3: 2 };

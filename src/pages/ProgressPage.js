@@ -2,6 +2,16 @@ import { card } from '../components/ui/card.js';
 import { titleCase } from '../utils/format/titleCase.js';
 import { computeProgressMetrics } from '../utils/progress.js';
 
+function formatDateTime(value) {
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? 'Unknown date' : parsed.toLocaleString();
+}
+
+function formatDateOnly(value) {
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString();
+}
+
 function metricBlock(label, value) {
   const item = document.createElement('article');
   item.className = 'metric-item';
@@ -24,7 +34,7 @@ function createHistoryRow(entry) {
 
   const completed = document.createElement('p');
   const completedStrong = document.createElement('strong');
-  completedStrong.textContent = new Date(entry.completedAt).toLocaleString();
+  completedStrong.textContent = formatDateTime(entry.completedAt);
   completed.appendChild(completedStrong);
 
   const category = document.createElement('p');
@@ -68,7 +78,7 @@ export function progressPage({ history }) {
     metricBlock('Current streak', `${metrics.streak.current} day(s)`),
     metricBlock(
       'Last activity',
-      metrics.streak.lastAttemptDate ? new Date(`${metrics.streak.lastAttemptDate}T00:00:00.000Z`).toLocaleDateString() : 'N/A'
+      metrics.streak.lastAttemptDate ? formatDateOnly(`${metrics.streak.lastAttemptDate}T00:00:00.000Z`) : 'N/A'
     ),
     metricBlock('Attempts in last 7 days', String(metrics.recentActivity.last7Days)),
     metricBlock('Attempts in last 30 days', String(metrics.recentActivity.last30Days))
