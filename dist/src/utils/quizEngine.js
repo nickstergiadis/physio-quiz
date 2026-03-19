@@ -5,7 +5,8 @@ import {
   filterQuestionsByMode,
   randomizeQuestionOrder,
   sortQuestionsById,
-  selectQuizLength
+  selectQuizLength,
+  validateQuestionObjects
 } from './questionBankUtils.js';
 
 function resolveQuestionOrder(questions, order = 'shuffled') {
@@ -13,8 +14,9 @@ function resolveQuestionOrder(questions, order = 'shuffled') {
 }
 
 export function getQuestionPool({ mode = 'normal', category, difficulty, questionSource = questionBank }) {
+  const validQuestions = validateQuestionObjects(Array.isArray(questionSource) ? questionSource : []);
   return filterQuestionsByDifficulty(
-    filterQuestionsByCategory(filterQuestionsByMode(questionSource, mode), category),
+    filterQuestionsByCategory(filterQuestionsByMode(validQuestions, mode), category),
     difficulty
   );
 }

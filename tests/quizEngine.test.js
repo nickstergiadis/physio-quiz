@@ -63,6 +63,29 @@ test('getQuestionPool filters out clinical-reasoning items in normal mode', () =
   assert.deepEqual(clinicalPool.map((q) => q.id), ['q2']);
 });
 
+test('getQuestionPool supports clinical category items and ignores malformed questions', () => {
+  const mixedSource = [
+    ...SAMPLE_QUESTIONS,
+    {
+      id: 'q4',
+      category: 'clinical reasoning',
+      difficulty: 'medium',
+      question: 'Q4',
+      options: ['A', 'B', 'C', 'D'],
+      correctAnswer: 2,
+      explanation: 'E4'
+    },
+    null,
+    { id: 'broken-1', category: 'knee' }
+  ];
+
+  const normalPool = getQuestionPool({ mode: 'normal', questionSource: mixedSource });
+  assert.deepEqual(normalPool.map((q) => q.id).sort(), ['q1', 'q3']);
+
+  const clinicalPool = getQuestionPool({ mode: 'clinical-reasoning', questionSource: mixedSource });
+  assert.deepEqual(clinicalPool.map((q) => q.id).sort(), ['q2', 'q4']);
+});
+
 test('calculateScore and category breakdown are correct', () => {
   const questions = [SAMPLE_QUESTIONS[0], SAMPLE_QUESTIONS[2]];
   const answers = { q1: 1, q3: 2 };
