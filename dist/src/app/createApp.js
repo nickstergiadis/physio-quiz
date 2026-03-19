@@ -150,6 +150,12 @@ export function createApp(root) {
     const route = state.route;
 
     if (route === ROUTES.quiz) {
+      if (!state.questions.length) {
+        state.startError = 'No active quiz session. Start a new quiz to continue.';
+        setRoute(ROUTES.home);
+        return;
+      }
+
       main.appendChild(
         quizPage({
           questions: state.questions,
@@ -164,6 +170,12 @@ export function createApp(root) {
     }
 
     if (route === ROUTES.results) {
+      if (!state.questions.length) {
+        state.startError = 'No quiz results to review yet. Complete a quiz first.';
+        setRoute(ROUTES.home);
+        return;
+      }
+
       const score = calculateScore(state.answers, state.questions);
       const review = buildQuestionReview(state.questions, state.answers);
       main.appendChild(
@@ -191,7 +203,14 @@ export function createApp(root) {
       return;
     }
 
-    main.appendChild(homePage({ onStart: startQuiz, initialFilters: state.filters, startError: state.startError }));
+    main.appendChild(
+      homePage({
+        onStart: startQuiz,
+        initialFilters: state.filters,
+        startError: state.startError,
+        questionSource: combinedQuestionBank(state.devQuestions)
+      })
+    );
   }
 
   window.addEventListener('hashchange', () => {
