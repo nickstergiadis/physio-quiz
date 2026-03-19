@@ -56,7 +56,9 @@ export function progressPage({ history }) {
     metricBlock(
       'Last activity',
       metrics.streak.lastAttemptDate ? new Date(`${metrics.streak.lastAttemptDate}T00:00:00.000Z`).toLocaleDateString() : 'N/A'
-    )
+    ),
+    metricBlock('Attempts in last 7 days', String(metrics.recentActivity.last7Days)),
+    metricBlock('Attempts in last 30 days', String(metrics.recentActivity.last30Days))
   );
 
   const categorySection = document.createElement('section');
@@ -65,6 +67,13 @@ export function progressPage({ history }) {
   const categoryTitle = document.createElement('h3');
   categoryTitle.textContent = 'Category Performance';
   categorySection.appendChild(categoryTitle);
+
+  if (!metrics.categoryPerformance.length) {
+    const noCategoryData = document.createElement('p');
+    noCategoryData.className = 'metric-label';
+    noCategoryData.textContent = 'No category performance data available yet.';
+    categorySection.appendChild(noCategoryData);
+  }
 
   metrics.categoryPerformance.forEach((category) => {
     const row = document.createElement('article');
@@ -83,6 +92,13 @@ export function progressPage({ history }) {
   const recentTitle = document.createElement('h3');
   recentTitle.textContent = 'Recent Quiz Attempts';
   recentSection.appendChild(recentTitle);
+
+  if (!metrics.recentAttempts.length) {
+    const noAttempts = document.createElement('p');
+    noAttempts.className = 'metric-label';
+    noAttempts.textContent = 'No recent attempts to display.';
+    recentSection.appendChild(noAttempts);
+  }
 
   metrics.recentAttempts.forEach((entry) => {
     recentSection.appendChild(createHistoryRow(entry));
