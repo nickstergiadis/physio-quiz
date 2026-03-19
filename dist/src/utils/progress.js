@@ -70,6 +70,23 @@ function calculateStreak(history) {
   };
 }
 
+function calculateRecentActivity(history) {
+  const now = Date.now();
+  const sevenDayCutoff = now - 7 * 24 * 60 * 60 * 1000;
+  const thirtyDayCutoff = now - 30 * 24 * 60 * 60 * 1000;
+
+  return history.reduce(
+    (totals, attempt) => {
+      const completedAt = new Date(attempt.completedAt).getTime();
+      if (!Number.isFinite(completedAt)) return totals;
+      if (completedAt >= sevenDayCutoff) totals.last7Days += 1;
+      if (completedAt >= thirtyDayCutoff) totals.last30Days += 1;
+      return totals;
+    },
+    { last7Days: 0, last30Days: 0 }
+  );
+}
+
 export function computeProgressMetrics(history, { recentLimit = 5 } = {}) {
   const totalQuizzes = history.length;
   const cumulative = history.reduce(
@@ -89,6 +106,7 @@ export function computeProgressMetrics(history, { recentLimit = 5 } = {}) {
   const weakestCategory = categories.length ? categories[categories.length - 1] : null;
 
   const streak = calculateStreak(history);
+  const recentActivity = calculateRecentActivity(history);
 
   return {
     totalQuizzes,
@@ -100,6 +118,7 @@ export function computeProgressMetrics(history, { recentLimit = 5 } = {}) {
       ? `${formatCategoryLabel(weakestCategory.category)} (${weakestCategory.averagePercent}%)`
       : 'N/A',
     streak,
+    recentActivity,
     categoryPerformance: categories,
     recentAttempts: history.slice(0, recentLimit)
   };

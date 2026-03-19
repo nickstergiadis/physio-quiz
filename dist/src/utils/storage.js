@@ -1,7 +1,9 @@
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
-const QUIZ_HISTORY_KEY = 'physio_quiz_history_v2';
+const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
+const LEGACY_QUIZ_HISTORY_KEY_V2 = 'physio_quiz_history_v2';
 const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
 const HISTORY_LIMIT = 50;
+const PROGRESS_VERSION = 1;
 
 function isRecord(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -49,25 +51,44 @@ function sanitizeHistoryEntry(entry) {
   };
 }
 
+function createProgressDocument(history) {
+  return {
+    version: PROGRESS_VERSION,
+    updatedAt: new Date().toISOString(),
+    attempts: history.slice(0, HISTORY_LIMIT)
+  };
+}
+
 function saveHistory(history) {
-  localStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(history.slice(0, HISTORY_LIMIT)));
+  localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify(createProgressDocument(history)));
+}
+
+function readLegacyHistory(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.map(sanitizeHistoryEntry).filter(Boolean);
+  } catch {
+    return null;
+  }
 }
 
 function migrateLegacyHistory() {
-  const raw = localStorage.getItem(LEGACY_QUIZ_HISTORY_KEY);
-  if (!raw) return;
-
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY);
-      return;
+  const legacyV2Raw = localStorage.getItem(LEGACY_QUIZ_HISTORY_KEY_V2);
+  if (legacyV2Raw) {
+    const migrated = readLegacyHistory(legacyV2Raw);
+    if (migrated) {
+      saveHistory(migrated);
     }
+    localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY_V2);
+  }
 
-    const migrated = parsed.map(sanitizeHistoryEntry).filter(Boolean);
-    saveHistory(migrated);
-    localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY);
-  } catch {
+  const legacyRaw = localStorage.getItem(LEGACY_QUIZ_HISTORY_KEY);
+  if (legacyRaw) {
+    const migrated = readLegacyHistory(legacyRaw);
+    if (migrated) {
+      saveHistory(migrated);
+    }
     localStorage.removeItem(LEGACY_QUIZ_HISTORY_KEY);
   }
 }
@@ -105,17 +126,25 @@ export function pushHistory(entry) {
 export function loadHistory() {
   migrateLegacyHistory();
 
-  const raw = localStorage.getItem(QUIZ_HISTORY_KEY);
+  const raw = localStorage.getItem(QUIZ_PROGRESS_KEY);
   if (!raw) {
     return [];
   }
 
   try {
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map(sanitizeHistoryEntry).filter(Boolean);
+
+    if (Array.isArray(parsed)) {
+      return parsed.map(sanitizeHistoryEntry).filter(Boolean);
+    }
+
+    if (!isRecord(parsed) || !Array.isArray(parsed.attempts)) {
+      return [];
+    }
+
+    return parsed.attempts.map(sanitizeHistoryEntry).filter(Boolean);
   } catch {
-    localStorage.removeItem(QUIZ_HISTORY_KEY);
+    localStorage.removeItem(QUIZ_PROGRESS_KEY);
     return [];
   }
 }
