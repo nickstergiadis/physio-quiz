@@ -96,26 +96,57 @@ Current project scripts:
 
 ## 2. Recommended category blueprint with target counts (total = 500)
 
-Keep existing 7 categories (no UI/category-scope churn), but rebalance by clinical prevalence and educational utility:
+Use the requested domain-weighted distribution as the source of truth, then map it into the app's current 7 selectable categories.
 
-- shoulder: **85**
-- knee: **85**
-- low back: **85**
-- ankle: **65**
-- cervical spine: **60**
-- exercise prescription: **60**
-- clinical reasoning (cross-region scenarios): **60**
+### Requested domain distribution (reference)
+- Shoulder: **40**
+- Knee: **40**
+- Hip: **30**
+- Ankle/Foot: **30**
+- Cervical spine: **30**
+- Lumbar spine: **35**
+- Elbow/Wrist/Hand: **25**
+- Thoracic/rib/posture: **15**
+- Neuro rehab fundamentals: **30**
+- Gait/function: **20**
+- Pain science / tissue healing: **25**
+- Exercise prescription / loading: **35**
+- Red flags / screening / precautions: **30**
+- Biomechanics / anatomy: **45**
+- General clinical reasoning / differential diagnosis: **70**
 
 Total: **500**
 
+### Mapped targets for current app categories
+Because the current UI exposes only 7 categories, fold the domain counts into those buckets while preserving the overall balance:
+
+- shoulder: **65**
+  - shoulder (40) + portion of biomechanics/anatomy (25)
+- knee: **65**
+  - knee (40) + portion of biomechanics/anatomy (25)
+- low back: **80**
+  - lumbar spine (35) + thoracic/rib/posture (15) + hip transfer (30)
+- ankle: **50**
+  - ankle/foot (30) + gait/function transfer (20)
+- cervical spine: **55**
+  - cervical spine (30) + elbow/wrist/hand transfer (25)
+- exercise prescription: **60**
+  - exercise prescription/loading (35) + pain science/tissue healing (25)
+- clinical reasoning: **125**
+  - general clinical reasoning/differential (70) + neuro rehab fundamentals (30) + red flags/screening/precautions (30)
+
+Target total: **500**
+
+> Note: keep a lightweight internal tracker (spreadsheet or validation script config) for the original 15-domain mix so content stays balanced even though the UI category set remains unchanged.
+
 ### Mode split recommendation
-Because clinical mode is tag/category-driven (not file-driven only), target explicit mode coverage:
-- Normal-mode eligible questions: **~300**
-- Clinical-reasoning-mode eligible questions: **~200**
+Because clinical mode is tag/category-driven (not file-driven only), keep explicit mode coverage targets:
+- Normal-mode eligible questions: **~320**
+- Clinical-reasoning-mode eligible questions: **~180**
 
 Practical authoring split:
-- `normalQuestions.js`: 300 questions
-- `clinicalReasoningQuestions.js`: 200 questions
+- `normalQuestions.js`: ~320 questions
+- `clinicalReasoningQuestions.js`: ~180 questions
 
 (Ensure clinical-mode questions consistently include `clinical-reasoning` tagging or `clinical reasoning` category.)
 
