@@ -1,563 +1,301 @@
-/**
- * Organized question sets by category.
- * Add new questions to the category array that matches your content area.
- */
-export const NORMAL_QUESTION_SETS = {
-  "shoulder": [
-    {
-      "id": "shoulder-001",
-      "category": "shoulder",
-      "difficulty": "easy",
-      "question": "During shoulder elevation, which movement fault most commonly increases subacromial load in symptomatic rotator cuff presentations?",
-      "options": [
-        "Early excessive scapular upward rotation",
-        "Reduced posterior tilt and upward rotation of the scapula",
-        "Excessive thoracic extension",
-        "Increased humeral external rotation"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Reduced scapular posterior tilt/upward rotation can reduce clearance and increase tendon compression during elevation.",
-      "tags": [
-        "anatomy",
-        "biomechanics"
-      ]
-    },
-    {
-      "id": "shoulder-002",
-      "category": "shoulder",
-      "difficulty": "medium",
-      "question": "A 48-year-old carpenter has lateral shoulder pain for 4 months, painful arc, and pain-limited but nearly full passive ROM. Which finding most strongly shifts your differential toward adhesive capsulitis instead of rotator cuff related shoulder pain?",
-      "options": [
-        "Pain with resisted abduction",
-        "Pain when sleeping on the shoulder",
-        "Marked passive external rotation restriction with firm capsular end-feel",
-        "Symptoms after overhead work"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Adhesive capsulitis is characterized by substantial passive ROM restriction, especially external rotation, not only pain-provoked active testing.",
-      "tags": [
-        "assessment",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "shoulder-003",
-      "category": "shoulder",
-      "difficulty": "medium",
-      "question": "For irritable rotator cuff tendinopathy in week 1-2, which exercise plan is most appropriate?",
-      "options": [
-        "Daily heavy overhead press to fatigue",
-        "Pain-monitored isometrics plus low-load elevation below aggravating range",
-        "No shoulder loading for 6 weeks",
-        "Only passive modalities and no home program"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Early pain-modulated loading builds tolerance while limiting flare-ups and preserves confidence and function.",
-      "tags": [
-        "treatment planning",
-        "exercise prescription"
-      ]
-    },
-    {
-      "id": "shoulder-004",
-      "category": "shoulder",
-      "difficulty": "hard",
-      "question": "A volleyball player 5 months after shoulder instability rehab is pain-free in ADLs but anxious with overhead spikes. Which return-to-sport criterion is most defensible before unrestricted play?",
-      "options": [
-        "Pain-free rest only",
-        "Equal passive ROM only",
-        "Symmetrical shoulder strength/endurance with successful sport-specific plyometric progression",
-        "Normal ultrasound appearance of the cuff"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Return decisions should include capacity testing and graded sport-specific exposure, not symptoms at rest alone.",
-      "tags": [
-        "return to sport",
-        "sports physio"
-      ]
-    },
-    {
-      "id": "shoulder-005",
-      "category": "shoulder",
-      "difficulty": "easy",
-      "question": "Following a traumatic shoulder injury, which presentation is most concerning for urgent medical referral?",
-      "options": [
-        "Painful arc without trauma",
-        "Night pain after increased training volume",
-        "Acute loss of active elevation with relatively preserved passive ROM",
-        "Mild pain only with end-range stretching"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Major active weakness after trauma can indicate acute full-thickness cuff tear or other structural injury needing timely specialist review.",
-      "tags": [
-        "red flags",
-        "contraindications"
-      ]
-    }
-  ],
-
-  "knee": [
-    {
-      "id": "knee-001",
-      "category": "knee",
-      "difficulty": "easy",
-      "question": "Which history pattern most strongly supports ACL rupture over isolated MCL sprain?",
-      "options": [
-        "Direct valgus blow with localized medial tenderness and no effusion",
-        "Non-contact pivot with pop, rapid effusion, and early instability",
-        "Gradual anterior knee pain with stairs",
-        "Pain only after prolonged kneeling"
-      ],
-      "correctAnswer": 1,
-      "explanation": "A pivoting mechanism plus rapid swelling and giving-way is classic for ACL injury.",
-      "tags": [
-        "assessment",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "knee-002",
-      "category": "knee",
-      "difficulty": "medium",
-      "question": "In early ACL reconstruction rehab (week 3-6), which objective should usually be prioritized before plyometrics?",
-      "options": [
-        "Maximal single-leg hop distance",
-        "Full extension, minimal effusion, and improved quadriceps activation",
-        "Running speed over 20 meters",
-        "Deep loaded pivoting drills"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Early phase progression is driven by impairment milestones (extension, swelling, quad control) before high-impact work.",
-      "tags": [
-        "ortho rehab",
-        "treatment planning"
-      ]
-    },
-    {
-      "id": "knee-003",
-      "category": "knee",
-      "difficulty": "medium",
-      "question": "A runner with patellofemoral pain reports pain 4/10 during squats that returns to baseline by next morning. How should this guide exercise progression?",
-      "options": [
-        "Stop all squatting immediately",
-        "Continue and progress load gradually within symptom-monitoring limits",
-        "Only use passive therapy for 4 weeks",
-        "Delay all strengthening until completely pain-free"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Many PFP programs allow tolerable, short-lived pain while load is progressed according to irritability and recovery.",
-      "tags": [
-        "exercise prescription",
-        "sports physio"
-      ]
-    },
-    {
-      "id": "knee-004",
-      "category": "knee",
-      "difficulty": "hard",
-      "question": "A 58-year-old with knee OA has fear of stairs and reduced activity tolerance. Which plan best matches evidence-based outpatient physio?",
-      "options": [
-        "Long-term rest with analgesics only",
-        "Progressive strength plus step-down retraining and graded walking exposure",
-        "Immediate referral for arthroscopy",
-        "Avoid any exercise that reproduces symptoms"
-      ],
-      "correctAnswer": 1,
-      "explanation": "For knee OA, education with progressive strengthening and functional task exposure improves pain and participation.",
-      "tags": [
-        "treatment planning",
-        "exercise-based rehab"
-      ]
-    },
-    {
-      "id": "knee-005",
-      "category": "knee",
-      "difficulty": "hard",
-      "question": "After ACL reconstruction, which criterion set is most appropriate for return to cutting sport?",
-      "options": [
-        "Time since surgery only",
-        "No effusion plus >90% limb symmetry on hop and strength tests with psychological readiness",
-        "Full ROM only",
-        "Surgeon clearance without functional testing"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Return-to-sport decisions should combine physical capacity, knee status, and confidence/readiness measures.",
-      "tags": [
-        "return to sport",
-        "assessment"
-      ]
-    }
-  ],
-
-  "low back": [
-    {
-      "id": "lowback-001",
-      "category": "low back",
-      "difficulty": "easy",
-      "question": "In an acute nonspecific low back pain case without red flags, what is the most appropriate first-line advice?",
-      "options": [
-        "Strict bed rest for one week",
-        "Stay active, reassure, and resume tolerated function early",
-        "Urgent MRI before movement",
-        "Avoid trunk flexion permanently"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Guideline-consistent care emphasizes reassurance and early graded activity over rest and routine imaging.",
-      "tags": [
-        "treatment planning",
-        "contraindications"
-      ]
-    },
-    {
-      "id": "lowback-002",
-      "category": "low back",
-      "difficulty": "medium",
-      "question": "Which presentation should trigger same-day emergency referral rather than routine rehab?",
-      "options": [
-        "Back pain aggravated by prolonged sitting",
-        "Unilateral leg pain after lifting",
-        "New urinary retention with saddle anesthesia and progressive bilateral symptoms",
-        "Morning stiffness easing after movement"
-      ],
-      "correctAnswer": 2,
-      "explanation": "This symptom cluster is concerning for cauda equina syndrome and requires urgent medical management.",
-      "tags": [
-        "red flags",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "lowback-003",
-      "category": "low back",
-      "difficulty": "medium",
-      "question": "A patient fears bending after an episode of back pain but neurologic screening is normal. What is the best communication strategy?",
-      "options": [
-        "Confirm bending is dangerous for all patients",
-        "Use reassurance and graded exposure to feared movements",
-        "Avoid discussing activity until pain is zero",
-        "Recommend permanent lumbar bracing"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Reducing fear-avoidance through education and graded exposure supports functional recovery.",
-      "tags": [
-        "clinical reasoning",
-        "exercise-based rehab"
-      ]
-    },
-    {
-      "id": "lowback-004",
-      "category": "low back",
-      "difficulty": "hard",
-      "question": "Repeated movement testing centralizes leg pain from calf to buttock. What is the most appropriate interpretation?",
-      "options": [
-        "Worsening neurologic status requiring immediate surgery",
-        "Potentially favorable directional response to guide exercise selection",
-        "Finding is clinically irrelevant",
-        "Absolute contraindication to exercise"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Centralization can help identify a directional preference and self-management strategy in selected patients.",
-      "tags": [
-        "assessment",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "lowback-005",
-      "category": "low back",
-      "difficulty": "hard",
-      "question": "A 72-year-old with known osteoporosis develops sudden focal thoracolumbar pain after lifting a light grocery bag. Best next step?",
-      "options": [
-        "Start high-load deadlifts immediately",
-        "Suspect vertebral compression fracture and arrange prompt medical assessment",
-        "Treat as routine muscle strain only",
-        "Prescribe running intervals"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Age, osteoporosis, and low-load sudden focal pain are red flags for possible vertebral compression fracture.",
-      "tags": [
-        "red flags",
-        "contraindications"
-      ]
-    }
-  ],
-
-  "ankle": [
-    {
-      "id": "ankle-001",
-      "category": "ankle",
-      "difficulty": "easy",
-      "question": "A player lands from a rebound onto another athlete's foot and rolls into inversion with slight plantarflexion. Which structure is most likely injured first in a typical lateral ankle sprain?",
-      "options": [
-        "Anterior talofibular ligament (ATFL)",
-        "Deltoid ligament",
-        "Syndesmotic complex (AITFL/interosseous membrane)",
-        "Posterior cruciate ligament"
-      ],
-      "correctAnswer": 0,
-      "explanation": "In a classic inversion-plantarflexion mechanism, the ATFL is usually the first and most commonly injured lateral ligament.",
-      "tags": [
-        "anatomy",
-        "sports physio"
-      ]
-    },
-    {
-      "id": "ankle-002",
-      "category": "ankle",
-      "difficulty": "medium",
-      "question": "In the first week after a lateral ankle sprain, which program is usually most appropriate?",
-      "options": [
-        "Complete non-weight-bearing until all pain resolves",
-        "Protected weight-bearing, ROM, and early balance retraining as tolerated",
-        "Heavy plyometrics on day 2",
-        "Passive modalities only"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Early progressive loading and neuromuscular work improve recovery compared with prolonged immobilization in many sprains.",
-      "tags": [
-        "treatment planning",
-        "exercise prescription"
-      ]
-    },
-    {
-      "id": "ankle-003",
-      "category": "ankle",
-      "difficulty": "medium",
-      "question": "Which finding most increases suspicion of syndesmotic injury rather than isolated lateral sprain?",
-      "options": [
-        "Tenderness only over ATFL",
-        "Pain with squeeze test and external rotation stress",
-        "Immediate pain relief with hopping",
-        "Isolated plantar heel pain"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Pain provoked by squeeze/external rotation tests supports syndesmotic involvement.",
-      "tags": [
-        "assessment",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "ankle-004",
-      "category": "ankle",
-      "difficulty": "hard",
-      "question": "A field athlete is 6 weeks post ankle sprain and wants to return to matches. Which criterion is most useful for readiness decisions?",
-      "options": [
-        "No tenderness to palpation only",
-        "Symmetrical hop, balance, and change-of-direction control with confidence",
-        "Ankle circumference equal at rest only",
-        "Normal X-ray only"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Functional performance and confidence under sport-like demands are key for return-to-sport decision-making.",
-      "tags": [
-        "return to sport",
-        "sports physio"
-      ]
-    },
-    {
-      "id": "ankle-005",
-      "category": "ankle",
-      "difficulty": "hard",
-      "question": "Which finding after ankle trauma should prompt urgent imaging referral based on Ottawa-style screening principles?",
-      "options": [
-        "Mild swelling with full weight-bearing",
-        "Inability to bear weight for four steps plus posterior malleolar tenderness",
-        "Pain only during jogging",
-        "Pain improved after taping"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Bony tenderness in malleolar zones with inability to bear weight raises fracture suspicion and indicates imaging.",
-      "tags": [
-        "red flags",
-        "contraindications"
-      ]
-    }
-  ],
-
-  "cervical spine": [
-    {
-      "id": "cervical-001",
-      "category": "cervical spine",
-      "difficulty": "easy",
-      "question": "In persistent neck pain, training which muscle group often improves motor control and endurance?",
-      "options": [
-        "Masseter",
-        "Deep neck flexors",
-        "Latissimus dorsi",
-        "Gluteus medius"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Deep neck flexor endurance deficits are common and are frequently targeted in exercise-based neck rehab.",
-      "tags": [
-        "anatomy",
-        "exercise-based rehab"
-      ]
-    },
-    {
-      "id": "cervical-002",
-      "category": "cervical spine",
-      "difficulty": "medium",
-      "question": "Which clinical picture most supports cervical radiculopathy over rotator cuff pathology?",
-      "options": [
-        "Pain only with overhead pressing",
-        "Arm pain/paresthesia in a dermatomal pattern and positive Spurling test",
-        "Night pain when lying on shoulder only",
-        "Weakness only during external rotation testing"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Dermatomal sensory symptoms with positive nerve root provocation supports radiculopathy.",
-      "tags": [
-        "differential diagnosis",
-        "assessment"
-      ]
-    },
-    {
-      "id": "cervical-003",
-      "category": "cervical spine",
-      "difficulty": "easy",
-      "question": "For desk-related neck pain with low irritability and no neurologic deficits, which initial plan is most appropriate?",
-      "options": [
-        "Prolonged collar immobilization",
-        "Manual therapy only for 6 weeks",
-        "Graded cervical/scapular exercise plus workstation and movement-break coaching",
-        "Avoid all strengthening"
-      ],
-      "correctAnswer": 2,
-      "explanation": "An active plan combining exercise plus workload/posture coaching is usually more effective than passive-only care.",
-      "tags": [
-        "treatment planning",
-        "exercise prescription"
-      ]
-    },
-    {
-      "id": "cervical-004",
-      "category": "cervical spine",
-      "difficulty": "hard",
-      "question": "Which presentation is most concerning for cervical myelopathy and warrants urgent medical referral?",
-      "options": [
-        "Unilateral neck pain after poor sleep",
-        "Hand clumsiness, gait disturbance, and bilateral upper motor neuron signs",
-        "Local tenderness over upper trapezius",
-        "Pain with end-range rotation only"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Progressive bilateral neurologic signs and gait/hand dexterity changes are red flags for cord involvement.",
-      "tags": [
-        "red flags",
-        "contraindications"
-      ]
-    },
-    {
-      "id": "cervical-005",
-      "category": "cervical spine",
-      "difficulty": "hard",
-      "question": "A contact-sport athlete is returning after neck pain. Which criterion best supports return-to-play?",
-      "options": [
-        "Pain-free at rest only",
-        "Near-normal cervical strength, full painless ROM, and no neurologic deficits during sport-specific loading",
-        "Normal MRI alone",
-        "One week since symptoms began"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Return-to-play decisions should include symptom resolution plus objective physical and neurologic readiness.",
-      "tags": [
-        "return to sport",
-        "sports physio"
-      ]
-    }
-  ],
-
-  "exercise prescription": [
-    {
-      "id": "exrx-001",
-      "category": "exercise prescription",
-      "difficulty": "easy",
-      "question": "A patient with rotator cuff pain flares after every session. Which dosage adjustment is most appropriate first?",
-      "options": [
-        "Double the load and keep frequency unchanged",
-        "Reduce volume/intensity and progress using symptom response",
-        "Stop all exercise indefinitely",
-        "Switch to passive treatment only"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Dose calibration using symptom response is central to adherence and progressive loading in rehab.",
-      "tags": [
-        "exercise prescription",
-        "treatment planning"
-      ]
-    },
-    {
-      "id": "exrx-002",
-      "category": "exercise prescription",
-      "difficulty": "medium",
-      "question": "For early strength rebuilding in outpatient rehab, which dosage is generally a practical starting point for many patients?",
-      "options": [
-        "1 set monthly",
-        "2-4 sets of 6-12 reps at a tolerable effort (about RPE 5-7), 2-3 days/week",
-        "100 reps to failure daily",
-        "No rest days"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Moderate volume and effort with rest days is a practical starting dose before progressive overload.",
-      "tags": [
-        "dosage",
-        "exercise-based rehab"
-      ]
-    },
-    {
-      "id": "exrx-003",
-      "category": "exercise prescription",
-      "difficulty": "easy",
-      "question": "Which strategy most improves adherence when a home program feels overwhelming?",
-      "options": [
-        "Add more exercises to improve variety",
-        "Co-design a shorter plan tied to the patient's goals and routine",
-        "Delay all exercise until motivation improves",
-        "Use generic handouts without discussion"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Adherence improves when plans are simple, meaningful, and realistically matched to the patient's routine.",
-      "tags": [
-        "adherence",
-        "clinical reasoning"
-      ]
-    },
-    {
-      "id": "exrx-004",
-      "category": "exercise prescription",
-      "difficulty": "hard",
-      "question": "A post-op knee patient reports pain up to 4/10 during exercise that settles by next day with no increased swelling. Best interpretation?",
-      "options": [
-        "Automatic sign of tissue damage",
-        "Likely acceptable training response within pain-monitoring limits",
-        "Absolute contraindication to strengthening",
-        "Reason to discharge from rehab"
-      ],
-      "correctAnswer": 1,
-      "explanation": "In many protocols, tolerable pain that settles within 24 hours can be acceptable for progression if joint response remains stable.",
-      "tags": [
-        "pain monitoring",
-        "ortho rehab"
-      ]
-    },
-    {
-      "id": "exrx-005",
-      "category": "exercise prescription",
-      "difficulty": "hard",
-      "question": "Which progression model best prepares patients for return-to-function in physically demanding work?",
-      "options": [
-        "Open-chain isolation only",
-        "Stepwise progression from impairment work to task-specific loaded patterns",
-        "Manual therapy only",
-        "Random exercise selection each session"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Bridging from base strength to specific work tasks supports transfer to real-world performance demands.",
-      "tags": [
-        "return to function",
-        "treatment planning"
-      ]
-    }
-  ]
+const CATEGORY_CONFIG = {
+  shoulder: {
+    slug: 'shoulder',
+    tags: ['msk', 'shoulder'],
+    topics: [
+      {
+        title: 'rotator cuff related shoulder pain',
+        hallmark: 'load-related lateral shoulder pain with painful arc and preserved passive range',
+        initialManagement: 'pain-monitored cuff and scapular strengthening with temporary load modification',
+        education: 'temporary pain with exercise is acceptable when symptoms settle within 24 hours',
+        progression: 'improved strength/endurance and tolerance to overhead tasks',
+        precaution: 'acute traumatic inability to actively elevate after a fall'
+      },
+      {
+        title: 'adhesive capsulitis',
+        hallmark: 'progressive pain with marked passive external rotation restriction',
+        initialManagement: 'education, graded mobility and strengthening within irritability, and expectation setting',
+        education: 'recovery is often prolonged, and pacing helps maintain function',
+        progression: 'passive range and functional reach begin to improve',
+        precaution: 'new systemic illness symptoms with severe unremitting shoulder pain'
+      },
+      {
+        title: 'subacromial bursitis',
+        hallmark: 'painful shoulder elevation and local tenderness after overload',
+        initialManagement: 'relative deload, graded range exercise, and progressive reloading',
+        education: 'brief unloading followed by progressive loading is better than prolonged rest',
+        progression: 'painful arc reduces while strength tasks are better tolerated',
+        precaution: 'fever, warmth, and severe resting pain suggesting infection'
+      },
+      {
+        title: 'long head biceps tendinopathy',
+        hallmark: 'anterior shoulder pain aggravated by resisted elbow flexion and supination tasks',
+        initialManagement: 'modify provocative loading and begin graded tendon loading',
+        education: 'tendon recovery is driven by progressive loading, not complete avoidance',
+        progression: 'resisted flexion and carrying become less irritable',
+        precaution: 'sudden deformity and bruising suggesting tendon rupture'
+      },
+      {
+        title: 'acromioclavicular joint sprain',
+        hallmark: 'superior shoulder pain after direct impact and pain with horizontal adduction',
+        initialManagement: 'short protection period then progressive shoulder function restoration',
+        education: 'early controlled movement helps restore function after acute protection',
+        progression: 'cross-body reach and push tasks become tolerable',
+        precaution: 'neurovascular compromise after high-energy shoulder trauma'
+      },
+      {
+        title: 'glenohumeral instability',
+        hallmark: 'apprehension in abduction-external rotation after prior dislocation episode',
+        initialManagement: 'dynamic shoulder stabilization and graded return to provocative positions',
+        education: 'graded exposure to apprehension positions is usually required for confidence recovery',
+        progression: 'improved control in overhead and perturbation tasks',
+        precaution: 'recurrent dislocations with inability to self-reduce'
+      },
+      {
+        title: 'SLAP-related shoulder pain',
+        hallmark: 'deep shoulder pain with overhead/cocking activities and reduced throwing tolerance',
+        initialManagement: 'kinetic-chain strengthening, load modification, and throwing progression',
+        education: 'throwing loads should progress stepwise based on symptom response',
+        progression: 'improved tolerance to staged throwing volume and speed',
+        precaution: 'acute traumatic locking with major loss of function'
+      },
+      {
+        title: 'scapular dyskinesis in overhead athlete',
+        hallmark: 'altered scapular control with fatigue-related shoulder symptoms',
+        initialManagement: 'scapular motor control retraining integrated with cuff strengthening',
+        education: 'scapular retraining supports shoulder load tolerance when integrated functionally',
+        progression: 'better movement quality during repeated overhead effort',
+        precaution: 'progressive neurologic weakness in upper limb'
+      },
+      {
+        title: 'posterior shoulder stiffness',
+        hallmark: 'limited horizontal adduction/internal rotation with posterior shoulder discomfort',
+        initialManagement: 'targeted mobility work plus progressive posterior cuff loading',
+        education: 'mobility gains should be paired with strength and task progression',
+        progression: 'throwing or pressing is tolerated with less posterior tightness',
+        precaution: 'night pain with constitutional symptoms and unexplained weight loss'
+      },
+      {
+        title: 'calcific rotator cuff tendinopathy',
+        hallmark: 'episodic severe shoulder pain with painful active elevation',
+        initialManagement: 'pain control, graded movement, and staged loading as irritability settles',
+        education: 'symptom severity may fluctuate, but function-focused loading remains important',
+        progression: 'night pain and elevation tolerance improve over weeks',
+        precaution: 'red hot swollen shoulder with fever and severe pain'
+      },
+      {
+        title: 'post-op rotator cuff rehabilitation',
+        hallmark: 'post-surgical weakness with healing constraints in early phase',
+        initialManagement: 'follow tissue-healing timelines with protected progression to active loading',
+        education: 'respecting protocol timing helps protect repair while rebuilding function',
+        progression: 'criteria-based progression in ROM, strength, and functional control',
+        precaution: 'sudden loss of function after a traumatic post-op incident'
+      }
+    ]
+  },
+  knee: {
+    slug: 'knee',
+    tags: ['msk', 'knee'],
+    topics: [
+      { title: 'ACL rupture', hallmark: 'non-contact pivot injury with pop, rapid effusion, and instability', initialManagement: 'early swelling control, extension restoration, quadriceps activation, and referral planning', education: 'early impairment restoration improves later outcomes', progression: 'minimal effusion with strong quadriceps control and stable functional tests', precaution: 'locked knee with inability to fully extend after acute trauma' },
+      { title: 'PCL injury', hallmark: 'dashboard or hyperflexion mechanism with posterior sag and instability downhill', initialManagement: 'quadriceps-focused strengthening and posterior tibial translation precautions early', education: 'early rehab emphasizes quadriceps function and controlled loading', progression: 'functional stability improves without giving-way episodes', precaution: 'multiligament signs after high-energy trauma' },
+      { title: 'patellofemoral pain', hallmark: 'anterior knee pain aggravated by stairs, squats, and prolonged sitting', initialManagement: 'hip-knee strengthening with load management and movement retraining', education: 'pain-monitored exercise is preferred to activity avoidance', progression: 'step and squat tolerance improves with better single-leg control', precaution: 'hot swollen knee with systemic symptoms' },
+      { title: 'knee osteoarthritis', hallmark: 'activity-related pain, stiffness after rest, and reduced functional endurance', initialManagement: 'education, progressive strengthening, aerobic activity, and functional practice', education: 'regular exercise is a core treatment for OA', progression: 'walking and stair capacity improve with graded loading', precaution: 'rapid unexplained swelling and constitutional symptoms' },
+      { title: 'meniscal injury', hallmark: 'joint line pain with twisting mechanism and episodic catching symptoms', initialManagement: 'symptom-guided strengthening, ROM, and functional progression', education: 'many meniscal presentations respond to structured rehab', progression: 'improved squat and rotation tolerance without locking', precaution: 'true mechanical locking with inability to extend' },
+      { title: 'MCL sprain', hallmark: 'valgus stress trauma with medial tenderness and instability symptoms', initialManagement: 'protected loading and progressive strengthening with valgus stress control', education: 'early controlled movement supports ligament healing', progression: 'pain-free valgus challenge and return of cutting confidence', precaution: 'gross instability suggesting combined ligament injury' },
+      { title: 'patellar tendinopathy', hallmark: 'localized inferior patellar pain during jumping and deceleration', initialManagement: 'load modification and progressive tendon loading from isometric/isotonic to energy-storage work', education: 'tendon rehab requires staged loading rather than rest alone', progression: 'jump tasks tolerated with acceptable pain response', precaution: 'sudden extensor mechanism failure after explosive movement' },
+      { title: 'hamstring strain near knee', hallmark: 'posterolateral knee pain after sprinting with resisted knee flexion pain', initialManagement: 'early protected loading and progressive hamstring strengthening', education: 'graded reloading reduces recurrence risk', progression: 'high-speed running and eccentric tasks become tolerable', precaution: 'large hematoma and severe weakness after acute injury' },
+      { title: 'ITB-related lateral knee pain', hallmark: 'lateral knee pain in runners linked to volume spikes and hill work', initialManagement: 'training modification with hip strength and movement retraining', education: 'running load management is central to recovery', progression: 'longer runs tolerated without flare-up', precaution: 'rest pain and night pain inconsistent with load-related pattern' },
+      { title: 'post-op ACL reconstruction rehab', hallmark: 'post-surgical swelling and quadriceps inhibition in early phase', initialManagement: 'restore extension, control effusion, and rebuild quadriceps activation', education: 'criteria-based progression is safer than time-only progression', progression: 'strength and hop symmetry with psychological readiness improve', precaution: 'calf pain/swelling suggesting possible DVT after surgery' },
+      { title: 'quadriceps tendinopathy', hallmark: 'suprapatellar tendon pain with jumping and deep knee loading', initialManagement: 'progressive tendon loading and temporary reduction of high-strain tasks', education: 'load calibration is key to tendon adaptation', progression: 'pain-monitoring remains stable as load increases', precaution: 'sudden extensor lag after forceful contraction' }
+    ]
+  },
+  'low back': {
+    slug: 'lowback',
+    tags: ['msk', 'spine'],
+    topics: [
+      { title: 'acute nonspecific low back pain', hallmark: 'recent onset back pain without neurologic deficit or systemic red flags', initialManagement: 'reassurance, early activity, and graded return to normal movement', education: 'prolonged bed rest delays recovery', progression: 'function improves despite some residual soreness', precaution: 'new bladder dysfunction with saddle anesthesia' },
+      { title: 'lumbar radicular pain', hallmark: 'leg-dominant pain in dermatomal pattern with neural mechanosensitivity', initialManagement: 'direction-sensitive exercise, activity modification, and neurologic monitoring', education: 'symptom centralization often guides early exercise direction', progression: 'leg pain retreats proximally and tolerance improves', precaution: 'progressive motor deficit such as worsening foot drop' },
+      { title: 'lumbar spinal stenosis', hallmark: 'walking intolerance eased by flexion-based postures and sitting', initialManagement: 'flexion-biased conditioning, lower-limb strength, and walking interval progression', education: 'paced walking with strategic rests can rebuild function', progression: 'longer walking duration before symptom onset', precaution: 'new bowel/bladder symptoms or rapidly worsening neurologic function' },
+      { title: 'facet-related lumbar pain', hallmark: 'localized extension-rotation aggravated back pain without major neurologic signs', initialManagement: 'graded movement, trunk endurance training, and load management', education: 'movement confidence and activity pacing are important', progression: 'extension tasks tolerated with less flare', precaution: 'history suggesting inflammatory or malignant cause' },
+      { title: 'sacroiliac region pain presentation', hallmark: 'unilateral buttock pain aggravated by transitions and prolonged standing', initialManagement: 'lumbopelvic strength, movement retraining, and gradual exposure', education: 'multi-factorial management works better than single-test diagnosis', progression: 'sit-to-stand and gait tolerance improve', precaution: 'severe night pain and systemic inflammatory signs' },
+      { title: 'vertebral compression fracture risk', hallmark: 'sudden focal thoracolumbar pain in older adult with osteoporosis risk', initialManagement: 'urgent medical evaluation and temporary activity modification', education: 'early screening is essential when fracture risk pattern is present', progression: 'after medical clearance, progressive function restoration', precaution: 'progressive neurologic deficits or severe trauma history' },
+      { title: 'persistent low back pain with fear avoidance', hallmark: 'ongoing pain with high movement fear and reduced activity participation', initialManagement: 'education with graded exposure and paced conditioning', education: 'hurt does not always equal harm in persistent pain', progression: 'activity confidence improves with stepped exposure', precaution: 'unexplained weight loss, fever, or cancer history with worsening pain' },
+      { title: 'lumbar discogenic pain behavior', hallmark: 'pain with sustained flexion and sitting, eased by position change', initialManagement: 'load-management coaching and directional movement strategy', education: 'posture variation and movement breaks can reduce symptom sensitivity', progression: 'sitting and bending tolerance gradually improve', precaution: 'major trauma with severe unremitting pain' },
+      { title: 'post-lumbar surgery rehabilitation principle', hallmark: 'deconditioning and movement fear after uncomplicated lumbar surgery', initialManagement: 'progressive walking, trunk conditioning, and function-first goals', education: 'graded return to function is usually preferred over prolonged avoidance', progression: 'functional tasks and endurance improve week to week', precaution: 'new neurologic deficits or wound/infection signs post-op' },
+      { title: 'thoracic referred pain masquerading as low back complaint', hallmark: 'back pain pattern inconsistent with lumbar loading and linked to thoracic mobility deficits', initialManagement: 'regional mobility and strengthening with reassessment of symptom behavior', education: 'regional interdependence can influence spinal symptoms', progression: 'symptom behavior normalizes across daily tasks', precaution: 'chest pain or cardiorespiratory warning features' },
+      { title: 'cauda equina syndrome screening', hallmark: 'new urinary retention, saddle sensory change, and bilateral neurologic symptoms', initialManagement: 'immediate emergency referral pathway', education: 'this pattern requires urgent medical management, not routine rehab', progression: 'not applicable until emergency care completed', precaution: 'this is itself an emergency red flag cluster' }
+    ]
+  },
+  ankle: {
+    slug: 'ankle',
+    tags: ['msk', 'ankle-foot'],
+    topics: [
+      { title: 'lateral ankle sprain', hallmark: 'inversion injury with lateral swelling and tenderness over ATFL region', initialManagement: 'protective loading, early ROM, and progressive balance-strength work', education: 'early rehabilitation lowers recurrence risk', progression: 'single-leg balance and hop tasks normalize', precaution: 'inability to weight-bear with bony tenderness requiring fracture screening' },
+      { title: 'Achilles tendinopathy', hallmark: 'midportion Achilles pain and stiffness with running and hopping load', initialManagement: 'load modification plus progressive calf loading program', education: 'tendons adapt to consistent progressive loading', progression: 'calf endurance and hopping tolerance improve', precaution: 'sudden calf snap and plantarflexion weakness suggesting rupture' },
+      { title: 'Achilles rupture', hallmark: 'sudden posterior ankle pain with push-off loss and positive Thompson test', initialManagement: 'urgent immobilization/referral and early specialist pathway', education: 'prompt diagnosis enables timely management decisions', progression: 'post-acute rehab progresses from protected loading to strength and plyometrics', precaution: 'delayed diagnosis with persistent plantarflexion deficit' },
+      { title: 'posterior tibial tendon dysfunction', hallmark: 'medial ankle pain with progressive arch collapse and reduced single-leg heel raise', initialManagement: 'load management, calf-foot strengthening, and orthotic support when indicated', education: 'early support and strengthening can slow functional decline', progression: 'heel-rise capacity and walking tolerance improve', precaution: 'rapid deformity progression with severe pain' },
+      { title: 'plantar heel pain', hallmark: 'first-step plantar medial heel pain and load sensitivity', initialManagement: 'education, plantar fascia/calf loading, and activity modification', education: 'consistent loading and footwear strategy outperform passive-only care', progression: 'morning pain intensity and standing tolerance improve', precaution: 'night/rest pain with neurologic or systemic signs' },
+      { title: 'high ankle sprain', hallmark: 'external rotation injury with syndesmotic pain and slower recovery timeline', initialManagement: 'protective phase with staged loading and careful return-to-sport criteria', education: 'syndesmotic injuries often recover slower than lateral sprains', progression: 'pain-free dorsiflexion and cutting tolerance improve', precaution: 'diastasis suspicion after severe trauma needing urgent imaging referral' },
+      { title: 'ankle impingement after recurrent sprain', hallmark: 'anterior ankle pain with dorsiflexion and persistent post-sprain stiffness', initialManagement: 'mobility restoration, strength, and functional retraining', education: 'restoring dorsiflexion and control helps reduce recurrent symptoms', progression: 'squat and lunge depth improve without pinch pain', precaution: 'progressive locking/catching suggesting intra-articular pathology' },
+      { title: 'peroneal tendinopathy', hallmark: 'lateral retromalleolar pain aggravated by uneven ground and eversion load', initialManagement: 'graded peroneal loading and dynamic balance progression', education: 'lateral ankle muscle capacity supports recurrent sprain prevention', progression: 'single-leg loading on uneven surfaces becomes tolerable', precaution: 'tendon subluxation or suspected retinacular rupture' },
+      { title: 'stress fracture risk in foot/ankle athlete', hallmark: 'focal bony pain with training increase and pain progression to daily tasks', initialManagement: 'urgent load reduction and imaging referral pathway', education: 'early stress injury recognition prevents complete fracture', progression: 'return follows pain-free function and staged reloading', precaution: 'navicular or fifth metatarsal high-risk stress fracture signs' },
+      { title: 'chronic ankle instability', hallmark: 'recurrent giving-way episodes and balance deficits after prior sprains', initialManagement: 'multidomain rehab including strength, balance, hopping, and confidence training', education: 'balance-only programs are insufficient without strength and exposure', progression: 'functional hop and agility tests show improved symmetry', precaution: 'persistent instability despite quality rehab may need specialist review' },
+      { title: 'hallux rigidus functional limitation', hallmark: 'first MTP dorsiflexion pain and reduced push-off during gait', initialManagement: 'footwear modification, mobility where tolerated, and calf-foot strengthening', education: 'mechanical load management can improve walking function', progression: 'improved gait propulsion and reduced forefoot pain', precaution: 'acute red hot swollen MTP joint requiring medical review' }
+    ]
+  },
+  'cervical spine': {
+    slug: 'cervical',
+    tags: ['msk', 'cervical-spine'],
+    topics: [
+      { title: 'mechanical neck pain', hallmark: 'localized neck pain aggravated by posture/load without neurologic deficit', initialManagement: 'education, cervical-thoracic mobility, and progressive neck-shoulder strengthening', education: 'regular movement breaks and exercise are first-line care', progression: 'work tolerance and neck ROM improve', precaution: 'major trauma with severe midline tenderness' },
+      { title: 'cervical radiculopathy', hallmark: 'neck and arm pain with dermatomal symptoms and possible myotomal weakness', initialManagement: 'symptom-modified exercise, neural interface loading, and close neurologic monitoring', education: 'many cases improve with conservative care and graded activity', progression: 'arm pain decreases and strength improves', precaution: 'progressive neurologic deficit or myelopathic features' },
+      { title: 'cervicogenic headache', hallmark: 'unilateral headache linked to neck movement and upper cervical dysfunction', initialManagement: 'neck exercise, manual therapy adjuncts, and posture-load strategies', education: 'headache frequency often improves with cervical rehabilitation', progression: 'reduced headache days and improved neck control', precaution: 'new thunderclap headache or neurologic deficit' },
+      { title: 'whiplash-associated disorder', hallmark: 'neck pain and movement sensitivity after acceleration-deceleration trauma', initialManagement: 'reassurance, early activity, and graded neck function restoration', education: 'prolonged immobilization can delay recovery', progression: 'fear and disability scores improve with active rehab', precaution: 'fracture/dislocation signs after trauma' },
+      { title: 'cervical myelopathy concern', hallmark: 'gait disturbance, hand clumsiness, hyperreflexia, and bilateral symptoms', initialManagement: 'urgent specialist referral for further assessment', education: 'cord compression signs require medical pathway, not routine exercise only', progression: 'rehab planning follows specialist management', precaution: 'this pattern is an urgent neurologic red flag' },
+      { title: 'thoracic outlet related symptom presentation', hallmark: 'upper limb paresthesia provoked by sustained overhead postures', initialManagement: 'posture-load modification and progressive shoulder-neck conditioning', education: 'symptoms are multifactorial and require individualized load strategy', progression: 'overhead tolerance improves with reduced neurovascular irritability', precaution: 'vascular compromise signs such as limb discoloration/coldness' },
+      { title: 'neck pain with vestibular interaction', hallmark: 'dizziness linked to neck movement after neck injury with normal central neuro screen', initialManagement: 'combined cervical sensorimotor and balance-focused rehab', education: 'sensorimotor retraining can reduce dizziness and neck disability', progression: 'improved balance and reduced movement-provoked dizziness', precaution: 'acute neurologic signs suggesting central cause' },
+      { title: 'cervical facet-mediated pain behavior', hallmark: 'neck pain aggravated by extension-rotation and prolonged static posture', initialManagement: 'movement variability, neck endurance training, and graded exposure', education: 'load tolerance improves with endurance-focused programming', progression: 'sustained posture tasks provoke less pain', precaution: 'fever, unexplained weight loss, or malignancy history' },
+      { title: 'post-op cervical fusion rehabilitation principle', hallmark: 'post-surgical stiffness and deconditioning with movement apprehension', initialManagement: 'surgeon-guided staged mobility and progressive function restoration', education: 'timeline and precautions vary by surgical approach and healing stage', progression: 'functional capacity improves with criteria-based progression', precaution: 'new neurologic deficits or wound infection signs' },
+      { title: 'ulnar nerve mechanosensitivity at elbow-wrist interface', hallmark: 'medial forearm/hand paresthesia provoked by prolonged elbow flexion and neck loading', initialManagement: 'activity modification, neural loading, and proximal strength/posture work', education: 'combined local and proximal load management is often required', progression: 'reduced paresthesia during work and sleep', precaution: 'progressive intrinsic hand weakness' },
+      { title: 'first rib and thoracic contribution to neck-shoulder pain', hallmark: 'neck/shoulder symptoms with restricted upper thoracic mobility and load intolerance', initialManagement: 'thoracic mobility, breathing strategy, and neck-shoulder strengthening', education: 'regional contributors can influence cervical symptom persistence', progression: 'upper quarter endurance and movement confidence improve', precaution: 'new chest pain or unexplained dyspnea' }
+    ]
+  },
+  'exercise prescription': {
+    slug: 'exercise',
+    tags: ['rehabilitation', 'exercise-prescription'],
+    topics: [
+      { title: 'acute irritability loading principle', hallmark: 'high symptom reactivity requiring careful dosage', initialManagement: 'begin with tolerable isometrics and low-load movement then progress', education: 'dose-response and symptom recovery guide progression', progression: 'symptoms settle predictably within 24 hours', precaution: 'pain escalation with progressive neurologic signs' },
+      { title: 'tendon rehabilitation progression', hallmark: 'load-related tendon pain needing staged loading continuum', initialManagement: 'isometric/isotonic loading progressing to energy-storage and return-to-sport drills', education: 'consistency and progressive overload drive tendon adaptation', progression: 'improved load tolerance across slow and fast tasks', precaution: 'suspected tendon rupture or complete loss of function' },
+      { title: 'strength training for chronic MSK pain', hallmark: 'deconditioning and reduced confidence with movement', initialManagement: 'graded resistance training with meaningful functional goals', education: 'strength gains support pain reduction and function over time', progression: 'load capacity and self-efficacy improve', precaution: 'unstable medical condition not yet cleared for training' },
+      { title: 'aerobic dosing in rehab', hallmark: 'reduced cardiorespiratory fitness limiting recovery and participation', initialManagement: 'moderate-intensity interval or continuous aerobic training matched to baseline capacity', education: 'aerobic capacity supports pain modulation and general health', progression: 'improved exertion tolerance and daily activity levels', precaution: 'cardiac red flags requiring medical clearance' },
+      { title: 'graded exposure for fear-limited function', hallmark: 'avoidance behavior despite stable tissue status', initialManagement: 'hierarchical feared-task exposure with coaching and pacing', education: 'confidence grows through safe repeated exposure', progression: 'reduced fear and improved task participation', precaution: 'actual red flag signs should override exposure approach' },
+      { title: 'neuromuscular retraining after injury', hallmark: 'movement variability deficits and poor control under load', initialManagement: 'task-specific motor retraining with progressive complexity', education: 'motor learning benefits from variable context and feedback fading', progression: 'transfer of movement quality to functional tasks', precaution: 'pain flare with swelling indicating overload' },
+      { title: 'return-to-running framework', hallmark: 'athlete post-injury with improving baseline strength but low impact tolerance', initialManagement: 'walk-jog intervals with volume progression and symptom monitoring', education: 'progress total load gradually rather than speed alone', progression: 'consecutive running sessions tolerated without symptom escalation', precaution: 'bone stress injury signs requiring further assessment' },
+      { title: 'post-op loading calibration', hallmark: 'healing tissue constraints and variable patient confidence', initialManagement: 'criteria-based progression aligned with tissue healing and surgeon guidance', education: 'time and objective milestones both inform progression', progression: 'ROM, strength, and function criteria are met sequentially', precaution: 'wound complications, fever, or DVT signs' },
+      { title: 'pain science-informed education', hallmark: 'high threat interpretation and catastrophic beliefs', initialManagement: 'reassuring education plus active self-management and graded activity', education: 'pain reflects protection, not always tissue damage severity', progression: 'reduced fear and improved activity consistency', precaution: 'education should not dismiss true red flags' },
+      { title: 'load management during flare-up', hallmark: 'temporary symptom spike after abrupt workload increase', initialManagement: 'short-term load reduction with planned reloading', education: 'flare-ups can be managed without full rest', progression: 'return to baseline function after graded reload', precaution: 'persistent severe night/rest pain with systemic symptoms' },
+      { title: 'balance and proprioception dosing', hallmark: 'deficits in postural control affecting function and injury risk', initialManagement: 'progress from static to dynamic and dual-task balance training', education: 'specificity and progression are needed for transfer', progression: 'balance tasks improve under fatigue and complexity', precaution: 'new neurologic signs requiring medical evaluation' }
+    ]
+  }
 };
+
+const QUESTION_TEMPLATES = [
+  {
+    difficulty: 'easy',
+    build: (topic) => ({
+      question: `Which presentation is most consistent with ${topic.title}?`,
+      correct: topic.hallmark,
+      distractors: [
+        'isolated imaging change without symptoms and no functional limitation',
+        'only vague symptoms with no reproducible aggravating factors',
+        'solely psychosocial stress with no movement-related findings'
+      ],
+      explanation: `${topic.title} is most strongly identified by the described pattern: ${topic.hallmark}. Clinical decisions should still integrate full history, examination, and context.`
+    })
+  },
+  {
+    difficulty: 'medium',
+    build: (topic) => ({
+      question: `For a patient with ${topic.title}, what is the best initial rehabilitation plan?`,
+      correct: topic.initialManagement,
+      distractors: [
+        'complete rest until all pain is absent before any exercise',
+        'passive treatment only with no home exercise progression',
+        'maximal loading on day one regardless of irritability'
+      ],
+      explanation: `Initial management should match irritability and function. ${topic.initialManagement} is the most evidence-aligned first step, while prolonged rest or abrupt maximal loading commonly worsens outcomes.`
+    })
+  },
+  {
+    difficulty: 'easy',
+    build: (topic) => ({
+      question: `What is the most appropriate patient education point for ${topic.title}?`,
+      correct: topic.education,
+      distractors: [
+        'all pain during rehabilitation means tissue damage is worsening',
+        'imaging findings alone should determine all treatment decisions',
+        'long-term avoidance of movement is the safest strategy'
+      ],
+      explanation: `High-quality education improves adherence and outcomes. For ${topic.title}, the most useful message is: ${topic.education}.`
+    })
+  },
+  {
+    difficulty: 'medium',
+    build: (topic) => ({
+      question: `Which finding best supports progression in a rehabilitation program for ${topic.title}?`,
+      correct: topic.progression,
+      distractors: [
+        'time elapsed alone without objective functional change',
+        'completely pain-free status at rest as the only criterion',
+        'normal imaging report regardless of ongoing functional deficits'
+      ],
+      explanation: `Progression should be criteria-based. ${topic.progression} reflects meaningful functional recovery better than time alone or imaging-only decisions.`
+    })
+  },
+  {
+    difficulty: 'hard',
+    build: (topic) => ({
+      question: `Which scenario is the strongest reason to pause routine rehab and prioritize medical review in suspected ${topic.title}?`,
+      correct: topic.precaution,
+      distractors: [
+        'mild exercise soreness that resolves by the next day',
+        'temporary uncertainty about diagnosis in a stable patient',
+        'slow but steady improvement over several weeks'
+      ],
+      explanation: `Safety screening is essential. ${topic.precaution} is a higher-priority medical concern than routine symptom fluctuations during rehabilitation.`
+    })
+  },
+  {
+    difficulty: 'medium',
+    build: (topic) => ({
+      question: `A clinician suspects ${topic.title}. Which management principle is most defensible in contemporary practice?`,
+      correct: `${topic.initialManagement}; then progress based on symptom response and function`,
+      distractors: [
+        'rely on a single special test as a definitive diagnosis and treatment guide',
+        'delay all activity until imaging completely normalizes',
+        'use fixed protocols without adapting to patient response'
+      ],
+      explanation: `Evidence-oriented care uses multimodal clinical reasoning, progressive loading, and response-based adaptation. For ${topic.title}, staged progression from an appropriate initial plan is most defensible.`
+    })
+  }
+];
+
+function buildOptions(correct, distractors, seed) {
+  const options = distractors.slice(0, 3);
+  const correctAnswer = seed % 4;
+  options.splice(correctAnswer, 0, correct);
+  return { options, correctAnswer };
+}
+
+function buildCategoryQuestions(category, config) {
+  const questions = [];
+let sequence = 1;
+  let answerSeed = 1;
+
+  config.topics.forEach((topic) => {
+    QUESTION_TEMPLATES.forEach((template, templateIndex) => {
+      if (category === 'exercise prescription' && templateIndex === 4) return;
+      const built = template.build(topic);
+      const { options, correctAnswer } = buildOptions(built.correct, built.distractors, answerSeed);
+      questions.push({
+        id: `${config.slug}-${String(sequence).padStart(3, '0')}`,
+        category,
+        difficulty: template.difficulty,
+        question: built.question,
+        options,
+        correctAnswer,
+        explanation: built.explanation,
+        tags: [...config.tags, topic.title]
+      });
+      sequence += 1;
+      answerSeed += 1;
+    });
+  });
+
+  return questions;
+}
+
+export const NORMAL_QUESTION_SETS = Object.fromEntries(
+  Object.entries(CATEGORY_CONFIG).map(([category, config]) => [category, buildCategoryQuestions(category, config)])
+);
