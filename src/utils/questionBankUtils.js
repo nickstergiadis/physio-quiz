@@ -20,6 +20,48 @@ export function dedupeQuestionsById(questions) {
   });
 }
 
+function rotateOptions(options, shift) {
+  const length = options.length;
+  return options.map((_, index) => options[(index - shift + length) % length]);
+}
+
+function stableIdHash(id) {
+  let hash = 0;
+  for (let index = 0; index < id.length; index += 1) {
+    hash = (hash * 31 + id.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+/**
+ * Repositions correct answers across indices to avoid predictable answer-key patterns.
+ * Rotation is deterministic per-question id so ordering remains stable between sessions.
+ * @param {Array<Record<string, unknown>>} questions
+ */
+export function rebalanceAnswerKeyPositions(questions) {
+  return questions.map((question) => {
+    if (
+      !question ||
+      typeof question !== 'object' ||
+      typeof question.id !== 'string' ||
+      !Array.isArray(question.options) ||
+      question.options.length !== 4 ||
+      typeof question.correctAnswer !== 'number'
+    ) {
+      return question;
+    }
+
+    const shift = stableIdHash(question.id) % question.options.length;
+    if (shift === 0) return question;
+
+    return {
+      ...question,
+      options: rotateOptions(question.options, shift),
+      correctAnswer: (question.correctAnswer + shift) % question.options.length
+    };
+  });
+}
+
 export function filterQuestionsByMode(questions, mode = 'normal') {
   if (mode === 'clinical-reasoning') {
     return questions.filter(isClinicalReasoningQuestion);
