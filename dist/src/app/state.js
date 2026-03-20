@@ -1,5 +1,5 @@
 import { loadDevQuestions, loadHistory, loadSession } from '../utils/storage.js';
-import { ROUTES, readRoute } from './router.js';
+import { ROUTES, resolveRoute } from './router.js';
 import { isValidQuestion } from '../data/schema/quizSchema.js';
 
 function isRecord(value) {
@@ -14,15 +14,16 @@ function sanitizeAnswers(value) {
 }
 
 export function createInitialState() {
+  const routeState = resolveRoute();
   const state = {
-    route: readRoute(),
+    route: routeState.route,
     filters: { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' },
     questions: [],
     currentIndex: 0,
     answers: {},
     history: loadHistory(),
     devQuestions: loadDevQuestions().filter(isValidQuestion),
-    startError: ''
+    startError: routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : ''
   };
 
   const restored = loadSession();
