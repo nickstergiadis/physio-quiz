@@ -1,7 +1,11 @@
 import { QUIZ_CATEGORIES, DIFFICULTY_LEVELS } from './schema/quizSchema.js';
 import { NORMAL_QUESTION_SETS } from './questions/normalQuestions.js';
 import { CLINICAL_REASONING_QUESTION_SETS } from './questions/clinicalReasoningQuestions.js';
-import { dedupeQuestionsById, validateQuestionObjects } from '../utils/questionBankUtils.js';
+import {
+  dedupeQuestionsById,
+  rebalanceAnswerKeyPositions,
+  validateQuestionObjects
+} from '../utils/questionBankUtils.js';
 
 function flattenQuestionSets(questionSets) {
   return Object.values(questionSets).flat();
@@ -13,8 +17,9 @@ const rawQuestionBank = [
 ];
 
 const dedupedQuestionBank = dedupeQuestionsById(rawQuestionBank);
+const balancedQuestionBank = rebalanceAnswerKeyPositions(dedupedQuestionBank);
 
-export const questionBank = validateQuestionObjects(dedupedQuestionBank);
+export const questionBank = validateQuestionObjects(balancedQuestionBank);
 
 export const quizCategories = QUIZ_CATEGORIES;
 export const difficultyLevels = DIFFICULTY_LEVELS;

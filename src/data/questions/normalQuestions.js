@@ -214,13 +214,13 @@ export const NORMAL_QUESTION_SETS = {
       "difficulty": "medium",
       "question": "Which presentation should trigger same-day emergency referral rather than routine rehab?",
       "options": [
-        "Back pain aggravated by prolonged sitting",
-        "Unilateral leg pain after lifting",
-        "New urinary retention with saddle anesthesia and progressive bilateral symptoms",
-        "Morning stiffness easing after movement"
+        "Back pain aggravated by prolonged sitting after a long drive",
+        "Unilateral leg pain after lifting that is improving week to week",
+        "Fever, severe constant night pain, and history of IV drug use/immunosuppression",
+        "Morning stiffness easing after movement and no systemic features"
       ],
       "correctAnswer": 2,
-      "explanation": "This symptom cluster is concerning for cauda equina syndrome and requires urgent medical management.",
+      "explanation": "Systemic infection risk factors with severe constant spinal pain are concerning for possible spinal infection and need urgent medical assessment.",
       "tags": [
         "red flags",
         "differential diagnosis"
