@@ -21,9 +21,17 @@ export function resolveRoute(hash = location.hash) {
 }
 
 export function readRoute() {
-  return resolveRoute().route;
+  return parseRouteFromHash(location.hash).route;
 }
 
 export function writeRoute(route) {
   location.hash = isKnownRoute(route) ? route : ROUTES.home;
+}
+
+export function parseRouteFromHash(hash) {
+  const raw = typeof hash === 'string' ? hash.replace('#', '') || ROUTES.home : ROUTES.home;
+  if (isKnownRoute(raw)) {
+    return { route: raw, fellBack: false };
+  }
+  return { route: ROUTES.home, fellBack: raw !== ROUTES.home };
 }

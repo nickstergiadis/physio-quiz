@@ -7,7 +7,7 @@ import { createAttemptId } from '../utils/id.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory, saveDevQuestions } from '../utils/storage.js';
 import { createInitialState } from './state.js';
-import { ROUTES, resolveRoute, writeRoute } from './router.js';
+import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
 
 function navLink(path, label) {
@@ -78,11 +78,7 @@ export function createApp(root) {
     navLink(ROUTES.home, 'Home'),
     navLink(ROUTES.quiz, 'Quiz'),
     navLink(ROUTES.progress, 'Progress')
-  ];
-  if (shouldShowAdminNavLink()) {
-    primaryNavLinks.push(navLink(ROUTES.admin, 'Admin (Dev)'));
-  }
-  nav.append(...primaryNavLinks);
+  );
 
   header.append(title, nav);
 
@@ -262,11 +258,21 @@ export function createApp(root) {
   }
 
   window.addEventListener('hashchange', () => {
-    const routeState = resolveRoute();
-    state.route = routeState.route;
-    state.startError = routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : '';
+    const parsed = parseRouteFromHash(location.hash);
+    state.route = parsed.route;
+    if (parsed.fellBack) {
+      state.startError = 'That page was not found. You were redirected to Home.';
+    }
     render();
   });
+
+  const initialRoute = parseRouteFromHash(location.hash);
+  if (initialRoute.fellBack) {
+    state.route = initialRoute.route;
+    state.startError = 'That page was not found. You were redirected to Home.';
+  } else {
+    state.route = readRoute();
+  }
 
   render();
 }
