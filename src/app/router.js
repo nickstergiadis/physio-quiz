@@ -11,10 +11,17 @@ export function isKnownRoute(route) {
 }
 
 export function readRoute() {
-  const raw = location.hash.replace('#', '') || ROUTES.home;
-  return isKnownRoute(raw) ? raw : ROUTES.home;
+  return parseRouteFromHash(location.hash).route;
 }
 
 export function writeRoute(route) {
   location.hash = isKnownRoute(route) ? route : ROUTES.home;
+}
+
+export function parseRouteFromHash(hash) {
+  const raw = typeof hash === 'string' ? hash.replace('#', '') || ROUTES.home : ROUTES.home;
+  if (isKnownRoute(raw)) {
+    return { route: raw, fellBack: false };
+  }
+  return { route: ROUTES.home, fellBack: raw !== ROUTES.home };
 }
