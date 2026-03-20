@@ -8,7 +8,7 @@ function getOptionLabel(question, answerIndex) {
   return question.options[answerIndex] ?? 'Invalid answer';
 }
 
-export function resultsPage({ score, review, onRestart }) {
+export function resultsPage({ score, review, unansweredCount = 0, onRestart }) {
   const body = document.createElement('div');
   body.className = 'stack';
 
@@ -16,7 +16,12 @@ export function resultsPage({ score, review, onRestart }) {
   summary.className = 'score';
   summary.textContent = `Score: ${score.correct}/${score.total} (${score.percent}%)`;
 
+  const unansweredSummary = document.createElement('p');
+  unansweredSummary.className = 'question-progress';
+  unansweredSummary.textContent = `Unanswered: ${unansweredCount}`;
+
   body.appendChild(summary);
+  body.appendChild(unansweredSummary);
 
   review.forEach((item) => {
     const result = document.createElement('article');

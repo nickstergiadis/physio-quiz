@@ -10,6 +10,8 @@ export function quizPage({ questions, answers, currentIndex, onSelectAnswer, onN
 
   return renderQuestion({
     question,
+    questions,
+    answers,
     index: currentIndex,
     total: questions.length,
     selectedOption: answers[question.id],
