@@ -56,3 +56,24 @@ test('streak resets when the most recent attempt is older than yesterday', () =>
   assert.equal(metrics.streak.current, 0);
   assert.equal(metrics.streak.activeToday, false);
 });
+
+test('invalid completedAt values are ignored when computing streaks', () => {
+  const history = [
+    {
+      id: 'bad-date',
+      completedAt: 'not-a-date',
+      score: { correct: 1, total: 1 },
+      categoryStats: {}
+    },
+    {
+      id: 'valid-date',
+      completedAt: asIsoDayOffset(1),
+      score: { correct: 1, total: 1 },
+      categoryStats: {}
+    }
+  ];
+
+  const metrics = computeProgressMetrics(history);
+  assert.equal(metrics.streak.current, 1);
+  assert.equal(metrics.streak.activeToday, false);
+});
