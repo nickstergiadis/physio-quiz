@@ -23,6 +23,38 @@ function combinedQuestionBank(devQuestions) {
   return [...questionBank, ...devQuestions];
 }
 
+const ADMIN_NAV_FLAG_KEY = 'physio_quiz_admin_nav_enabled';
+
+function shouldShowAdminNavLink() {
+  const hashQuery = location.hash.split('?')[1];
+  const searchParams = new URLSearchParams(hashQuery || '');
+  const devFlag = searchParams.get('dev');
+
+  if (devFlag === '1') {
+    try {
+      localStorage.setItem(ADMIN_NAV_FLAG_KEY, '1');
+    } catch {
+      // Ignore storage write failures (e.g. private mode / storage disabled).
+    }
+    return true;
+  }
+
+  if (devFlag === '0') {
+    try {
+      localStorage.removeItem(ADMIN_NAV_FLAG_KEY);
+    } catch {
+      // Ignore storage removal failures (e.g. private mode / storage disabled).
+    }
+    return false;
+  }
+
+  try {
+    return localStorage.getItem(ADMIN_NAV_FLAG_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 export function createApp(root) {
   if (!root) {
     console.error('App root element not found.');
@@ -42,12 +74,15 @@ export function createApp(root) {
   const nav = document.createElement('nav');
   nav.className = 'nav';
   nav.setAttribute('aria-label', 'Primary');
-  nav.append(
+  const primaryNavLinks = [
     navLink(ROUTES.home, 'Home'),
     navLink(ROUTES.quiz, 'Quiz'),
-    navLink(ROUTES.progress, 'Progress'),
-    navLink(ROUTES.admin, 'Admin (Dev)')
-  );
+    navLink(ROUTES.progress, 'Progress')
+  ];
+  if (shouldShowAdminNavLink()) {
+    primaryNavLinks.push(navLink(ROUTES.admin, 'Admin (Dev)'));
+  }
+  nav.append(...primaryNavLinks);
 
   header.append(title, nav);
 
