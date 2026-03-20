@@ -7,7 +7,7 @@ import { createAttemptId } from '../utils/id.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import { saveSession, clearSession, pushHistory, loadHistory, saveDevQuestions } from '../utils/storage.js';
 import { createInitialState } from './state.js';
-import { ROUTES, readRoute, writeRoute } from './router.js';
+import { ROUTES, resolveRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
 
 function navLink(path, label) {
@@ -219,7 +219,9 @@ export function createApp(root) {
   }
 
   window.addEventListener('hashchange', () => {
-    state.route = readRoute();
+    const routeState = resolveRoute();
+    state.route = routeState.route;
+    state.startError = routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : '';
     render();
   });
 
