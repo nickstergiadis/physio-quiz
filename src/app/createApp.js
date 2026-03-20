@@ -78,7 +78,8 @@ export function createApp(root) {
     navLink(ROUTES.home, 'Home'),
     navLink(ROUTES.quiz, 'Quiz'),
     navLink(ROUTES.progress, 'Progress')
-  );
+  ];
+  nav.append(...primaryNavLinks);
 
   header.append(title, nav);
 
