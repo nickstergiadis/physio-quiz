@@ -12,7 +12,8 @@ export function isKnownRoute(route) {
 
 export function readRoute() {
   const raw = location.hash.replace('#', '') || ROUTES.home;
-  return isKnownRoute(raw) ? raw : ROUTES.home;
+  const [path] = raw.split('?');
+  return isKnownRoute(path) ? path : ROUTES.home;
 }
 
 export function writeRoute(route) {
