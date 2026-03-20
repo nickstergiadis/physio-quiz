@@ -165,6 +165,8 @@ This prevents categories becoming unintentionally "all hard" or "all easy".
 
 Add CI-enforced checks in `scripts/validateQuestionBank.mjs`:
 
+**Quality-first principle:** hitting the numeric target must never override educational quality. Any question that is uncertain, weakly supported, repetitive, too niche, or low pedagogical value should be rewritten or removed.
+
 1. **Unique ID rule**
    - hard fail on duplicate IDs.
 
@@ -191,7 +193,11 @@ Add CI-enforced checks in `scripts/validateQuestionBank.mjs`:
    - normalize text and flag high-similarity stems in same category.
    - start as warning during growth phase; switch to fail before final release.
 
-8. **Renderable constraints**
+8. **Evidence/support confidence rule**
+   - flag stems/explanations with speculative wording or weakly supported claims for reviewer rewrite/removal.
+   - fail CI for unresolved `confidence-low` content labels at merge time.
+
+9. **Renderable constraints**
    - ensure exactly 4 options and valid `correctAnswer` index (already present in runtime guard, but make it CI-failing early).
 
 ## 5. Key risks and mitigations
@@ -256,3 +262,5 @@ Add CI-enforced checks in `scripts/validateQuestionBank.mjs`:
 
 ## Operational recommendation
 Do **not** land 451 new questions in one pull request. Use incremental PRs with validation gating to maintain clinical quality and avoid large-scale regressions.
+
+Treat **question quality as a hard gate**: do not keep weak questions simply to reach the 500 total.

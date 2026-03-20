@@ -31,6 +31,17 @@ This project now uses a **question bank system** with data separated from app lo
 
 Questions are automatically flattened, deduped by `id`, and validated before use.
 
+## Question quality standard (non-negotiable)
+
+When authoring or reviewing questions, prioritize educational value over raw count targets.
+
+- Rewrite or remove any question that is:
+  - uncertain or weakly supported,
+  - repetitive with existing items,
+  - too niche for this quiz's learning goals,
+  - or low pedagogical value.
+- Do not keep low-quality items just to hit a numeric milestone (for example, a 500-question target).
+
 ## How to add explanations, tags, and difficulty
 
 - `explanation`: required string used in answer review.
