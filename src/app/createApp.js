@@ -132,6 +132,12 @@ export function createApp(root) {
     render();
   }
 
+  function getUnansweredCount() {
+    return state.questions.reduce((count, question) => {
+      return state.answers[question.id] === undefined ? count + 1 : count;
+    }, 0);
+  }
+
   function previousQuestion() {
     if (state.currentIndex > 0) {
       state.currentIndex -= 1;
@@ -214,10 +220,12 @@ export function createApp(root) {
 
       const score = calculateScore(state.answers, state.questions);
       const review = buildQuestionReview(state.questions, state.answers);
+      const unansweredCount = getUnansweredCount();
       main.appendChild(
         resultsPage({
           score,
           review,
+          unansweredCount,
           onRestart: restart
         })
       );
