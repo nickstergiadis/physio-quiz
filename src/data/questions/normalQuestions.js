@@ -243,86 +243,23 @@ const QUESTION_TEMPLATES = [
         'temporary uncertainty about diagnosis in a stable patient',
         'slow but steady improvement over several weeks'
       ],
-      "correctAnswer": 1,
-      "explanation": "Guideline-consistent care emphasizes reassurance and early graded activity over rest and routine imaging.",
-      "tags": [
-        "treatment planning",
-        "contraindications"
-      ]
-    },
-    {
-      "id": "lowback-002",
-      "category": "low back",
-      "difficulty": "medium",
-      "question": "Which presentation should trigger same-day emergency referral rather than routine rehab?",
-      "options": [
-        "Back pain aggravated by prolonged sitting after a long drive",
-        "Unilateral leg pain after lifting that is improving week to week",
-        "Fever, severe constant night pain, and history of IV drug use/immunosuppression",
-        "Morning stiffness easing after movement and no systemic features"
+      explanation: `Safety screening is essential. In suspected ${topic.title}, ${topic.precaution} should prompt timely medical review over routine progression.`
+    })
+  },
+  {
+    difficulty: 'medium',
+    build: (topic) => ({
+      question: `For ${topic.title}, which planning principle best supports safe long-term outcomes?`,
+      correct: `Combine ${topic.initialManagement} with ongoing education that ${topic.education}.`,
+      distractors: [
+        'base all progression decisions on imaging changes alone',
+        'delay active rehabilitation until every symptom is absent',
+        'use a fixed protocol without adapting to patient response'
       ],
-      "correctAnswer": 2,
-      "explanation": "Systemic infection risk factors with severe constant spinal pain are concerning for possible spinal infection and need urgent medical assessment.",
-      "tags": [
-        "red flags",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "lowback-003",
-      "category": "low back",
-      "difficulty": "medium",
-      "question": "A patient fears bending after an episode of back pain but neurologic screening is normal. What is the best communication strategy?",
-      "options": [
-        "Confirm bending is dangerous for all patients",
-        "Use reassurance and graded exposure to feared movements",
-        "Avoid discussing activity until pain is zero",
-        "Recommend permanent lumbar bracing"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Reducing fear-avoidance through education and graded exposure supports functional recovery.",
-      "tags": [
-        "clinical reasoning",
-        "exercise-based rehab"
-      ]
-    },
-    {
-      "id": "lowback-004",
-      "category": "low back",
-      "difficulty": "hard",
-      "question": "Repeated movement testing centralizes leg pain from calf to buttock. What is the most appropriate interpretation?",
-      "options": [
-        "Worsening neurologic status requiring immediate surgery",
-        "Potentially favorable directional response to guide exercise selection",
-        "Finding is clinically irrelevant",
-        "Absolute contraindication to exercise"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Centralization can help identify a directional preference and self-management strategy in selected patients.",
-      "tags": [
-        "assessment",
-        "differential diagnosis"
-      ]
-    },
-    {
-      "id": "lowback-005",
-      "category": "low back",
-      "difficulty": "hard",
-      "question": "A 72-year-old with known osteoporosis develops sudden focal thoracolumbar pain after lifting a light grocery bag. Best next step?",
-      "options": [
-        "Start high-load deadlifts immediately",
-        "Suspect vertebral compression fracture and arrange prompt medical assessment",
-        "Treat as routine muscle strain only",
-        "Prescribe running intervals"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Age, osteoporosis, and low-load sudden focal pain are red flags for possible vertebral compression fracture.",
-      "tags": [
-        "red flags",
-        "contraindications"
-      ]
-    }
-  ],
+      explanation: `Durable outcomes come from integrating individualized loading and education. For ${topic.title}, combining initial management with targeted education supports adherence and functional progression.`
+    })
+  }
+];
 
 function buildOptions(correct, distractors, seed) {
   const options = distractors.slice(0, 3);
@@ -333,7 +270,7 @@ function buildOptions(correct, distractors, seed) {
 
 function buildCategoryQuestions(category, config) {
   const questions = [];
-let sequence = 1;
+  let sequence = 1;
   let answerSeed = 1;
 
   config.topics.forEach((topic) => {
