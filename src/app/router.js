@@ -10,10 +10,18 @@ export function isKnownRoute(route) {
   return Object.values(ROUTES).includes(route);
 }
 
+export function resolveRoute(hash = location.hash) {
+  const raw = hash.replace('#', '') || ROUTES.home;
+  const known = isKnownRoute(raw);
+
+  return {
+    route: known ? raw : ROUTES.home,
+    unknownHash: !!raw && !known
+  };
+}
+
 export function readRoute() {
-  const raw = location.hash.replace('#', '') || ROUTES.home;
-  const [path] = raw.split('?');
-  return isKnownRoute(path) ? path : ROUTES.home;
+  return resolveRoute().route;
 }
 
 export function writeRoute(route) {
