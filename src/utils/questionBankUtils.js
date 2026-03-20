@@ -39,27 +39,42 @@ function stableIdHash(id) {
  * @param {Array<Record<string, unknown>>} questions
  */
 export function rebalanceAnswerKeyPositions(questions) {
-  return questions.map((question) => {
-    if (
-      !question ||
-      typeof question !== 'object' ||
-      typeof question.id !== 'string' ||
-      !Array.isArray(question.options) ||
-      question.options.length !== 4 ||
-      typeof question.correctAnswer !== 'number'
-    ) {
-      return question;
+  const balanced = [...questions];
+
+  const eligible = questions
+    .map((question, index) => ({ question, index }))
+    .filter(
+      ({ question }) =>
+        question &&
+        typeof question === 'object' &&
+        typeof question.id === 'string' &&
+        Array.isArray(question.options) &&
+        question.options.length === 4 &&
+        Number.isInteger(question.correctAnswer)
+    )
+    .sort((left, right) => {
+      const hashDiff = stableIdHash(left.question.id) - stableIdHash(right.question.id);
+      if (hashDiff !== 0) return hashDiff;
+      return left.question.id.localeCompare(right.question.id);
+    });
+
+  eligible.forEach(({ question, index }, position) => {
+    const targetAnswer = position % question.options.length;
+    const shift = (targetAnswer - question.correctAnswer + question.options.length) % question.options.length;
+
+    if (shift === 0) {
+      balanced[index] = question;
+      return;
     }
 
-    const shift = stableIdHash(question.id) % question.options.length;
-    if (shift === 0) return question;
-
-    return {
+    balanced[index] = {
       ...question,
       options: rotateOptions(question.options, shift),
       correctAnswer: (question.correctAnswer + shift) % question.options.length
     };
   });
+
+  return balanced;
 }
 
 export function filterQuestionsByMode(questions, mode = 'normal') {
