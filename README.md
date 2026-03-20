@@ -78,6 +78,19 @@ Then open the local URL printed by `serve` (often `http://localhost:3000`).
 
 > Routing note: the app uses hash routes (`#/quiz`, `#/progress`), so deep-link rewrite rules are not required.
 
+
+### GitHub Pages (recommended for this repo)
+
+1. Commit and push this repository to the `main` branch on GitHub.
+2. Ensure the workflow `.github/workflows/deploy-pages.yml` is present (it builds from `dist/`).
+3. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+4. Push to `main` (or run the workflow manually from **Actions**).
+5. After the deploy job succeeds, the live URL appears in:
+   - **Settings → Pages**
+   - the **deploy** workflow job summary
+
+Typical URL format is `https://<owner>.github.io/physio-quiz/`.
+
 ## Environment and configuration requirements
 
 The app currently requires **no runtime environment variables**.
