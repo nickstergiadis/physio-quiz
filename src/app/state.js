@@ -1,4 +1,11 @@
-import { isQuizCompleted, loadDevQuestions, loadHistory, loadSession, setQuizCompleted } from '../utils/storage.js';
+import {
+  isQuizCompleted,
+  loadDevQuestions,
+  loadHistory,
+  loadQuizResult,
+  loadSession,
+  setQuizCompleted
+} from '../utils/storage.js';
 import { ROUTES, resolveRoute } from './router.js';
 import { isValidQuestion } from '../data/schema/quizSchema.js';
 
@@ -22,6 +29,7 @@ export function createInitialState() {
     currentIndex: 0,
     answers: {},
     quizCompleted: isQuizCompleted(),
+    latestResult: loadQuizResult(),
     history: loadHistory(),
     devQuestions: loadDevQuestions().filter(isValidQuestion),
     startError: routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : ''
@@ -47,6 +55,7 @@ export function createInitialState() {
     state.answers = sanitizeAnswers(restored.answers);
     if (state.questions.length) {
       state.quizCompleted = false;
+      state.latestResult = null;
       setQuizCompleted(false);
     }
 

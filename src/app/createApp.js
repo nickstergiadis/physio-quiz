@@ -11,7 +11,9 @@ import {
   pushHistory,
   loadHistory,
   saveDevQuestions,
-  setQuizCompleted
+  setQuizCompleted,
+  saveQuizResult,
+  clearQuizResult
 } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
@@ -126,7 +128,9 @@ export function createApp(root) {
     state.currentIndex = 0;
     state.answers = {};
     state.quizCompleted = false;
+    state.latestResult = null;
     setQuizCompleted(false);
+    clearQuizResult();
     persistSession();
     setRoute(ROUTES.quiz);
   }
@@ -171,7 +175,13 @@ export function createApp(root) {
 
     state.history = loadHistory();
     state.quizCompleted = true;
+    state.latestResult = {
+      score,
+      review: buildQuestionReview(state.questions, state.answers),
+      unansweredCount: getUnansweredCount()
+    };
     setQuizCompleted(true);
+    saveQuizResult(state.latestResult);
     clearSession();
     setRoute(ROUTES.results);
   }
@@ -193,7 +203,9 @@ export function createApp(root) {
     state.currentIndex = 0;
     state.answers = {};
     state.quizCompleted = false;
+    state.latestResult = null;
     setQuizCompleted(false);
+    clearQuizResult();
     state.startError = '';
     clearSession();
     setRoute(ROUTES.home);
@@ -227,30 +239,20 @@ export function createApp(root) {
     }
 
     if (route === ROUTES.results) {
-      if (!state.quizCompleted) {
-        state.startError = state.questions.length
-          ? 'Finish and submit your active quiz before viewing results.'
-          : 'No quiz results to review yet. Complete a quiz first.';
-        setRoute(state.questions.length ? ROUTES.quiz : ROUTES.home);
-        return;
-      }
-
-      if (!state.questions.length) {
+      if (!state.quizCompleted || !state.latestResult) {
         state.startError = 'No quiz results to review yet. Complete a quiz first.';
         state.quizCompleted = false;
+        state.latestResult = null;
         setQuizCompleted(false);
+        clearQuizResult();
         setRoute(ROUTES.home);
         return;
       }
-
-      const score = calculateScore(state.answers, state.questions);
-      const review = buildQuestionReview(state.questions, state.answers);
-      const unansweredCount = getUnansweredCount();
       main.appendChild(
         resultsPage({
-          score,
-          review,
-          unansweredCount,
+          score: state.latestResult.score,
+          review: state.latestResult.review,
+          unansweredCount: state.latestResult.unansweredCount,
           onRestart: restart
         })
       );
