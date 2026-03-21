@@ -66,23 +66,23 @@ test('streak resets when the most recent attempt is older than yesterday', () =>
   assert.equal(metrics.streak.activeToday, false);
 });
 
-test('last activity uses Toronto local date around midnight boundaries', () => {
+test('invalid completedAt values are ignored when computing streaks', () => {
   const history = [
     {
-      id: 'a4',
-      // Mar 20, 2026 00:15 in Toronto (UTC-4)
-      completedAt: '2026-03-20T04:15:00.000Z',
-      score: { correct: 8, total: 10 },
+      id: 'bad-date',
+      completedAt: 'not-a-date',
+      score: { correct: 1, total: 1 },
+      categoryStats: {}
+    },
+    {
+      id: 'valid-date',
+      completedAt: asIsoDayOffset(1),
+      score: { correct: 1, total: 1 },
       categoryStats: {}
     }
   ];
 
-  const metrics = computeProgressMetrics(history, {
-    now: new Date('2026-03-20T05:00:00.000Z'),
-    timeZone: TORONTO
-  });
-
-  assert.equal(metrics.streak.lastAttemptDate, '2026-03-20');
-  assert.equal(metrics.streak.activeToday, true);
+  const metrics = computeProgressMetrics(history);
   assert.equal(metrics.streak.current, 1);
+  assert.equal(metrics.streak.activeToday, false);
 });

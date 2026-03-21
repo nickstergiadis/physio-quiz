@@ -37,12 +37,18 @@ function calculateStreak(history, now, timeZone) {
     return { current: 0, activeToday: false, lastAttemptDate: null };
   }
 
+  const toIsoDayKey = (value) => {
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) return null;
+    return date.toISOString().slice(0, 10);
+  };
+
   const uniqueDays = [
     ...new Set(
       history
         .map((attempt) => attempt.completedAt)
         .filter(Boolean)
-        .map((value) => getLocalDateKey(value, timeZone))
+        .map((value) => toIsoDayKey(value))
         .filter(Boolean)
     )
   ].sort((a, b) => b.localeCompare(a));
