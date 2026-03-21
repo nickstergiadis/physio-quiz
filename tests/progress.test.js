@@ -82,7 +82,30 @@ test('invalid completedAt values are ignored when computing streaks', () => {
     }
   ];
 
-  const metrics = computeProgressMetrics(history);
+  const metrics = computeProgressMetrics(history, {
+    now: new Date('2026-03-21T16:00:00.000Z'),
+    timeZone: TORONTO
+  });
+  assert.equal(metrics.streak.current, 1);
+  assert.equal(metrics.streak.activeToday, false);
+});
+
+test('last activity and streak day keys are resolved in the configured timezone', () => {
+  const history = [
+    {
+      id: 'late-night-toronto',
+      completedAt: '2026-03-20T23:30:00-04:00',
+      score: { correct: 4, total: 5 },
+      categoryStats: {}
+    }
+  ];
+
+  const metrics = computeProgressMetrics(history, {
+    now: new Date('2026-03-21T16:00:00.000Z'),
+    timeZone: TORONTO
+  });
+
+  assert.equal(metrics.streak.lastAttemptDate, '2026-03-20');
   assert.equal(metrics.streak.current, 1);
   assert.equal(metrics.streak.activeToday, false);
 });
