@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 
 import { computeProgressMetrics } from '../src/utils/progress.js';
 
-function asIsoDayOffset(daysAgo) {
-  const stamp = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+const TORONTO = 'America/Toronto';
+
+function asIsoDayOffset(daysAgo, baseNow = '2026-03-21T16:00:00.000Z') {
+  const stamp = new Date(new Date(baseNow).getTime() - daysAgo * 24 * 60 * 60 * 1000);
   stamp.setUTCHours(12, 0, 0, 0);
   return stamp.toISOString();
 }
@@ -31,7 +33,11 @@ test('progress metrics compute average, category ranking, and streak continuity 
     }
   ];
 
-  const metrics = computeProgressMetrics(history, { recentLimit: 2 });
+  const metrics = computeProgressMetrics(history, {
+    recentLimit: 2,
+    now: new Date('2026-03-21T16:00:00.000Z'),
+    timeZone: TORONTO
+  });
 
   assert.equal(metrics.totalQuizzes, 2);
   assert.equal(metrics.averageScore, 70);
@@ -52,7 +58,10 @@ test('streak resets when the most recent attempt is older than yesterday', () =>
     }
   ];
 
-  const metrics = computeProgressMetrics(history);
+  const metrics = computeProgressMetrics(history, {
+    now: new Date('2026-03-21T16:00:00.000Z'),
+    timeZone: TORONTO
+  });
   assert.equal(metrics.streak.current, 0);
   assert.equal(metrics.streak.activeToday, false);
 });

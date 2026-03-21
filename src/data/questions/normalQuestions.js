@@ -243,20 +243,20 @@ const QUESTION_TEMPLATES = [
         'temporary uncertainty about diagnosis in a stable patient',
         'slow but steady improvement over several weeks'
       ],
-      explanation: `Safety screening is essential. ${topic.precaution} is a higher-priority medical concern than routine symptom fluctuations during rehabilitation.`
+      explanation: `Safety screening is essential. In suspected ${topic.title}, ${topic.precaution} should prompt timely medical review over routine progression.`
     })
   },
   {
     difficulty: 'medium',
     build: (topic) => ({
-      question: `A clinician suspects ${topic.title}. Which management principle is most defensible in contemporary practice?`,
-      correct: `${topic.initialManagement}; then progress based on symptom response and function`,
+      question: `For ${topic.title}, which planning principle best supports safe long-term outcomes?`,
+      correct: `Combine ${topic.initialManagement} with ongoing education that ${topic.education}.`,
       distractors: [
-        'rely on a single special test as a definitive diagnosis and treatment guide',
-        'delay all activity until imaging completely normalizes',
-        'use fixed protocols without adapting to patient response'
+        'base all progression decisions on imaging changes alone',
+        'delay active rehabilitation until every symptom is absent',
+        'use a fixed protocol without adapting to patient response'
       ],
-      explanation: `Evidence-oriented care uses multimodal clinical reasoning, progressive loading, and response-based adaptation. For ${topic.title}, staged progression from an appropriate initial plan is most defensible.`
+      explanation: `Durable outcomes come from integrating individualized loading and education. For ${topic.title}, combining initial management with targeted education supports adherence and functional progression.`
     })
   }
 ];
@@ -270,7 +270,7 @@ function buildOptions(correct, distractors, seed) {
 
 function buildCategoryQuestions(category, config) {
   const questions = [];
-let sequence = 1;
+  let sequence = 1;
   let answerSeed = 1;
 
   config.topics.forEach((topic) => {

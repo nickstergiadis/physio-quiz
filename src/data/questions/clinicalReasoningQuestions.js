@@ -24,61 +24,123 @@ const CASES = [
   { scenario: 'A 33-year-old CrossFit athlete has shoulder pain during kipping pull-ups with reduced thoracic extension and scapular control fatigue.', likely: 'load-related shoulder dysfunction with kinetic-chain contributors', nextStep: 'assess thoracic mobility, scapular control, and pull-up load exposure', management: 'temporarily regress provocative volume and rebuild strength/control progressively', redFlag: 'acute trauma with major strength loss', categoryTag: 'sport shoulder' }
 ];
 
-const CASE_TEMPLATES = [
+const GUIDELINE_NOTE = 'Guideline anchors: NICE NG59 (low back), NICE NG193 (chronic pain), JOSPT CPGs for neck/shoulder/knee disorders, and APTA CPG principles on red-flag triage and graded loading.';
+
+const ITEM_BLUEPRINTS = [
   {
+    key: 'interpretation',
     difficulty: 'medium',
-    question: (c) => `${c.scenario}\n\nWhat is the most likely clinical interpretation?`,
+    questionVariants: [
+      (c) => `${c.scenario}\n\nWhich interpretation best fits this presentation at first contact?`,
+      (c) => `${c.scenario}\n\nYour provisional diagnosis should prioritize which clinical pattern?`,
+      (c) => `${c.scenario}\n\nWhat is the most defensible clinical impression before treatment planning?`
+    ],
     correct: (c) => c.likely,
-    distractors: [
-      'a presentation that can be diagnosed with a single special test alone',
-      'a harmless pattern that never requires structured rehabilitation',
-      'a condition that should be managed by imaging results only'
+    distractorSets: [
+      [
+        'a presentation that can be diagnosed with a single special test alone',
+        'a harmless pattern that never requires structured rehabilitation',
+        'a condition that should be managed by imaging results only'
+      ],
+      [
+        'a non-specific complaint where symptom behavior should be ignored',
+        'a diagnosis confirmed only after complete pain resolution',
+        'a pathology that mandates immediate invasive treatment regardless of exam findings'
+      ]
     ],
-    explanation: (c) => `The vignette is most consistent with ${c.likely}. This should be integrated with full history, examination, and contextual factors before final planning.`
+    reason: (c) => `The cluster of symptoms and behavior is most consistent with ${c.likely}, not with a single-test or imaging-only conclusion.`
   },
   {
+    key: 'next-step',
     difficulty: 'medium',
-    question: (c) => `${c.scenario}\n\nWhat is the best immediate next clinical step?`,
+    questionVariants: [
+      (c) => `${c.scenario}\n\nWhat should be done in this session before progressing rehabilitation load?`,
+      (c) => `${c.scenario}\n\nWhich immediate action is most likely to improve safety and decision quality?`,
+      (c) => `${c.scenario}\n\nWhat is the best next clinical step right now?`
+    ],
     correct: (c) => c.nextStep,
-    distractors: [
-      'start maximal loading immediately without further assessment',
-      'delay any decision-making until pain is completely absent for several weeks',
-      'base all decisions on one isolated orthopedic test'
+    distractorSets: [
+      [
+        'start maximal loading immediately without further assessment',
+        'delay any decision-making until pain is completely absent for several weeks',
+        'base all decisions on one isolated orthopedic test'
+      ],
+      [
+        'provide a generic handout and reassess only after one month',
+        'wait for routine imaging before any focused clinical exam',
+        'continue unchanged treatment even if symptoms are worsening'
+      ]
     ],
-    explanation: (c) => `Best-practice reasoning prioritizes the next step that changes management safely and efficiently. Here, that is to ${c.nextStep}.`
+    reason: (c) => `The most useful immediate decision is to ${c.nextStep}, because it changes risk stratification and guides management.`
   },
   {
+    key: 'management',
     difficulty: 'medium',
-    question: (c) => `${c.scenario}\n\nWhich rehabilitation approach is most appropriate initially?`,
+    questionVariants: [
+      (c) => `${c.scenario}\n\nWhich initial plan best reflects modern rehab principles?`,
+      (c) => `${c.scenario}\n\nWhich management approach is most appropriate for the first phase?`,
+      (c) => `${c.scenario}\n\nWhat is the strongest early rehabilitation strategy?`
+    ],
     correct: (c) => c.management,
-    distractors: [
-      'advise complete rest and avoid all meaningful movement for six weeks',
-      'apply passive treatment only and postpone active rehabilitation',
-      'use the same non-individualized protocol regardless of irritability'
+    distractorSets: [
+      [
+        'advise complete rest and avoid all meaningful movement for six weeks',
+        'apply passive treatment only and postpone active rehabilitation',
+        'use the same non-individualized protocol regardless of irritability'
+      ],
+      [
+        'focus exclusively on manual therapy and avoid exercise progression',
+        'chase pain elimination before allowing any functional movement',
+        'set treatment intensity without considering goals or symptom behavior'
+      ]
     ],
-    explanation: (c) => `Early management should align with irritability, goals, and risk profile. ${c.management} is the most defensible starting approach.`
+    reason: (c) => `${c.management} aligns with graded loading, functional progression, and irritability-informed dosing.`
   },
   {
+    key: 'red-flag',
     difficulty: 'hard',
-    question: (c) => `${c.scenario}\n\nWhich finding would most strongly trigger urgent medical escalation?`,
-    correct: (c) => c.redFlag,
-    distractors: [
-      'temporary post-exercise soreness that settles by the next day',
-      'slow but progressive improvement across sessions',
-      'a patient preference for slower exercise progression'
+    questionVariants: [
+      (c) => `${c.scenario}\n\nWhich finding is the clearest reason to pause routine rehab and prioritize urgent medical review?`,
+      (c) => `${c.scenario}\n\nWhich scenario requires immediate escalation rather than standard physiotherapy progression?`,
+      (c) => `${c.scenario}\n\nWhat would most strongly trigger same-day medical referral?`
     ],
-    explanation: (c) => `Urgent escalation is indicated by true red-flag features. In this case, the highest-priority concern is ${c.redFlag}.`
+    correct: (c) => c.redFlag,
+    distractorSets: [
+      [
+        'temporary post-exercise soreness that settles by the next day',
+        'slow but progressive improvement across sessions',
+        'a patient preference for slower exercise progression'
+      ],
+      [
+        'manageable soreness after introducing a new exercise',
+        'minor day-to-day variability in pain with stable function',
+        'requesting more education before increasing load'
+      ]
+    ],
+    reason: (c) => `${c.redFlag} indicates potential serious pathology or rapidly worsening status, so escalation takes priority over routine rehab.`
   },
   {
+    key: 'communication',
     difficulty: 'easy',
-    question: (c) => `${c.scenario}\n\nWhich clinician statement best reflects evidence-informed practice?`,
-    correct: (c) => `${c.management}; progress based on function and symptom behavior`,
-    distractors: [
-      'pain always equals ongoing tissue damage, so avoid loading entirely',
-      'special tests are definitive and make broader clinical reasoning unnecessary',
-      'imaging severity directly determines disability in every patient'
+    questionVariants: [
+      (c) => `${c.scenario}\n\nWhich clinician message best supports evidence-informed shared decision-making?`,
+      (c) => `${c.scenario}\n\nWhat statement best reflects high-quality physiotherapy communication?`,
+      (c) => `${c.scenario}\n\nWhich coaching point is most appropriate at this stage?`
     ],
-    explanation: () => 'Evidence-oriented MSK rehabilitation combines clinical reasoning, graded loading, and ongoing reassessment rather than absolute rules.'
+    correct: (c) => `${c.management}; progress based on function and symptom behavior`,
+    distractorSets: [
+      [
+        'pain always equals ongoing tissue damage, so avoid loading entirely',
+        'special tests are definitive and make broader clinical reasoning unnecessary',
+        'imaging severity directly determines disability in every patient'
+      ],
+      [
+        'if pain appears at all, stop all exercise until reassessment',
+        'MRI findings alone should decide whether rehab is worthwhile',
+        'recovery speed can be predicted precisely from one baseline score'
+      ]
+    ],
+    reason: () => 'The strongest communication combines reassurance, active rehab, shared decisions, and adaptation to response over time.'
   }
 ];
 
@@ -89,23 +151,41 @@ function buildOptions(correct, distractors, seed) {
   return { options, correctAnswer };
 }
 
+function explanationFor(options, correctAnswer, reason) {
+  const correctOption = options[correctAnswer];
+  const distractorRationales = options
+    .map((option, index) => {
+      if (index === correctAnswer) {
+        return `Correct (${index + 1}): ${correctOption} — ${reason}`;
+      }
+      return `Option ${index + 1} is less appropriate: ${option} — it either delays indicated assessment, over-medicalizes findings, or under-doses active rehabilitation.`;
+    })
+    .join(' ');
+
+  return `${distractorRationales} ${GUIDELINE_NOTE}`;
+}
+
 const clinicalReasoningQuestions = [];
 let idCounter = 1;
 
-CASES.forEach((caseItem) => {
-  CASE_TEMPLATES.forEach((template) => {
-    const correct = template.correct(caseItem);
-    const { options, correctAnswer } = buildOptions(correct, template.distractors, idCounter);
+CASES.forEach((caseItem, caseIndex) => {
+  ITEM_BLUEPRINTS.forEach((blueprint, blueprintIndex) => {
+    const correct = blueprint.correct(caseItem);
+    const variantIndex = (caseIndex + blueprintIndex) % blueprint.questionVariants.length;
+    const distractorSet = blueprint.distractorSets[(caseIndex + blueprintIndex) % blueprint.distractorSets.length];
+    const { options, correctAnswer } = buildOptions(correct, distractorSet, idCounter);
+
     clinicalReasoningQuestions.push({
       id: `reasoning-${String(idCounter).padStart(3, '0')}`,
       category: 'clinical reasoning',
-      difficulty: template.difficulty,
-      question: template.question(caseItem),
+      difficulty: blueprint.difficulty,
+      question: blueprint.questionVariants[variantIndex](caseItem),
       options,
       correctAnswer,
-      explanation: template.explanation(caseItem),
-      tags: ['clinical-reasoning', caseItem.categoryTag]
+      explanation: explanationFor(options, correctAnswer, blueprint.reason(caseItem)),
+      tags: ['clinical-reasoning', blueprint.key, caseItem.categoryTag]
     });
+
     idCounter += 1;
   });
 });

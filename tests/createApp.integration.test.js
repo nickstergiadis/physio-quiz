@@ -60,9 +60,10 @@ test('home/setup render and default start behavior', () => {
 });
 
 test('answer + submit flow renders results with explanation text and attempt appears in progress', () => {
-  installAppDom();
+  const { storageState } = installAppDom();
 
   clickByText('Start Quiz');
+  assert.equal(storageState.has('physio_quiz_completed'), false);
 
   for (let i = 0; i < 10; i += 1) {
     const firstOption = document.querySelector('.option-btn');
@@ -72,6 +73,7 @@ test('answer + submit flow renders results with explanation text and attempt app
   }
 
   assert.equal(window.location.hash, ROUTES.results);
+  assert.equal(storageState.get('physio_quiz_completed'), '1');
   assert.ok(document.body.textContent.includes('Quiz Results'));
   assert.ok(document.body.textContent.includes('Explanation:'));
 
@@ -82,6 +84,73 @@ test('answer + submit flow renders results with explanation text and attempt app
   assert.ok(document.body.textContent.includes('Progress Dashboard'));
   assert.ok(document.body.textContent.includes('Quizzes completed'));
   assert.ok(document.body.textContent.includes('Recent Quiz Attempts'));
+});
+
+test('results route is guarded during an active quiz and redirects home', () => {
+  installAppDom({ hash: `#${ROUTES.results}` });
+
+  clickByText('Start Quiz');
+  assert.equal(window.location.hash, ROUTES.quiz);
+
+  window.location.hash = `#${ROUTES.results}`;
+  window.dispatchEvent(new Event('hashchange'));
+
+  assert.ok([ROUTES.home, `#${ROUTES.home}`].includes(window.location.hash));
+  assert.ok(document.body.textContent.includes('No quiz results to review yet. Complete a quiz first.'));
+});
+
+test('starting a new quiz clears stale result state and /results redirects home until next submit', () => {
+  const { storageState } = installAppDom();
+
+  clickByText('Start Quiz');
+  for (let i = 0; i < 10; i += 1) {
+    document.querySelector('.option-btn')?.click();
+    clickByText(i === 9 ? 'Submit Quiz' : 'Next');
+  }
+
+  assert.equal(window.location.hash, ROUTES.results);
+  assert.equal(storageState.has('physio_quiz_result_v1'), true);
+
+  window.location.hash = `#${ROUTES.home}`;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.ok([ROUTES.home, `#${ROUTES.home}`].includes(window.location.hash));
+
+  clickByText('Start Quiz');
+  assert.equal(storageState.has('physio_quiz_result_v1'), false);
+
+  window.location.hash = `#${ROUTES.home}`;
+  window.dispatchEvent(new Event('hashchange'));
+  window.location.hash = `#${ROUTES.results}`;
+  window.dispatchEvent(new Event('hashchange'));
+
+  assert.equal(window.location.hash, ROUTES.home);
+  assert.ok(document.body.textContent.includes('No quiz results to review yet. Complete a quiz first.'));
+});
+
+test('progress history only increments when quiz is submitted', () => {
+  const { storageState } = installAppDom();
+
+  clickByText('Start Quiz');
+  window.location.hash = `#${ROUTES.home}`;
+  window.dispatchEvent(new Event('hashchange'));
+
+  window.location.hash = `#${ROUTES.progress}`;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.ok(document.body.textContent.includes('No quiz attempts yet. Complete a quiz to build your progress history.'));
+
+  window.location.hash = `#${ROUTES.home}`;
+  window.dispatchEvent(new Event('hashchange'));
+  clickByText('Start Quiz');
+  for (let i = 0; i < 10; i += 1) {
+    document.querySelector('.option-btn')?.click();
+    clickByText(i === 9 ? 'Submit Quiz' : 'Next');
+  }
+
+  window.location.hash = `#${ROUTES.progress}`;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.ok(document.body.textContent.includes('Quizzes completed'));
+  assert.ok(document.body.textContent.includes('1'));
+  assert.ok((storageState.get('physio_quiz_progress_v1') || '').includes('attempts'));
 });
 
 test('app recovers from malformed localStorage documents', () => {

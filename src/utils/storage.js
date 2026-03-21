@@ -1,7 +1,10 @@
 import { createAttemptId } from './id.js';
+import { createZonedTimestamp } from './dateTime.js';
 
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
+const QUIZ_COMPLETED_KEY = 'physio_quiz_completed';
 const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
+const QUIZ_RESULT_KEY = 'physio_quiz_result_v1';
 const DEV_QUESTION_DRAFTS_KEY = 'physio_quiz_dev_questions_v1';
 const LEGACY_QUIZ_HISTORY_KEY_V2 = 'physio_quiz_history_v2';
 const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
@@ -63,9 +66,9 @@ function sanitizeHistoryEntry(entry) {
 
   const id = typeof entry.id === 'string' ? entry.id : createAttemptId();
   const completedAt = (() => {
-    if (typeof entry.completedAt !== 'string') return new Date().toISOString();
+    if (typeof entry.completedAt !== 'string') return createZonedTimestamp();
     const parsed = new Date(entry.completedAt);
-    return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+    return Number.isNaN(parsed.getTime()) ? createZonedTimestamp() : createZonedTimestamp(parsed);
   })();
   const filters = isRecord(entry.filters)
     ? {
@@ -89,7 +92,7 @@ function sanitizeHistoryEntry(entry) {
 function createProgressDocument(history) {
   return {
     version: PROGRESS_VERSION,
-    updatedAt: new Date().toISOString(),
+    updatedAt: createZonedTimestamp(),
     attempts: history.slice(0, HISTORY_LIMIT)
   };
 }
@@ -148,6 +151,40 @@ export function loadSession() {
 
 export function clearSession() {
   safeRemoveItem(QUIZ_SESSION_KEY);
+}
+
+export function setQuizCompleted(isCompleted) {
+  if (isCompleted) {
+    safeSetItem(QUIZ_COMPLETED_KEY, '1');
+    return;
+  }
+  safeRemoveItem(QUIZ_COMPLETED_KEY);
+}
+
+export function isQuizCompleted() {
+  return safeGetItem(QUIZ_COMPLETED_KEY) === '1';
+}
+
+export function saveQuizResult(result) {
+  safeSetItem(QUIZ_RESULT_KEY, JSON.stringify(result));
+}
+
+export function loadQuizResult() {
+  const raw = safeGetItem(QUIZ_RESULT_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    safeRemoveItem(QUIZ_RESULT_KEY);
+    return null;
+  }
+}
+
+export function clearQuizResult() {
+  safeRemoveItem(QUIZ_RESULT_KEY);
 }
 
 export function pushHistory(entry) {
