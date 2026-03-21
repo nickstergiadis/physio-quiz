@@ -205,3 +205,46 @@ test('admin link is hidden from nav after hardening but direct route still rende
 
   assert.ok(document.body.textContent.includes('Dev/Admin page (local only).'));
 });
+
+test('quiz submission works for multiple mode/category/difficulty combinations', () => {
+  installAppDom();
+
+  const scenarios = [
+    { mode: 'normal', category: 'knee', difficulty: 'easy', length: '5' },
+    { mode: 'clinical-reasoning', category: 'all', difficulty: 'all', length: '5' }
+  ];
+
+  scenarios.forEach((scenario, index) => {
+    const mode = document.querySelector('#mode');
+    const category = document.querySelector('#category');
+    const difficulty = document.querySelector('#difficulty');
+    const length = document.querySelector('#length');
+    assert.ok(mode && category && difficulty && length, 'Expected setup fields to be present');
+
+    mode.value = scenario.mode;
+    mode.dispatchEvent(new Event('change', { bubbles: true }));
+    category.value = scenario.category;
+    category.dispatchEvent(new Event('change', { bubbles: true }));
+    difficulty.value = scenario.difficulty;
+    difficulty.dispatchEvent(new Event('change', { bubbles: true }));
+    length.value = scenario.length;
+    length.dispatchEvent(new Event('change', { bubbles: true }));
+
+    clickByText('Start Quiz');
+    assert.equal(window.location.hash, ROUTES.quiz);
+    assert.ok(document.body.textContent.includes('Question 1 of 5'));
+
+    for (let i = 0; i < 5; i += 1) {
+      document.querySelector('.option-btn')?.click();
+      clickByText(i === 4 ? 'Submit Quiz' : 'Next');
+    }
+
+    assert.equal(window.location.hash, ROUTES.results);
+    assert.ok(document.body.textContent.includes('Score:'));
+
+    if (index < scenarios.length - 1) {
+      clickByText('Start New Quiz');
+      assert.equal(window.location.hash, ROUTES.home);
+    }
+  });
+});

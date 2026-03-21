@@ -37,11 +37,7 @@ function calculateStreak(history, now, timeZone) {
     return { current: 0, activeToday: false, lastAttemptDate: null };
   }
 
-  const toIsoDayKey = (value) => {
-    const date = new Date(value);
-    if (!Number.isFinite(date.getTime())) return null;
-    return date.toISOString().slice(0, 10);
-  };
+  const toIsoDayKey = (value) => getLocalDateKey(value, timeZone);
 
   const uniqueDays = [
     ...new Set(
