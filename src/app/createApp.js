@@ -5,7 +5,14 @@ import { progressPage } from '../pages/ProgressPage.js';
 import { adminPage } from '../pages/AdminPage.js';
 import { createAttemptId } from '../utils/id.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
-import { saveSession, clearSession, pushHistory, loadHistory, saveDevQuestions } from '../utils/storage.js';
+import {
+  saveSession,
+  clearSession,
+  pushHistory,
+  loadHistory,
+  saveDevQuestions,
+  setQuizCompleted
+} from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
@@ -117,6 +124,8 @@ export function createApp(root) {
     state.questions = session.questions;
     state.currentIndex = 0;
     state.answers = {};
+    state.quizCompleted = false;
+    setQuizCompleted(false);
     persistSession();
     setRoute(ROUTES.quiz);
   }
@@ -160,6 +169,8 @@ export function createApp(root) {
     });
 
     state.history = loadHistory();
+    state.quizCompleted = true;
+    setQuizCompleted(true);
     clearSession();
     setRoute(ROUTES.results);
   }
@@ -180,6 +191,8 @@ export function createApp(root) {
     state.questions = [];
     state.currentIndex = 0;
     state.answers = {};
+    state.quizCompleted = false;
+    setQuizCompleted(false);
     state.startError = '';
     clearSession();
     setRoute(ROUTES.home);
@@ -213,8 +226,18 @@ export function createApp(root) {
     }
 
     if (route === ROUTES.results) {
+      if (!state.quizCompleted) {
+        state.startError = state.questions.length
+          ? 'Finish and submit your active quiz before viewing results.'
+          : 'No quiz results to review yet. Complete a quiz first.';
+        setRoute(state.questions.length ? ROUTES.quiz : ROUTES.home);
+        return;
+      }
+
       if (!state.questions.length) {
         state.startError = 'No quiz results to review yet. Complete a quiz first.';
+        state.quizCompleted = false;
+        setQuizCompleted(false);
         setRoute(ROUTES.home);
         return;
       }

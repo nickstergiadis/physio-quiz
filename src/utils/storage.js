@@ -1,6 +1,7 @@
 import { createAttemptId } from './id.js';
 
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
+const QUIZ_COMPLETED_KEY = 'physio_quiz_completed';
 const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
 const DEV_QUESTION_DRAFTS_KEY = 'physio_quiz_dev_questions_v1';
 const LEGACY_QUIZ_HISTORY_KEY_V2 = 'physio_quiz_history_v2';
@@ -148,6 +149,18 @@ export function loadSession() {
 
 export function clearSession() {
   safeRemoveItem(QUIZ_SESSION_KEY);
+}
+
+export function setQuizCompleted(isCompleted) {
+  if (isCompleted) {
+    safeSetItem(QUIZ_COMPLETED_KEY, '1');
+    return;
+  }
+  safeRemoveItem(QUIZ_COMPLETED_KEY);
+}
+
+export function isQuizCompleted() {
+  return safeGetItem(QUIZ_COMPLETED_KEY) === '1';
 }
 
 export function pushHistory(entry) {
