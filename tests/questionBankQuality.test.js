@@ -40,3 +40,18 @@ test('explanations are substantive enough for learning feedback', () => {
     assert.ok(wordCount >= 8, `Explanation too short for ${question.id}`);
   }
 });
+
+test('explanations are populated and unique per question', () => {
+  const normalizedExplanations = new Set();
+
+  for (const question of questionBank) {
+    const normalized = question.explanation.toLowerCase().replace(/\s+/g, ' ').trim();
+    assert.ok(normalized.length > 0, `Missing explanation for ${question.id}`);
+    assert.equal(
+      normalizedExplanations.has(normalized),
+      false,
+      `Duplicate explanation found for ${question.id}`
+    );
+    normalizedExplanations.add(normalized);
+  }
+});
