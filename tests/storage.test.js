@@ -67,6 +67,24 @@ test('history entries normalize invalid completedAt strings', () => {
   assert.equal(Number.isNaN(new Date(history[0].completedAt).getTime()), false);
 });
 
+
+test('history timestamps are persisted with timezone offsets instead of UTC Z suffix', () => {
+  installMemoryStorage();
+
+  pushHistory({
+    id: 'attempt-timezone-test',
+    completedAt: '2026-03-20T04:15:00.000Z',
+    filters: { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' },
+    score: { correct: 1, total: 1 },
+    categoryStats: {}
+  });
+
+  const history = loadHistory();
+  assert.equal(history.length, 1);
+  assert.match(history[0].completedAt, /[+-]\d{2}:\d{2}$/);
+  assert.equal(history[0].completedAt.endsWith('Z'), false);
+});
+
 test('saveSession and loadSession retain session payload', () => {
   installMemoryStorage();
   const payload = {

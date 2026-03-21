@@ -1,15 +1,20 @@
 import { card } from '../components/ui/card.js';
 import { titleCase } from '../utils/format/titleCase.js';
 import { computeProgressMetrics } from '../utils/progress.js';
+import { USER_TIME_ZONE } from '../utils/dateTime.js';
 
 function formatDateTime(value) {
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? 'Unknown date' : parsed.toLocaleString();
+  return Number.isNaN(parsed.getTime()) ? 'Unknown date' : parsed.toLocaleString('en-CA', { timeZone: USER_TIME_ZONE });
 }
 
-function formatDateOnly(value) {
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString();
+function formatDateOnly(dayKey) {
+  if (typeof dayKey !== 'string') return 'N/A';
+  const [year, month, day] = dayKey.split('-').map(Number);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return 'N/A';
+
+  const parsed = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString('en-CA', { timeZone: USER_TIME_ZONE });
 }
 
 function metricBlock(label, value) {
@@ -78,7 +83,7 @@ export function progressPage({ history }) {
     metricBlock('Current streak', `${metrics.streak.current} day(s)`),
     metricBlock(
       'Last activity',
-      metrics.streak.lastAttemptDate ? formatDateOnly(`${metrics.streak.lastAttemptDate}T00:00:00.000Z`) : 'N/A'
+      metrics.streak.lastAttemptDate ? formatDateOnly(metrics.streak.lastAttemptDate) : 'N/A'
     ),
     metricBlock('Attempts in last 7 days', String(metrics.recentActivity.last7Days)),
     metricBlock('Attempts in last 30 days', String(metrics.recentActivity.last30Days))

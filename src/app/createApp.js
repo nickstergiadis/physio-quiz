@@ -16,6 +16,7 @@ import {
 import { createInitialState } from './state.js';
 import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
+import { createZonedTimestamp } from '../utils/dateTime.js';
 
 function navLink(path, label) {
   const link = document.createElement('a');
@@ -162,7 +163,7 @@ export function createApp(root) {
 
     pushHistory({
       id: createAttemptId(),
-      completedAt: new Date().toISOString(),
+      completedAt: createZonedTimestamp(),
       filters: state.filters,
       score,
       categoryStats
