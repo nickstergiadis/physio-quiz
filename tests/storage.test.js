@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { loadHistory, loadSession, pushHistory, saveSession } from '../src/utils/storage.js';
+import { isQuizCompleted, loadHistory, loadSession, pushHistory, saveSession, setQuizCompleted } from '../src/utils/storage.js';
 
 function installMemoryStorage(initial = {}) {
   const state = new Map(Object.entries(initial));
@@ -78,4 +78,14 @@ test('saveSession and loadSession retain session payload', () => {
 
   saveSession(payload);
   assert.deepEqual(loadSession(), payload);
+});
+
+test('quiz completion flag can be set and cleared', () => {
+  installMemoryStorage();
+
+  assert.equal(isQuizCompleted(), false);
+  setQuizCompleted(true);
+  assert.equal(isQuizCompleted(), true);
+  setQuizCompleted(false);
+  assert.equal(isQuizCompleted(), false);
 });
