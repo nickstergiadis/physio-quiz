@@ -1,7 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isQuizCompleted, loadHistory, loadSession, pushHistory, saveSession, setQuizCompleted } from '../src/utils/storage.js';
+import {
+  clearQuizResult,
+  isQuizCompleted,
+  loadHistory,
+  loadQuizResult,
+  loadSession,
+  pushHistory,
+  saveQuizResult,
+  saveSession,
+  setQuizCompleted
+} from '../src/utils/storage.js';
 
 function installMemoryStorage(initial = {}) {
   const state = new Map(Object.entries(initial));
@@ -88,4 +98,19 @@ test('quiz completion flag can be set and cleared', () => {
   assert.equal(isQuizCompleted(), true);
   setQuizCompleted(false);
   assert.equal(isQuizCompleted(), false);
+});
+
+test('quiz result payload can be saved, loaded, and cleared', () => {
+  installMemoryStorage();
+  const payload = {
+    score: { correct: 5, total: 10, percent: 50 },
+    review: [],
+    unansweredCount: 0
+  };
+
+  saveQuizResult(payload);
+  assert.deepEqual(loadQuizResult(), payload);
+
+  clearQuizResult();
+  assert.equal(loadQuizResult(), null);
 });
