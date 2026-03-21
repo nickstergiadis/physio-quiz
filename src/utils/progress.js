@@ -1,4 +1,5 @@
 import { titleCase } from './format/titleCase.js';
+import { USER_TIME_ZONE, getLocalDateKey } from './dateTime.js';
 
 function formatCategoryLabel(category) {
   if (!category) return 'N/A';
@@ -26,7 +27,12 @@ function resolveCategoryStats(history) {
     .sort((a, b) => b.averagePercent - a.averagePercent || b.attempts - a.attempts);
 }
 
-function calculateStreak(history) {
+function toDayIndex(dayKey) {
+  const [year, month, day] = dayKey.split('-').map(Number);
+  return Math.floor(Date.UTC(year, month - 1, day) / (24 * 60 * 60 * 1000));
+}
+
+function calculateStreak(history, now, timeZone) {
   if (!history.length) {
     return { current: 0, activeToday: false, lastAttemptDate: null };
   }
@@ -36,7 +42,8 @@ function calculateStreak(history) {
       history
         .map((attempt) => attempt.completedAt)
         .filter(Boolean)
-        .map((value) => new Date(value).toISOString().slice(0, 10))
+        .map((value) => getLocalDateKey(value, timeZone))
+        .filter(Boolean)
     )
   ].sort((a, b) => b.localeCompare(a));
 
@@ -44,25 +51,25 @@ function calculateStreak(history) {
     return { current: 0, activeToday: false, lastAttemptDate: null };
   }
 
-  const todayKey = new Date().toISOString().slice(0, 10);
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const dayMs = 24 * 60 * 60 * 1000;
+  const todayKey = getLocalDateKey(now, timeZone);
+  const todayIndex = todayKey ? toDayIndex(todayKey) : null;
+  const yesterday = todayIndex === null ? null : new Date((todayIndex - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   let streak = 0;
-  let expectedDay = new Date(`${uniqueDays[0]}T00:00:00.000Z`);
+  let expectedDayIndex = toDayIndex(uniqueDays[0]);
 
   for (const day of uniqueDays) {
-    const dayDate = new Date(`${day}T00:00:00.000Z`);
-    if (dayDate.getTime() !== expectedDay.getTime()) {
+    const dayIndex = toDayIndex(day);
+    if (dayIndex != expectedDayIndex) {
       break;
     }
 
     streak += 1;
-    expectedDay = new Date(expectedDay.getTime() - dayMs);
+    expectedDayIndex -= 1;
   }
 
-  const activeToday = uniqueDays[0] === todayKey;
-  const current = activeToday || uniqueDays[0] === yesterday ? streak : 0;
+  const activeToday = todayKey !== null && uniqueDays[0] === todayKey;
+  const current = uniqueDays[0] === todayKey || uniqueDays[0] === yesterday ? streak : 0;
 
   return {
     current,
@@ -88,7 +95,7 @@ function calculateRecentActivity(history) {
   );
 }
 
-export function computeProgressMetrics(history, { recentLimit = 5 } = {}) {
+export function computeProgressMetrics(history, { recentLimit = 5, now = new Date(), timeZone = USER_TIME_ZONE } = {}) {
   const totalQuizzes = history.length;
   const cumulative = history.reduce(
     (totals, attempt) => {
@@ -106,7 +113,7 @@ export function computeProgressMetrics(history, { recentLimit = 5 } = {}) {
   const strongestCategory = categories[0] || null;
   const weakestCategory = categories.length ? categories[categories.length - 1] : null;
 
-  const streak = calculateStreak(history);
+  const streak = calculateStreak(history, now, timeZone);
   const recentActivity = calculateRecentActivity(history);
 
   return {

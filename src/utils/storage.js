@@ -1,4 +1,5 @@
 import { createAttemptId } from './id.js';
+import { createZonedTimestamp } from './dateTime.js';
 
 const QUIZ_SESSION_KEY = 'physio_quiz_session';
 const QUIZ_COMPLETED_KEY = 'physio_quiz_completed';
@@ -64,9 +65,9 @@ function sanitizeHistoryEntry(entry) {
 
   const id = typeof entry.id === 'string' ? entry.id : createAttemptId();
   const completedAt = (() => {
-    if (typeof entry.completedAt !== 'string') return new Date().toISOString();
+    if (typeof entry.completedAt !== 'string') return createZonedTimestamp();
     const parsed = new Date(entry.completedAt);
-    return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+    return Number.isNaN(parsed.getTime()) ? createZonedTimestamp() : createZonedTimestamp(parsed);
   })();
   const filters = isRecord(entry.filters)
     ? {
@@ -90,7 +91,7 @@ function sanitizeHistoryEntry(entry) {
 function createProgressDocument(history) {
   return {
     version: PROGRESS_VERSION,
-    updatedAt: new Date().toISOString(),
+    updatedAt: createZonedTimestamp(),
     attempts: history.slice(0, HISTORY_LIMIT)
   };
 }
