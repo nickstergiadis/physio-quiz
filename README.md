@@ -92,29 +92,28 @@ For Edge Functions:
 
 ### 4) Frontend runtime config
 
-Set public runtime config in `index.html` (or inject at deploy):
+The app reads public config in this precedence order:
 
-```html
-<meta name="physio-quiz-supabase-url" content="https://YOUR_PROJECT.supabase.co" />
-<meta name="physio-quiz-supabase-anon-key" content="YOUR_ANON_KEY" />
-```
+1. `window.__PHYSIO_QUIZ_CONFIG__` (from `runtime-config.js`)
+2. `<meta>` tags in `index.html`
 
-Optional explicit function base URL override:
+Required values for remote save:
 
-```html
-<meta name="physio-quiz-supabase-functions-url" content="https://YOUR_PROJECT.supabase.co/functions/v1" />
-```
+- `PHYSIO_QUIZ_SUPABASE_URL` → `https://YOUR_PROJECT.supabase.co`
+- `PHYSIO_QUIZ_SUPABASE_ANON_KEY` → public anon key
 
-Or:
+Optional override:
 
-```html
-<script>
-  window.__PHYSIO_QUIZ_CONFIG__ = {
-    supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
-    supabaseAnonKey: 'YOUR_ANON_KEY',
-    supabaseFunctionsBaseUrl: 'https://YOUR_PROJECT.supabase.co/functions/v1'
-  };
-</script>
+- `PHYSIO_QUIZ_SUPABASE_FUNCTIONS_URL` → explicit Edge Function base URL (defaults to `${SUPABASE_URL}/functions/v1`)
+
+For local/non-CI static hosting, set values in `runtime-config.js` before publishing:
+
+```js
+window.__PHYSIO_QUIZ_CONFIG__ = Object.assign({}, window.__PHYSIO_QUIZ_CONFIG__, {
+  supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
+  supabaseAnonKey: 'YOUR_ANON_KEY',
+  supabaseFunctionsBaseUrl: 'https://YOUR_PROJECT.supabase.co/functions/v1'
+});
 ```
 
 > Never expose service-role keys in the browser.
@@ -167,8 +166,23 @@ For stronger abuse resistance, add WAF/rate limiting and optionally a rotate-cod
 ## Static deployment notes (GitHub Pages)
 
 - App uses hash routes (`#/quiz`, `#/progress`)
-- Inject runtime Supabase config during deployment
+- Build emits `dist/runtime-config.js` from environment variables
 - Keep function URL reachable from static host origin/CORS policy
+
+### GitHub Pages exact setup
+
+1. In GitHub repo settings, add Actions secrets:
+   - `PHYSIO_QUIZ_SUPABASE_URL`
+   - `PHYSIO_QUIZ_SUPABASE_ANON_KEY`
+   - optional: `PHYSIO_QUIZ_SUPABASE_FUNCTIONS_URL`
+2. Run the **Deploy to GitHub Pages** workflow. It now fails fast if required secrets are missing.
+3. Confirm deployed `runtime-config.js` contains non-empty `supabaseUrl` and `supabaseAnonKey`.
+4. Open the app Home page and click **Save progress**. You should receive a resume code instead of a configuration error.
+
+### Other static hosts (Netlify, Cloudflare Pages, S3, etc.)
+
+- Provide the same environment variables to the build command (`npm run build`), or edit `dist/runtime-config.js` after build and before publish.
+- Publish the full `dist/` directory including `runtime-config.js`.
 
 ## Local development notes
 

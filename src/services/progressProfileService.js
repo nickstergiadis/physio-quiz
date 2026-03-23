@@ -1,4 +1,4 @@
-import { getSupabaseConfig } from '../config/runtimeConfig.js';
+import { getSupabaseConfig, getSupabaseConfigDiagnostics } from '../config/runtimeConfig.js';
 
 const CODE_CHUNK = 4;
 const MAX_CODE_LENGTH = 64;
@@ -62,10 +62,21 @@ function isConfigured(config) {
   return Boolean(config.url && config.anonKey && config.functionsBaseUrl);
 }
 
+function buildMissingConfigErrorMessage() {
+  const diagnostics = getSupabaseConfigDiagnostics();
+  const missingNames = diagnostics.missingRequired.map((item) => item.envName);
+
+  if (!missingNames.length) {
+    return 'Remote save is not configured in this environment.';
+  }
+
+  return `Remote save is not configured in this environment. Missing runtime config: ${missingNames.join(', ')}. Set these values in runtime-config.js or meta tags.`;
+}
+
 async function callEdgeFunction(functionName, body) {
   const config = getSupabaseConfig();
   if (!isConfigured(config)) {
-    throw new Error('Remote save is not configured in this environment.');
+    throw new Error(buildMissingConfigErrorMessage());
   }
 
   const response = await fetch(`${config.functionsBaseUrl}/${functionName}`, {

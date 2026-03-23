@@ -78,6 +78,16 @@ function isRecord(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
+function buildProfileMessage(prefix, error, fallback) {
+  const details = error?.message || '';
+  if (details.includes('Remote save is not configured in this environment')) {
+    console.error(details);
+    return `${prefix}: Remote save is unavailable on this deployment. Local progress still works on this device.`;
+  }
+
+  return `${prefix}: ${details || fallback}`;
+}
+
 export function createApp(root) {
   if (!root) {
     console.error('App root element not found.');
@@ -192,7 +202,11 @@ export function createApp(root) {
       state.profile.status = 'remote-linked';
       saveProfileStatus(state.profile.status);
     } catch (error) {
-      profileMessage = `Save error: ${error.message || 'Could not save to remote profile. Local progress is still available.'}`;
+      profileMessage = buildProfileMessage(
+        'Save error',
+        error,
+        'Could not save to remote profile. Local progress is still available.'
+      );
     }
   }
 
@@ -223,7 +237,7 @@ export function createApp(root) {
         await profileService.saveProfileByCode(state.profile.resumeCode, payload);
         profileMessage = 'Saved progress to your existing resume code.';
       } catch (error) {
-        profileMessage = `Save error: ${error.message || 'Unable to save progress right now.'}`;
+        profileMessage = buildProfileMessage('Save error', error, 'Unable to save progress right now.');
       }
       render();
       return;
@@ -238,7 +252,7 @@ export function createApp(root) {
       profileMessage = `Your resume code: ${profileRecord.resumeCode}. Save it somewhere safe.`;
       render();
     } catch (error) {
-      profileMessage = `Save error: ${error.message || 'Unable to create a profile right now.'}`;
+      profileMessage = buildProfileMessage('Save error', error, 'Unable to create a profile right now.');
       render();
     }
   }
@@ -274,7 +288,7 @@ export function createApp(root) {
 
       setRoute(ROUTES.home);
     } catch (error) {
-      profileMessage = `Resume error: ${error.message || 'Could not load saved progress. Please try again.'}`;
+      profileMessage = buildProfileMessage('Resume error', error, 'Could not load saved progress. Please try again.');
       render();
     }
   }
