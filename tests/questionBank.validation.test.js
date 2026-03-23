@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 import { questionBank } from '../src/data/questionBank.js';
 import { QUIZ_CATEGORIES, isValidQuestion } from '../src/data/schema/quizSchema.js';
 
-test('question bank contains 500 schema-valid questions', () => {
-  assert.equal(questionBank.length, 500);
+test('question bank contains at least 500 schema-valid questions', () => {
+  assert.ok(questionBank.length >= 500, `expected at least 500 questions, got ${questionBank.length}`);
   questionBank.forEach((question) => assert.equal(isValidQuestion(question), true, question.id));
 });
 

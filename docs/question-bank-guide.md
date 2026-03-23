@@ -46,6 +46,6 @@ When authoring or reviewing questions, prioritize educational value over raw cou
 
 - `explanation`: required string used in answer review.
 - `tags`: optional string array (e.g. `['clinical-reasoning', 'rehab']`).
-- `difficulty`: must be one of `easy`, `medium`, `hard`.
+- `difficulty`: must be one of `easy`, `medium`, `hard`, `expert`.
 
 The runtime validator (`isValidQuestion`) enforces this schema. Invalid questions are discarded by `src/data/questionBank.js`.

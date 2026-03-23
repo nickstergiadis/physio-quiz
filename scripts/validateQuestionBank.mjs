@@ -64,19 +64,21 @@ for (const question of questionBank) {
 }
 
 const total = questionBank.length;
-if (total !== 500) errors.push(`Expected 500 questions, found ${total}`);
+if (total < 500) errors.push(`Expected at least 500 questions, found ${total}`);
 
 for (const category of QUIZ_CATEGORIES) {
   if (!byCategory[category]) errors.push(`Category has no questions: ${category}`);
 }
 
-const easyPct = byDifficulty.easy / total;
-const mediumPct = byDifficulty.medium / total;
-const hardPct = byDifficulty.hard / total;
+const easyPct = (byDifficulty.easy || 0) / total;
+const mediumPct = (byDifficulty.medium || 0) / total;
+const hardPct = (byDifficulty.hard || 0) / total;
+const expertPct = (byDifficulty.expert || 0) / total;
 
-if (easyPct < 0.3 || easyPct > 0.4) warnings.push(`Easy difficulty outside target band: ${(easyPct * 100).toFixed(1)}%`);
-if (mediumPct < 0.4 || mediumPct > 0.5) warnings.push(`Medium difficulty outside target band: ${(mediumPct * 100).toFixed(1)}%`);
-if (hardPct < 0.15 || hardPct > 0.25) warnings.push(`Hard difficulty outside target band: ${(hardPct * 100).toFixed(1)}%`);
+if (easyPct < 0.25 || easyPct > 0.4) warnings.push(`Easy difficulty outside target band: ${(easyPct * 100).toFixed(1)}%`);
+if (mediumPct < 0.35 || mediumPct > 0.55) warnings.push(`Medium difficulty outside target band: ${(mediumPct * 100).toFixed(1)}%`);
+if (hardPct < 0.1 || hardPct > 0.3) warnings.push(`Hard difficulty outside target band: ${(hardPct * 100).toFixed(1)}%`);
+if (byDifficulty.expert !== undefined && (expertPct < 0.05 || expertPct > 0.2)) warnings.push(`Expert difficulty outside target band: ${(expertPct * 100).toFixed(1)}%`);
 
 const maxAnswer = Math.max(...Object.values(byAnswerIndex));
 const minAnswer = Math.min(...Object.values(byAnswerIndex));

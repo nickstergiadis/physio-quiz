@@ -1,5 +1,5 @@
 /**
- * @typedef {'easy'|'medium'|'hard'} Difficulty
+ * @typedef {'easy'|'medium'|'hard'|'expert'} Difficulty
  * @typedef {'shoulder'|'knee'|'low back'|'ankle'|'cervical spine'|'exercise prescription'|'clinical reasoning'} QuizCategory
  *
  * @typedef {Object} QuizQuestion
@@ -25,7 +25,7 @@ export const QUIZ_CATEGORIES = [
 ];
 
 /** @type {Difficulty[]} */
-export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'];
+export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard', 'expert'];
 
 /**
  * Runtime guard for consistent question shape.
