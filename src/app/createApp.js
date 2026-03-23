@@ -198,7 +198,8 @@ export function createApp(root) {
   }
 
   function restart() {
-    state.filters = { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' };
+    const previousMode = state.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal';
+    state.filters = { mode: previousMode, category: 'all', difficulty: 'all', length: 10, order: 'shuffled' };
     state.questions = [];
     state.currentIndex = 0;
     state.answers = {};
