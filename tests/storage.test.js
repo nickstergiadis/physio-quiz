@@ -135,6 +135,22 @@ test('quiz result payload can be saved, loaded, and cleared', () => {
   assert.equal(loadQuizResult(), null);
 });
 
+
+
+test('invalid quiz result payload is discarded safely', () => {
+  const state = installMemoryStorage({
+    physio_quiz_result_v1: JSON.stringify({
+      score: 'bad-score',
+      review: 'not-an-array',
+      unansweredCount: -5
+    })
+  });
+
+  assert.equal(loadQuizResult(), null);
+  assert.equal(state.has('physio_quiz_result_v1'), false);
+});
+
+
 test('attempt details can be saved and loaded by attempt id', () => {
   installMemoryStorage();
   const attemptId = 'attempt-123';
