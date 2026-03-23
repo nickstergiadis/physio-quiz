@@ -19,6 +19,7 @@ Physio Quiz is a lightweight, static single-page physiotherapy training app buil
   - strongest and weakest categories
   - streak and recent activity metrics
   - recent attempt history
+- Local-only persistence (browser `localStorage`) for session and history; no cloud sync or resume codes
 - Local dev/admin screen for drafting questions in browser storage
 - Schema validation and duplicate-id filtering for question safety
 
@@ -93,7 +94,8 @@ Typical URL format is `https://<owner>.github.io/physio-quiz/`.
 
 ## Environment and configuration requirements
 
-The app currently requires **no runtime environment variables**.
+The app currently requires **no runtime environment variables** and **no Supabase services**.
+It is intentionally a static, local-only app build that runs entirely in the browser.
 
 Configuration lives in source code:
 
