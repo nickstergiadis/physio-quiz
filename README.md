@@ -1,28 +1,26 @@
 # Physio Quiz
 
-Physio Quiz is a lightweight vanilla JavaScript SPA for physiotherapy MCQ practice. Users can start immediately (no signup), and can now optionally create an **anonymous saved progress profile** backed by Supabase using a generated resume code.
+Physio Quiz is a lightweight vanilla JavaScript SPA for physiotherapy MCQ practice. Users can start immediately (no signup), and can optionally create an **anonymous saved progress profile** using a generated resume code.
 
-## What’s new: anonymous saveable progress
+## Anonymous saved progress (Supabase + Edge Functions)
 
-- Start quizzes with no authentication.
-- Click **Save progress** to create a remote anonymous profile.
-- Receive a generated **resume code** (copy + store safely).
-- Later, enter the code in **Resume saved progress** (or via URL) to restore:
-  - in-progress quiz session
-  - selected answers + current question index
-  - completion state + latest result
-  - attempt history + attempt review details
-- Local storage remains active as fallback/cache.
-- Once linked, remote profile becomes source of truth for restore across devices.
+This implementation uses:
 
-## Features
+- **Supabase Postgres** for `progress_profiles`
+- **Supabase Edge Functions** as the only browser-facing API for profile create/get/save
+- localStorage as local cache/fallback
 
-- Quiz setup filters: mode, category, difficulty, length, order
-- Question-by-question flow with Previous/Next controls
-- Scoring + explanation review at completion
-- Progress dashboard with history and metrics
-- Dev/admin draft-question page (`#/admin-dev`)
-- Local-first behavior with optional Supabase remote resume profiles
+The browser does **not** query `progress_profiles` directly by resume code.
+
+## Feature summary
+
+- Start quiz instantly with no account
+- Create a saved profile at any point
+- Server generates a high-entropy resume code once
+- Resume on any device with the code
+- Debounced autosave after key quiz/progress changes
+- Local storage fallback retained
+- Remote profile is preferred once linked
 
 ## Quick start
 
@@ -45,119 +43,135 @@ npm test
 npm run build
 ```
 
-Build output is in `dist/`.
+## Supabase setup
 
-### Run built app locally
+### 1) Database schema and RLS
+
+Run `supabase/anonymous_progress_profiles.sql` in Supabase SQL Editor.
+
+It creates:
+
+- `public.progress_profiles`
+  - `id uuid`
+  - `code_hash text unique`
+  - `code_last4 text`
+  - `payload_json jsonb`
+  - `app_data_version integer`
+  - `created_at`, `updated_at`, `last_active_at`
+- indexes on `updated_at` + `last_active_at`
+- `updated_at` trigger
+- RLS enabled
+- revoked anon/authenticated table privileges
+
+No permissive anon RLS policies are created for by-code reads/writes.
+
+### 2) Edge Functions
+
+Deploy these functions:
+
+- `create-progress-profile`
+- `get-progress-profile`
+- `save-progress-profile`
+
+They live in `supabase/functions/` and use `SUPABASE_SERVICE_ROLE_KEY` server-side.
+
+Example deployment commands:
 
 ```bash
-npx serve dist
+supabase functions deploy create-progress-profile
+supabase functions deploy get-progress-profile
+supabase functions deploy save-progress-profile
 ```
 
-## Supabase setup (anonymous resume codes)
+### 3) Required function env vars
 
-1. Create a Supabase project.
-2. Open SQL Editor and run:
+For Edge Functions:
 
-```sql
--- from this repo
--- supabase/anonymous_progress_profiles.sql
-```
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-3. Copy your project values:
-   - Project URL
-   - anon public API key
+### 4) Frontend runtime config
 
-4. Configure runtime values in `index.html` (or inject at deploy time):
+Set public runtime config in `index.html` (or inject at deploy):
 
 ```html
 <meta name="physio-quiz-supabase-url" content="https://YOUR_PROJECT.supabase.co" />
 <meta name="physio-quiz-supabase-anon-key" content="YOUR_ANON_KEY" />
 ```
 
-Alternative runtime injection:
+Optional explicit function base URL override:
+
+```html
+<meta name="physio-quiz-supabase-functions-url" content="https://YOUR_PROJECT.supabase.co/functions/v1" />
+```
+
+Or:
 
 ```html
 <script>
   window.__PHYSIO_QUIZ_CONFIG__ = {
     supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
-    supabaseAnonKey: 'YOUR_ANON_KEY'
+    supabaseAnonKey: 'YOUR_ANON_KEY',
+    supabaseFunctionsBaseUrl: 'https://YOUR_PROJECT.supabase.co/functions/v1'
   };
 </script>
 ```
 
-> Do not hardcode service-role keys. Use only the Supabase anon key in the browser.
+> Never expose service-role keys in the browser.
 
-## Database schema + policy model
+## How resume codes work
 
-`supabase/anonymous_progress_profiles.sql` creates:
+- User clicks **Save progress**
+- Edge Function generates a code (format like `PQ-XXXX-XXXX-XXXX-XXXX-XXXX`)
+- Function normalizes and hashes the code (SHA-256)
+- DB stores only `code_hash` + `code_last4`, not raw code
+- Raw code is returned once to the client
+- User can resume via form input or URL `?resume=...` / `#/?resume=...`
 
-- `public.anonymous_progress_profiles`
-  - `id` (UUID)
-  - `resume_code_hash` (SHA-256 hash of normalized code)
-  - `payload_json` (JSONB state blob)
-  - `created_at`, `updated_at`, `last_active_at`
-- Security-definer RPC functions:
-  - `create_progress_profile`
-  - `get_progress_profile_by_code`
-  - `save_progress_profile_by_code`
+## Autosave and reconciliation
 
-Direct anon table access is revoked. Browser clients use RPC only.
+Autosave (debounced) runs when linked profile exists after:
 
-## Resume code flow
+- start quiz
+- answer change
+- prev/next navigation
+- submit quiz
+- restart/new quiz transitions
 
-1. User starts quiz normally.
-2. User clicks **Save progress**.
-3. App generates a long random code and sends payload to Supabase.
-4. App shows **Your resume code** with copy button.
-5. User resumes later by entering code or by URL:
-   - `#/` with hash query: `#/??resume=CODE` (or `code=`)
-   - page query: `?resume=CODE`
-6. App loads remote payload, writes local cache, and routes user to quiz/results/home based on restored state.
+Reconciliation strategy (MVP):
 
-## Autosave behavior
+- On linked-profile bootstrap, compare local snapshot `updatedAt` with remote
+- If local is clearly newer, push local snapshot to remote
+- Otherwise restore remote snapshot and cache locally
 
-When linked to a resume code, remote autosave runs (debounced) after key state changes:
+## Security notes and limitations
 
-- starting a quiz
-- selecting/changing answers
-- moving previous/next
-- completing a quiz
-- restart/new quiz transition
+Implemented controls:
 
-If network fails, app keeps local progress and shows a non-destructive status message.
+- cryptographically random server-generated codes
+- DB stores only hash, not raw resume code
+- input normalization + validation
+- payload size limits in frontend and Edge Functions
+- no direct anon table access
+- basic failure responses and limited detail
+- lightweight client-side retry throttling
 
-## Static hosting / GitHub Pages notes
+Remaining brute-force limitations (MVP):
 
-- App uses hash routes (`#/quiz`, `#/progress`) so rewrite rules are not required.
-- For GitHub Pages, ensure runtime Supabase config is injected into deployed `index.html`.
-- CI/CD should run:
+- no distributed IP rate limit at edge yet
+- no CAPTCHA/challenge step
+- no code rotation endpoint
 
-```bash
-npm run check && npm test && npm run build
-```
+For stronger abuse resistance, add WAF/rate limiting and optionally a rotate-code flow.
 
-## Security limitations and notes
+## Static deployment notes (GitHub Pages)
 
-- Resume code is a bearer credential: anyone with it can access that profile.
-- Store it like a password.
-- The app normalizes + validates code input and includes lightweight client-side attempt throttling.
-- Server-side hash storage is implemented (`resume_code_hash`) so raw code is not stored in table rows.
-- For stronger brute-force defense, add edge rate-limiting/CAPTCHA/WAF controls at the platform layer.
+- App uses hash routes (`#/quiz`, `#/progress`)
+- Inject runtime Supabase config during deployment
+- Keep function URL reachable from static host origin/CORS policy
 
-## Local storage keys
+## Local development notes
 
-- `physio_quiz_session`
-- `physio_quiz_completed`
-- `physio_quiz_result_v1`
-- `physio_quiz_progress_v1`
-- `physio_quiz_attempt_details_v1`
-- `physio_quiz_resume_code_v1`
-- `physio_quiz_profile_status_v1`
-- `physio_quiz_dev_questions_v1`
-
-## Follow-up improvements (recommended)
-
-- Move code generation fully server-side in RPC for single-source security.
-- Add Supabase Edge Function for stronger request throttling/IP-based controls.
-- Add optional encrypted payload-at-rest model for sensitive deployments.
-- Add explicit “unlink device” and “rotate resume code” controls.
+- Frontend can run without Supabase config (local-only mode)
+- When config is missing or network fails, app keeps local progress intact
+- To test Edge Functions locally, use Supabase CLI with local env vars and function serve
