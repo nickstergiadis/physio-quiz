@@ -108,6 +108,22 @@ function sanitizeReviewItem(item) {
   };
 }
 
+
+function sanitizeQuizResult(result) {
+  if (!isRecord(result) || !Array.isArray(result.review)) return null;
+
+  const score = sanitizeScore(result.score);
+  const review = result.review.map(sanitizeReviewItem).filter(Boolean);
+  const unansweredCount =
+    Number.isInteger(result.unansweredCount) && result.unansweredCount >= 0 ? result.unansweredCount : 0;
+
+  return {
+    score,
+    review,
+    unansweredCount
+  };
+}
+
 function sanitizeAttemptDetails(details) {
   if (!isRecord(details) || !Array.isArray(details.review)) return null;
   const score = sanitizeScore(details.score);
@@ -216,7 +232,9 @@ export function isQuizCompleted() {
 }
 
 export function saveQuizResult(result) {
-  safeSetItem(QUIZ_RESULT_KEY, JSON.stringify(result));
+  const sanitized = sanitizeQuizResult(result);
+  if (!sanitized) return;
+  safeSetItem(QUIZ_RESULT_KEY, JSON.stringify(sanitized));
 }
 
 export function loadQuizResult() {
@@ -226,7 +244,13 @@ export function loadQuizResult() {
   }
 
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    const sanitized = sanitizeQuizResult(parsed);
+    if (!sanitized) {
+      safeRemoveItem(QUIZ_RESULT_KEY);
+      return null;
+    }
+    return sanitized;
   } catch {
     safeRemoveItem(QUIZ_RESULT_KEY);
     return null;

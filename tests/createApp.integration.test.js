@@ -171,6 +171,23 @@ test('app recovers from malformed localStorage documents', () => {
   assert.ok(document.body.textContent.includes('No quiz attempts yet. Complete a quiz to build your progress history.'));
 });
 
+
+
+test('completed flag with malformed stored result is safely cleared and redirected home', () => {
+  const { storageState } = installAppDom({
+    hash: `#${ROUTES.results}`,
+    storage: {
+      physio_quiz_completed: '1',
+      physio_quiz_result_v1: JSON.stringify({ score: 'bad-score', review: 'not-an-array' })
+    }
+  });
+
+  assert.ok([ROUTES.home, `#${ROUTES.home}`].includes(window.location.hash));
+  assert.ok(document.body.textContent.includes('No quiz results to review yet. Complete a quiz first.'));
+  assert.equal(storageState.has('physio_quiz_result_v1'), false);
+  assert.equal(storageState.has('physio_quiz_completed'), false);
+});
+
 test('invalid hash route falls back to home with a user-facing notice', () => {
   installAppDom({ hash: '#/not-a-real-route' });
 
