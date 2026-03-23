@@ -5,6 +5,7 @@ const QUIZ_SESSION_KEY = 'physio_quiz_session';
 const QUIZ_COMPLETED_KEY = 'physio_quiz_completed';
 const QUIZ_PROGRESS_KEY = 'physio_quiz_progress_v1';
 const QUIZ_RESULT_KEY = 'physio_quiz_result_v1';
+const QUIZ_ATTEMPT_DETAILS_KEY = 'physio_quiz_attempt_details_v1';
 const DEV_QUESTION_DRAFTS_KEY = 'physio_quiz_dev_questions_v1';
 const LEGACY_QUIZ_HISTORY_KEY_V2 = 'physio_quiz_history_v2';
 const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
@@ -87,6 +88,55 @@ function sanitizeHistoryEntry(entry) {
     score: sanitizeScore(entry.score),
     categoryStats: sanitizeCategoryStats(entry.categoryStats)
   };
+}
+
+function sanitizeReviewItem(item) {
+  if (!isRecord(item)) return null;
+  if (typeof item.question !== 'string' || !Array.isArray(item.options)) return null;
+
+  const options = item.options.map((option) => (typeof option === 'string' ? option : String(option ?? '')));
+  const correctAnswer = Number.isInteger(item.correctAnswer) ? item.correctAnswer : -1;
+  const selectedAnswer = Number.isInteger(item.selectedAnswer) && item.selectedAnswer >= 0 ? item.selectedAnswer : null;
+
+  return {
+    question: item.question,
+    options,
+    selectedAnswer,
+    correctAnswer,
+    explanation: typeof item.explanation === 'string' ? item.explanation : '',
+    isCorrect: selectedAnswer === correctAnswer
+  };
+}
+
+function sanitizeAttemptDetails(details) {
+  if (!isRecord(details) || !Array.isArray(details.review)) return null;
+  const score = sanitizeScore(details.score);
+
+  return {
+    id: typeof details.id === 'string' ? details.id : createAttemptId(),
+    completedAt: typeof details.completedAt === 'string' ? details.completedAt : createZonedTimestamp(),
+    score,
+    unansweredCount: Number.isInteger(details.unansweredCount) && details.unansweredCount >= 0 ? details.unansweredCount : 0,
+    review: details.review.map(sanitizeReviewItem).filter(Boolean)
+  };
+}
+
+function loadAttemptDetailsDocument() {
+  const raw = safeGetItem(QUIZ_ATTEMPT_DETAILS_KEY);
+  if (!raw) return {};
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!isRecord(parsed)) return {};
+    return parsed;
+  } catch {
+    safeRemoveItem(QUIZ_ATTEMPT_DETAILS_KEY);
+    return {};
+  }
+}
+
+function saveAttemptDetailsDocument(document) {
+  safeSetItem(QUIZ_ATTEMPT_DETAILS_KEY, JSON.stringify(document));
 }
 
 function createProgressDocument(history) {
@@ -193,6 +243,11 @@ export function pushHistory(entry) {
   if (!normalized) return;
   history.unshift(normalized);
   saveHistory(history);
+
+  const validAttemptIds = new Set(history.map((attempt) => attempt.id));
+  const detailsDocument = loadAttemptDetailsDocument();
+  const pruned = Object.fromEntries(Object.entries(detailsDocument).filter(([id]) => validAttemptIds.has(id)));
+  saveAttemptDetailsDocument(pruned);
 }
 
 export function loadHistory() {
@@ -219,6 +274,23 @@ export function loadHistory() {
     safeRemoveItem(QUIZ_PROGRESS_KEY);
     return [];
   }
+}
+
+export function saveAttemptDetails(attemptId, details) {
+  if (typeof attemptId !== 'string' || !attemptId) return;
+  const sanitized = sanitizeAttemptDetails({ ...details, id: attemptId });
+  if (!sanitized) return;
+
+  const document = loadAttemptDetailsDocument();
+  document[attemptId] = sanitized;
+  saveAttemptDetailsDocument(document);
+}
+
+export function loadAttemptDetails(attemptId) {
+  if (typeof attemptId !== 'string' || !attemptId) return null;
+  const document = loadAttemptDetailsDocument();
+  const details = sanitizeAttemptDetails(document[attemptId]);
+  return details || null;
 }
 
 export function saveDevQuestions(questions) {

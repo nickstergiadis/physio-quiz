@@ -84,6 +84,9 @@ test('answer + submit flow renders results with explanation text and attempt app
   assert.ok(document.body.textContent.includes('Progress Dashboard'));
   assert.ok(document.body.textContent.includes('Quizzes completed'));
   assert.ok(document.body.textContent.includes('Recent Quiz Attempts'));
+  clickByText('View details');
+  assert.ok(document.body.textContent.includes('Correct answer:'));
+  assert.ok(document.body.textContent.includes('Explanation:'));
 });
 
 test('results route is guarded during an active quiz and redirects home', () => {
