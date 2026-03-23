@@ -27,6 +27,23 @@ test('loadProfileByCode rejects obviously invalid codes', async () => {
   await assert.rejects(() => service.loadProfileByCode('short'), /valid resume code/i);
 });
 
+
+test('service reports missing runtime config variables in configuration errors', async () => {
+  global.document = {
+    querySelector() {
+      return null;
+    }
+  };
+  global.__PHYSIO_QUIZ_CONFIG__ = {};
+
+  const service = createProgressProfileService();
+
+  await assert.rejects(
+    () => service.createProfile({ a: 1 }),
+    /PHYSIO_QUIZ_SUPABASE_URL.*PHYSIO_QUIZ_SUPABASE_ANON_KEY/i
+  );
+});
+
 test('service calls Supabase Edge Functions for save/load/create', async () => {
   installDomConfig();
 
