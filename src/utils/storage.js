@@ -12,6 +12,10 @@ const LEGACY_QUIZ_HISTORY_KEY = 'physio_quiz_history';
 const HISTORY_LIMIT = 50;
 const PROGRESS_VERSION = 1;
 
+const LINKED_RESUME_CODE_KEY = 'physio_quiz_resume_code_v1';
+const PROFILE_STATUS_KEY = 'physio_quiz_profile_status_v1';
+const APP_DATA_VERSION = 2;
+
 function safeGetItem(key) {
   try {
     return localStorage.getItem(key);
@@ -309,5 +313,112 @@ export function loadDevQuestions() {
   } catch {
     safeRemoveItem(DEV_QUESTION_DRAFTS_KEY);
     return [];
+  }
+}
+
+export function saveLinkedResumeCode(resumeCode) {
+  if (typeof resumeCode !== 'string' || !resumeCode.trim()) return;
+  safeSetItem(LINKED_RESUME_CODE_KEY, resumeCode.trim());
+}
+
+export function loadLinkedResumeCode() {
+  return safeGetItem(LINKED_RESUME_CODE_KEY) || '';
+}
+
+export function clearLinkedResumeCode() {
+  safeRemoveItem(LINKED_RESUME_CODE_KEY);
+}
+
+export function saveProfileStatus(status) {
+  if (typeof status !== 'string') return;
+  safeSetItem(PROFILE_STATUS_KEY, status);
+}
+
+export function loadProfileStatus() {
+  return safeGetItem(PROFILE_STATUS_KEY) || 'local-only';
+}
+
+function loadAttemptDetailsMap() {
+  const rawMap = loadAttemptDetailsDocument();
+  return Object.fromEntries(
+    Object.entries(rawMap)
+      .map(([id, details]) => [id, sanitizeAttemptDetails({ ...details, id })])
+      .filter(([, details]) => !!details)
+  );
+}
+
+export function buildPersistedSnapshot({
+  filters,
+  questions,
+  currentIndex,
+  answers,
+  quizCompleted,
+  latestResult,
+  history,
+  attemptDetails,
+  profile
+}) {
+  const detailsMap = isRecord(attemptDetails) ? attemptDetails : loadAttemptDetailsMap();
+  return {
+    appDataVersion: APP_DATA_VERSION,
+    updatedAt: createZonedTimestamp(),
+    filters: isRecord(filters) ? filters : { mode: 'normal', category: 'all', difficulty: 'all', length: 10, order: 'shuffled' },
+    session: {
+      questions: Array.isArray(questions) ? questions : [],
+      currentIndex: Number.isInteger(currentIndex) ? currentIndex : 0,
+      answers: isRecord(answers) ? answers : {},
+      quizCompleted: Boolean(quizCompleted)
+    },
+    latestResult: isRecord(latestResult) ? latestResult : null,
+    history: Array.isArray(history) ? history.map(sanitizeHistoryEntry).filter(Boolean) : loadHistory(),
+    attemptDetails: detailsMap,
+    profile: isRecord(profile)
+      ? {
+          resumeCode: typeof profile.resumeCode === 'string' ? profile.resumeCode : '',
+          status: typeof profile.status === 'string' ? profile.status : loadProfileStatus()
+        }
+      : {
+          resumeCode: loadLinkedResumeCode(),
+          status: loadProfileStatus()
+        }
+  };
+}
+
+export function persistSnapshotToLocal(snapshot) {
+  if (!isRecord(snapshot)) return;
+
+  if (isRecord(snapshot.session) && Array.isArray(snapshot.session.questions) && snapshot.session.questions.length) {
+    saveSession({
+      filters: isRecord(snapshot.filters) ? snapshot.filters : undefined,
+      questions: snapshot.session.questions,
+      currentIndex: Number.isInteger(snapshot.session.currentIndex) ? snapshot.session.currentIndex : 0,
+      answers: isRecord(snapshot.session.answers) ? snapshot.session.answers : {}
+    });
+  } else {
+    clearSession();
+  }
+
+  if (Array.isArray(snapshot.history)) {
+    saveHistory(snapshot.history);
+  }
+
+  if (isRecord(snapshot.attemptDetails)) {
+    saveAttemptDetailsDocument(snapshot.attemptDetails);
+  }
+
+  if (snapshot.session?.quizCompleted && snapshot.latestResult) {
+    setQuizCompleted(true);
+    saveQuizResult(snapshot.latestResult);
+  } else {
+    setQuizCompleted(false);
+    clearQuizResult();
+  }
+
+  if (typeof snapshot.profile?.resumeCode === 'string' && snapshot.profile.resumeCode) {
+    saveLinkedResumeCode(snapshot.profile.resumeCode);
+  }
+
+  if (typeof snapshot.profile?.status === 'string') {
+    saveProfileStatus(snapshot.profile.status);
   }
 }
