@@ -1,191 +1,158 @@
 # Physio Quiz
 
-Physio Quiz is a lightweight vanilla JavaScript SPA for physiotherapy MCQ practice. Users can start immediately (no signup), and can optionally create an **anonymous saved progress profile** using a generated resume code.
+## App summary
 
-## Anonymous saved progress (Supabase + Edge Functions)
+Physio Quiz is a lightweight, static single-page physiotherapy training app built with vanilla JavaScript. Learners can run quick MCQ sessions, review explanations, and track progress locally in the browser without a backend.
 
-This implementation uses:
+## Feature list
 
-- **Supabase Postgres** for `progress_profiles`
-- **Supabase Edge Functions** as the only browser-facing API for profile create/get/save
-- localStorage as local cache/fallback
+- Quiz setup with filters for:
+  - mode (`normal` or `clinical-reasoning`)
+  - category
+  - difficulty
+  - quiz length
+  - question order (`shuffled` or `fixed`)
+- Guided question flow with Previous/Next navigation
+- End-of-quiz scoring and per-question review with explanation text
+- Progress dashboard with:
+  - overall average score
+  - strongest and weakest categories
+  - streak and recent activity metrics
+  - recent attempt history
+- Local dev/admin screen for drafting questions in browser storage
+- Schema validation and duplicate-id filtering for question safety
 
-The browser does **not** query `progress_profiles` directly by resume code.
-
-## Feature summary
-
-- Start quiz instantly with no account
-- Create a saved profile at any point
-- Server generates a high-entropy resume code once
-- Resume on any device with the code
-- Debounced autosave after key quiz/progress changes
-- Local storage fallback retained
-- Remote profile is preferred once linked
-
-## Quick start
+## Local setup
 
 ### Requirements
 
 - Node.js 18+
 - npm 9+
 
-### Install
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### Validate + test + build
+## Run and build steps
+
+### Static checks
 
 ```bash
 npm run check
+```
+
+### Test suite
+
+```bash
 npm test
+```
+
+### Production build
+
+```bash
 npm run build
 ```
 
-## Supabase setup
+Build output is written to `dist/`.
 
-### 1) Database schema and RLS
-
-Run `supabase/anonymous_progress_profiles.sql` in Supabase SQL Editor.
-
-It creates:
-
-- `public.progress_profiles`
-  - `id uuid`
-  - `code_hash text unique`
-  - `code_last4 text`
-  - `payload_json jsonb`
-  - `app_data_version integer`
-  - `created_at`, `updated_at`, `last_active_at`
-- indexes on `updated_at` + `last_active_at`
-- `updated_at` trigger
-- RLS enabled
-- revoked anon/authenticated table privileges
-
-No permissive anon RLS policies are created for by-code reads/writes.
-
-### 2) Edge Functions
-
-Deploy these functions:
-
-- `create-progress-profile`
-- `get-progress-profile`
-- `save-progress-profile`
-
-They live in `supabase/functions/` and use `SUPABASE_SERVICE_ROLE_KEY` server-side.
-
-Example deployment commands:
+### Run the built app locally
 
 ```bash
-supabase functions deploy create-progress-profile
-supabase functions deploy get-progress-profile
-supabase functions deploy save-progress-profile
+npx serve dist
 ```
 
-### 3) Required function env vars
+Then open the local URL printed by `serve` (often `http://localhost:3000`).
 
-For Edge Functions:
+## Deployment steps
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+1. Install dependencies: `npm install`
+2. Run validation: `npm run check && npm test`
+3. Build: `npm run build`
+4. Deploy the contents of `dist/` to any static host (Netlify, Vercel static, GitHub Pages, Cloudflare Pages, S3/CloudFront, etc.)
+5. Smoke test in production:
+   - start a quiz
+   - answer and submit
+   - confirm results/progress pages render
 
-### 4) Frontend runtime config
+> Routing note: the app uses hash routes (`#/quiz`, `#/progress`), so deep-link rewrite rules are not required.
 
-The app reads public config in this precedence order:
 
-1. `window.__PHYSIO_QUIZ_CONFIG__` (from `runtime-config.js`)
-2. `<meta>` tags in `index.html`
+### GitHub Pages (recommended for this repo)
 
-Required values for remote save:
+1. Commit and push this repository to the `main` branch on GitHub.
+2. Ensure the workflow `.github/workflows/deploy-pages.yml` is present (it builds from `dist/`).
+3. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+4. Push to `main` (or run the workflow manually from **Actions**).
+5. After the deploy job succeeds, the live URL appears in:
+   - **Settings → Pages**
+   - the **deploy** workflow job summary
 
-- `PHYSIO_QUIZ_SUPABASE_URL` → `https://YOUR_PROJECT.supabase.co`
-- `PHYSIO_QUIZ_SUPABASE_ANON_KEY` → public anon key
+Typical URL format is `https://<owner>.github.io/physio-quiz/`.
 
-Optional override:
+## Environment and configuration requirements
 
-- `PHYSIO_QUIZ_SUPABASE_FUNCTIONS_URL` → explicit Edge Function base URL (defaults to `${SUPABASE_URL}/functions/v1`)
+The app currently requires **no runtime environment variables**.
 
-For local/non-CI static hosting, set values in `runtime-config.js` before publishing:
+Configuration lives in source code:
 
-```js
-window.__PHYSIO_QUIZ_CONFIG__ = Object.assign({}, window.__PHYSIO_QUIZ_CONFIG__, {
-  supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
-  supabaseAnonKey: 'YOUR_ANON_KEY',
-  supabaseFunctionsBaseUrl: 'https://YOUR_PROJECT.supabase.co/functions/v1'
-});
-```
+- app shell/router/state: `src/app/`
+- question schema/constants: `src/data/schema/quizSchema.js`
+- question content: `src/data/questions/`
+- build pipeline: `scripts/build.mjs`
 
-> Never expose service-role keys in the browser.
+### Browser storage keys
 
-## How resume codes work
+- `physio_quiz_session`
+- `physio_quiz_progress_v1`
+- `physio_quiz_dev_questions_v1`
 
-- User clicks **Save progress**
-- Edge Function generates a code (format like `PQ-XXXX-XXXX-XXXX-XXXX-XXXX`)
-- Function normalizes and hashes the code (SHA-256)
-- DB stores only `code_hash` + `code_last4`, not raw code
-- Raw code is returned once to the client
-- User can resume via form input or URL `?resume=...` / `#/?resume=...`
+Clear these keys if you need a clean local test state.
 
-## Autosave and reconciliation
+## How to add new questions
 
-Autosave (debounced) runs when linked profile exists after:
+Use either method below.
 
-- start quiz
-- answer change
-- prev/next navigation
-- submit quiz
-- restart/new quiz transitions
+### Method A: via dev/admin page (quickest)
 
-Reconciliation strategy (MVP):
+1. Open `#/admin-dev`.
+2. Complete all fields (category, difficulty, mode, question, options, explanation, tags).
+3. Click **Preview question**.
+4. Click **Save question**.
 
-- On linked-profile bootstrap, compare local snapshot `updatedAt` with remote
-- If local is clearly newer, push local snapshot to remote
-- Otherwise restore remote snapshot and cache locally
+Saved questions persist in localStorage on that browser only.
 
-## Security notes and limitations
+### Method B: commit to source-controlled question bank
 
-Implemented controls:
+1. Add question objects to:
+   - `src/data/questions/normalQuestions.js` (normal mode), or
+   - `src/data/questions/clinicalReasoningQuestions.js` (case-based mode)
+2. Ensure each object satisfies `isValidQuestion` in `src/data/schema/quizSchema.js`.
+3. Ensure each `id` is unique.
+4. Run `npm run check && npm test && npm run build`.
 
-- cryptographically random server-generated codes
-- DB stores only hash, not raw resume code
-- input normalization + validation
-- payload size limits in frontend and Edge Functions
-- no direct anon table access
-- basic failure responses and limited detail
-- lightweight client-side retry throttling
+## Accessibility basics (current baseline)
 
-Remaining brute-force limitations (MVP):
+- Proper label/input associations in setup/admin forms
+- Visible keyboard focus styles via `:focus-visible`
+- Live regions for setup availability and error feedback
+- Active navigation state announced with `aria-current`
+- Answer options expose pressed state with `aria-pressed`
 
-- no distributed IP rate limit at edge yet
-- no CAPTCHA/challenge step
-- no code rotation endpoint
+## Performance basics (current baseline)
 
-For stronger abuse resistance, add WAF/rate limiting and optionally a rotate-code flow.
+- Fully static bundle (no runtime API calls)
+- Small module graph and direct DOM rendering
+- Graceful localStorage guards for restricted-storage environments
+- Built output is plain static assets for CDN caching
 
-## Static deployment notes (GitHub Pages)
+## Future roadmap
 
-- App uses hash routes (`#/quiz`, `#/progress`)
-- Build emits `dist/runtime-config.js` from environment variables
-- Keep function URL reachable from static host origin/CORS policy
-
-### GitHub Pages exact setup
-
-1. In GitHub repo settings, add Actions secrets:
-   - `PHYSIO_QUIZ_SUPABASE_URL`
-   - `PHYSIO_QUIZ_SUPABASE_ANON_KEY`
-   - optional: `PHYSIO_QUIZ_SUPABASE_FUNCTIONS_URL`
-2. Run the **Deploy to GitHub Pages** workflow. It now fails fast if required secrets are missing.
-3. Confirm deployed `runtime-config.js` contains non-empty `supabaseUrl` and `supabaseAnonKey`.
-4. Open the app Home page and click **Save progress**. You should receive a resume code instead of a configuration error.
-
-### Other static hosts (Netlify, Cloudflare Pages, S3, etc.)
-
-- Provide the same environment variables to the build command (`npm run build`), or edit `dist/runtime-config.js` after build and before publish.
-- Publish the full `dist/` directory including `runtime-config.js`.
-
-## Local development notes
-
-- Frontend can run without Supabase config (local-only mode)
-- When config is missing or network fails, app keeps local progress intact
-- To test Edge Functions locally, use Supabase CLI with local env vars and function serve
+- Authentication + role-based admin controls
+- Import/export for question banks
+- Timed quiz mode and adaptive selection
+- Keyboard shortcuts and richer accessibility support
+- Optional analytics hooks (privacy-conscious)
+- Expanded automated tests (UI and integration)
+- Optional TypeScript migration for stricter safety
