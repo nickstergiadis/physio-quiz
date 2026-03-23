@@ -13,7 +13,9 @@ import {
   saveDevQuestions,
   setQuizCompleted,
   saveQuizResult,
-  clearQuizResult
+  clearQuizResult,
+  saveAttemptDetails,
+  loadAttemptDetails
 } from '../utils/storage.js';
 import { createInitialState } from './state.js';
 import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
@@ -164,21 +166,32 @@ export function createApp(root) {
   function submitQuiz() {
     const score = calculateScore(state.answers, state.questions);
     const categoryStats = calculateCategoryScore(state.answers, state.questions);
+    const attemptId = createAttemptId();
+    const completedAt = createZonedTimestamp();
+    const review = buildQuestionReview(state.questions, state.answers);
+    const unansweredCount = getUnansweredCount();
 
     pushHistory({
-      id: createAttemptId(),
-      completedAt: createZonedTimestamp(),
+      id: attemptId,
+      completedAt,
       filters: state.filters,
       score,
       categoryStats
+    });
+
+    saveAttemptDetails(attemptId, {
+      completedAt,
+      score,
+      unansweredCount,
+      review
     });
 
     state.history = loadHistory();
     state.quizCompleted = true;
     state.latestResult = {
       score,
-      review: buildQuestionReview(state.questions, state.answers),
-      unansweredCount: getUnansweredCount()
+      review,
+      unansweredCount
     };
     setQuizCompleted(true);
     saveQuizResult(state.latestResult);
@@ -261,7 +274,12 @@ export function createApp(root) {
     }
 
     if (route === ROUTES.progress) {
-      main.appendChild(progressPage({ history: state.history }));
+      main.appendChild(
+        progressPage({
+          history: state.history,
+          onViewAttemptDetails: (attemptId) => loadAttemptDetails(attemptId)
+        })
+      );
       return;
     }
 

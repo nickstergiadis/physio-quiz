@@ -1,4 +1,5 @@
 import { card } from '../components/ui/card.js';
+import { button } from '../components/ui/button.js';
 import { titleCase } from '../utils/format/titleCase.js';
 import { computeProgressMetrics } from '../utils/progress.js';
 import { USER_TIME_ZONE } from '../utils/dateTime.js';
@@ -33,7 +34,54 @@ function metricBlock(label, value) {
   return item;
 }
 
-function createHistoryRow(entry) {
+function getOptionLabel(question, answerIndex) {
+  if (answerIndex === undefined || answerIndex === null || answerIndex < 0) {
+    return 'Not answered';
+  }
+  return question.options[answerIndex] ?? 'Invalid answer';
+}
+
+function createAttemptDetails(details) {
+  const detailsWrap = document.createElement('section');
+  detailsWrap.className = 'stack';
+
+  const summary = document.createElement('p');
+  summary.className = 'question-progress';
+  summary.textContent = `Score: ${details.score.correct}/${details.score.total} (${details.score.percent}%) • Unanswered: ${details.unansweredCount}`;
+  detailsWrap.appendChild(summary);
+
+  details.review.forEach((item) => {
+    const result = document.createElement('article');
+    result.className = 'result-item';
+
+    const heading = document.createElement('h4');
+    heading.textContent = item.question;
+
+    const userAnswer = document.createElement('p');
+    const userLabel = document.createElement('strong');
+    userLabel.textContent = 'Your answer: ';
+    userAnswer.appendChild(userLabel);
+    userAnswer.append(`${getOptionLabel(item, item.selectedAnswer)} ${item.isCorrect ? '✅' : '❌'}`);
+
+    const correctAnswer = document.createElement('p');
+    const correctLabel = document.createElement('strong');
+    correctLabel.textContent = 'Correct answer: ';
+    correctAnswer.appendChild(correctLabel);
+    correctAnswer.append(getOptionLabel(item, item.correctAnswer));
+
+    const explanation = document.createElement('p');
+    const explanationLabel = document.createElement('strong');
+    explanationLabel.textContent = 'Explanation: ';
+    explanation.append(explanationLabel, item.explanation || 'No explanation provided.');
+
+    result.append(heading, userAnswer, correctAnswer, explanation);
+    detailsWrap.appendChild(result);
+  });
+
+  return detailsWrap;
+}
+
+function createHistoryRow(entry, onViewAttemptDetails) {
   const row = document.createElement('article');
   row.className = 'history-item';
 
@@ -55,12 +103,45 @@ function createHistoryRow(entry) {
   const score = document.createElement('p');
   score.textContent = `Score: ${entry.score.correct}/${entry.score.total} (${entry.score.percent}%)`;
 
-  row.append(completed, category, difficulty, score);
+  const detailsButton = button({
+    label: 'View details',
+    variant: 'secondary',
+    className: 'history-details-btn'
+  });
+  const detailsContainer = document.createElement('div');
+  detailsContainer.className = 'stack';
+  detailsContainer.hidden = true;
+
+  detailsButton.addEventListener('click', () => {
+    if (detailsContainer.hidden) {
+      if (!detailsContainer.dataset.loaded) {
+        const details = onViewAttemptDetails?.(entry.id);
+        if (!details) {
+          const unavailable = document.createElement('p');
+          unavailable.className = 'metric-label';
+          unavailable.textContent = 'Detailed review is unavailable for this attempt.';
+          detailsContainer.appendChild(unavailable);
+        } else {
+          detailsContainer.appendChild(createAttemptDetails(details));
+        }
+        detailsContainer.dataset.loaded = '1';
+      }
+
+      detailsContainer.hidden = false;
+      detailsButton.textContent = 'Hide details';
+      return;
+    }
+
+    detailsContainer.hidden = true;
+    detailsButton.textContent = 'View details';
+  });
+
+  row.append(completed, category, difficulty, score, detailsButton, detailsContainer);
 
   return row;
 }
 
-export function progressPage({ history }) {
+export function progressPage({ history, onViewAttemptDetails }) {
   const body = document.createElement('div');
   body.className = 'stack';
 
@@ -139,7 +220,7 @@ export function progressPage({ history }) {
   }
 
   metrics.recentAttempts.forEach((entry) => {
-    recentSection.appendChild(createHistoryRow(entry));
+    recentSection.appendChild(createHistoryRow(entry, onViewAttemptDetails));
   });
 
   body.append(summaryGrid, categorySection, recentSection);

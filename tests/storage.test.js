@@ -4,10 +4,12 @@ import assert from 'node:assert/strict';
 import {
   clearQuizResult,
   isQuizCompleted,
+  loadAttemptDetails,
   loadHistory,
   loadQuizResult,
   loadSession,
   pushHistory,
+  saveAttemptDetails,
   saveQuizResult,
   saveSession,
   setQuizCompleted
@@ -131,4 +133,41 @@ test('quiz result payload can be saved, loaded, and cleared', () => {
 
   clearQuizResult();
   assert.equal(loadQuizResult(), null);
+});
+
+test('attempt details can be saved and loaded by attempt id', () => {
+  installMemoryStorage();
+  const attemptId = 'attempt-123';
+  const payload = {
+    completedAt: '2026-03-20T04:15:00-04:00',
+    score: { correct: 2, total: 3, percent: 67 },
+    unansweredCount: 1,
+    review: [
+      {
+        question: 'What is pain?',
+        options: ['A', 'B', 'C', 'D'],
+        selectedAnswer: 1,
+        correctAnswer: 2,
+        explanation: 'Pain is multifactorial.'
+      }
+    ]
+  };
+
+  saveAttemptDetails(attemptId, payload);
+  assert.deepEqual(loadAttemptDetails(attemptId), {
+    id: attemptId,
+    completedAt: payload.completedAt,
+    score: payload.score,
+    unansweredCount: 1,
+    review: [
+      {
+        question: 'What is pain?',
+        options: ['A', 'B', 'C', 'D'],
+        selectedAnswer: 1,
+        correctAnswer: 2,
+        explanation: 'Pain is multifactorial.',
+        isCorrect: false
+      }
+    ]
+  });
 });
