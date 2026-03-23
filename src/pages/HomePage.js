@@ -21,6 +21,7 @@ export function homePage({
   onCreateProfile,
   onResumeProfile,
   onCopyResumeCode,
+  onCopyResumeLink,
   resumeInputValue = ''
 }) {
   const content = document.createElement('div');
@@ -74,7 +75,13 @@ export function homePage({
   codeBox.textContent = profile?.resumeCode || 'Not created yet';
 
   const copyButton = buildActionButton('Copy code', () => onCopyResumeCode?.(), !profile?.resumeCode, 'btn btn-ghost');
-  codeWrap.append(codeBox, copyButton);
+  const copyLinkButton = buildActionButton(
+    'Copy resume link',
+    () => onCopyResumeLink?.(),
+    !profile?.resumeCode,
+    'btn btn-ghost'
+  );
+  codeWrap.append(codeBox, copyButton, copyLinkButton);
 
   const resumeForm = document.createElement('form');
   resumeForm.className = 'stack';

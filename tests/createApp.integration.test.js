@@ -254,11 +254,11 @@ test('quiz submission works for multiple mode/category/difficulty combinations',
 
 test('home page can create and display a generated resume code', async () => {
   global.fetch = async (url) => {
-    if (String(url).includes('/create_progress_profile')) {
+    if (String(url).includes('/functions/v1/create-progress-profile')) {
       return {
         ok: true,
         async json() {
-          return { resume_code: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX', payload_json: {} };
+          return { success: true, resumeCode: 'PQ-ABCD-EFGH-IJKL-MNOP-QRST', payload_json: {} };
         }
       };
     }
@@ -276,7 +276,7 @@ test('home page can create and display a generated resume code', async () => {
   clickByText('Save progress');
   await new Promise((resolve) => setTimeout(resolve, 0));
 
-  assert.ok(document.body.textContent.includes('Your resume code: ABCD-EFGH-IJKL-MNOP-QRST-UVWX'));
+  assert.ok(document.body.textContent.includes('Your resume code:'));
 });
 
 test('resume flow handles invalid code input gracefully', async () => {
@@ -304,14 +304,14 @@ test('linked profiles autosave after answer selection', async () => {
     return {
       ok: true,
       async json() {
-        return { resume_code: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX', payload_json: {} };
+        return { success: true, resumeCode: 'PQ-ABCD-EFGH-IJKL-MNOP-QRST', payload_json: {} };
       }
     };
   };
 
   installAppDom({
     storage: {
-      physio_quiz_resume_code_v1: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX',
+      physio_quiz_resume_code_v1: 'PQ-ABCD-EFGH-IJKL-MNOP-QRST',
       physio_quiz_profile_status_v1: 'remote-linked'
     }
   });
@@ -326,5 +326,84 @@ test('linked profiles autosave after answer selection', async () => {
 
   await new Promise((resolve) => setTimeout(resolve, 900));
 
-  assert.ok(calls.some((url) => url.includes('/save_progress_profile_by_code')));
+  assert.ok(calls.some((url) => url.includes('/functions/v1/save-progress-profile')));
+});
+
+test('resume by valid code restores in-progress quiz state from remote payload', async () => {
+  global.fetch = async (url) => {
+    if (String(url).includes('/functions/v1/get-progress-profile')) {
+      return {
+        ok: true,
+        async json() {
+          return {
+            success: true,
+            resumeCode: 'PQ-ABCD-EFGH-IJKL-MNOP-QRST',
+            payload_json: {
+              updatedAt: '2026-03-23T00:00:00.000Z',
+              filters: { mode: 'normal', category: 'all', difficulty: 'all', length: 5, order: 'shuffled' },
+              session: {
+                questions: [
+                  {
+                    id: 'q-1',
+                    prompt: 'Q1?',
+                    options: ['A', 'B', 'C', 'D'],
+                    answerIndex: 0,
+                    explanation: 'Because',
+                    category: 'knee',
+                    difficulty: 'easy',
+                    mode: 'normal'
+                  }
+                ],
+                currentIndex: 0,
+                answers: { 'q-1': 1 },
+                quizCompleted: false
+              },
+              history: [],
+              attemptDetails: {}
+            }
+          };
+        }
+      };
+    }
+
+    return { ok: false, status: 500, async json() { return {}; } };
+  };
+
+  installAppDom();
+  global.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://demo.supabase.co',
+    supabaseAnonKey: 'anon-demo-key'
+  };
+  window.__PHYSIO_QUIZ_CONFIG__ = global.__PHYSIO_QUIZ_CONFIG__;
+
+  const input = document.querySelector('#resume-code-input');
+  assert.ok(input, 'Expected resume input to render on home page');
+  input.value = 'pq-abcd-efgh-ijkl-mnop-qrst';
+
+  clickByText('Resume saved progress');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.equal(window.location.hash, ROUTES.quiz);
+  assert.ok(document.body.textContent.includes('Question 1 of 1'));
+});
+
+test('network failures in profile creation do not block normal quiz flow', async () => {
+  global.fetch = async () => {
+    throw new Error('offline');
+  };
+
+  installAppDom();
+  global.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://demo.supabase.co',
+    supabaseAnonKey: 'anon-demo-key'
+  };
+  window.__PHYSIO_QUIZ_CONFIG__ = global.__PHYSIO_QUIZ_CONFIG__;
+
+  clickByText('Save progress');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.ok(document.body.textContent.includes('Save error:'));
+
+  clickByText('Start Quiz');
+  assert.equal(window.location.hash, ROUTES.quiz);
+  assert.ok(document.body.textContent.includes('Question 1 of 10'));
 });

@@ -232,6 +232,26 @@ textarea.input {
 }
 
 
+.result-explanation {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.explanation-content {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.explanation-content p {
+  margin: 0;
+}
+
+.explanation-content ul,
+.explanation-content ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -334,4 +354,30 @@ textarea.input {
   .question-stem {
     font-size: 1rem;
   }
+}
+
+.profile-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: #fbfdff;
+}
+
+.profile-title {
+  margin: 0;
+}
+
+.profile-code-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.resume-code {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  background: #eef3f8;
+  padding: 0.3rem 0.45rem;
+  border-radius: 8px;
 }

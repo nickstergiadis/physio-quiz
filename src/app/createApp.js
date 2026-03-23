@@ -26,6 +26,7 @@ import { ROUTES, parseRouteFromHash, readRoute, readResumeCodeFromLocation, writ
 import { questionBank } from '../data/questionBank.js';
 import { createZonedTimestamp } from '../utils/dateTime.js';
 import { createProgressProfileService } from '../services/progressProfileService.js';
+import { chooseSourceSnapshot } from '../services/progressSync.js';
 
 function navLink(path, label) {
   const link = document.createElement('a');
@@ -88,6 +89,7 @@ export function createApp(root) {
   let resumeInputValue = readResumeCodeFromLocation();
   let pendingAutosaveTimer = null;
   let profileMessage = '';
+  let hasBootstrappedRemoteProfile = false;
 
   const appShell = document.createElement('div');
   appShell.className = 'app-shell';
@@ -293,6 +295,52 @@ export function createApp(root) {
     render();
   }
 
+  async function copyResumeLink() {
+    if (!state.profile.resumeCode) return;
+    const resumeUrl = `${location.origin}${location.pathname}?resume=${encodeURIComponent(state.profile.resumeCode)}`;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(resumeUrl);
+        profileMessage = 'Resume link copied to clipboard.';
+      } else {
+        profileMessage = 'Copy not supported in this browser. Please copy the link manually.';
+      }
+    } catch {
+      profileMessage = 'Copy failed. Please copy the link manually.';
+    }
+    render();
+  }
+
+  async function bootstrapRemoteProfileIfLinked() {
+    if (hasBootstrappedRemoteProfile) return;
+    hasBootstrappedRemoteProfile = true;
+    if (!state.profile.resumeCode || !profileService.isAvailable()) return;
+
+    try {
+      const profileRecord = await profileService.loadProfileByCode(state.profile.resumeCode);
+      const remoteSnapshot = isRecord(profileRecord.payload) ? profileRecord.payload : {};
+      const localSnapshot = buildSnapshot();
+      const decision = chooseSourceSnapshot({ localSnapshot, remoteSnapshot });
+
+      if (decision.winner === 'local') {
+        await profileService.saveProfileByCode(state.profile.resumeCode, localSnapshot);
+        profileMessage = 'Local changes were newer, so they were synced to your saved profile.';
+      } else {
+        const restored = isRecord(decision.snapshot) ? decision.snapshot : {};
+        restored.profile = {
+          resumeCode: profileRecord.resumeCode,
+          status: 'remote-linked'
+        };
+        applySnapshot(restored);
+        profileMessage = decision.reason;
+      }
+      render();
+    } catch {
+      profileMessage = 'Could not refresh saved profile. Local progress is still available on this device.';
+      render();
+    }
+  }
+
   function setRoute(route) {
     state.route = route;
     writeRoute(route);
@@ -489,7 +537,8 @@ export function createApp(root) {
         resumeInputValue,
         onCreateProfile: createOrRefreshProfile,
         onResumeProfile: resumeSavedProgress,
-        onCopyResumeCode: copyResumeCode
+        onCopyResumeCode: copyResumeCode,
+        onCopyResumeLink: copyResumeLink
       })
     );
   }
@@ -516,6 +565,7 @@ export function createApp(root) {
   }
 
   render();
+  bootstrapRemoteProfileIfLinked();
 
   const resumeCodeFromLocation = readResumeCodeFromLocation();
   if (resumeCodeFromLocation) {

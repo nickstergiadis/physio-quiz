@@ -1,4 +1,13 @@
-import { loadDevQuestions, loadHistory, loadSession } from '../utils/storage.js';
+import {
+  isQuizCompleted,
+  loadDevQuestions,
+  loadHistory,
+  loadQuizResult,
+  loadSession,
+  loadLinkedResumeCode,
+  loadProfileStatus,
+  setQuizCompleted
+} from '../utils/storage.js';
 import { ROUTES, resolveRoute } from './router.js';
 import { isValidQuestion } from '../data/schema/quizSchema.js';
 
@@ -21,8 +30,14 @@ export function createInitialState() {
     questions: [],
     currentIndex: 0,
     answers: {},
+    quizCompleted: isQuizCompleted(),
+    latestResult: loadQuizResult(),
     history: loadHistory(),
     devQuestions: loadDevQuestions().filter(isValidQuestion),
+    profile: {
+      resumeCode: loadLinkedResumeCode(),
+      status: loadProfileStatus()
+    },
     startError: routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : ''
   };
 
@@ -33,7 +48,8 @@ export function createInitialState() {
           mode: restored.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
           category: typeof restored.filters.category === 'string' ? restored.filters.category : 'all',
           difficulty: typeof restored.filters.difficulty === 'string' ? restored.filters.difficulty : 'all',
-          length: [5, 10, 15, 20].includes(restored.filters.length) ? restored.filters.length : 10,
+          length:
+            Number.isInteger(restored.filters.length) && restored.filters.length > 0 ? restored.filters.length : 10,
           order: restored.filters.order === 'fixed' ? 'fixed' : 'shuffled'
         }
       : state.filters;
@@ -44,6 +60,11 @@ export function createInitialState() {
     state.currentIndex = Math.max(0, Math.min(restoredIndex, Math.max(state.questions.length - 1, 0)));
 
     state.answers = sanitizeAnswers(restored.answers);
+    if (state.questions.length) {
+      state.quizCompleted = false;
+      state.latestResult = null;
+      setQuizCompleted(false);
+    }
 
     if (state.route === ROUTES.home && state.questions.length) {
       state.route = ROUTES.quiz;
