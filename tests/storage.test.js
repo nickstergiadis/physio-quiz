@@ -44,7 +44,7 @@ test('history entries are sanitized when persisted', () => {
   pushHistory({
     id: 123,
     completedAt: null,
-    filters: { mode: 'bad', category: 7, difficulty: null, length: 999, order: 'bad' },
+    filters: { mode: 'bad', category: 7, difficulty: null, length: -1, order: 'bad' },
     score: { correct: 3, total: 4 },
     categoryStats: {
       knee: { correct: 2, total: 3 },
