@@ -258,6 +258,19 @@ const QUESTION_TEMPLATES = [
       ],
       explanation: `Durable outcomes come from integrating individualized loading and education. For ${topic.title}, combining initial management with targeted education supports adherence and functional progression.`
     })
+  },
+  {
+    difficulty: 'expert',
+    build: (topic) => ({
+      question: `A patient with suspected ${topic.title} shows ${topic.hallmark}. Irritability is moderate-high, but there is no immediate emergency finding. What is the best next-step decision today?`,
+      correct: `Prioritize ${topic.initialManagement}, explicitly monitor 24-hour symptom response, and escalate promptly if ${topic.precaution}.`,
+      distractors: [
+        'prescribe complete rest until all symptoms resolve and avoid any active reassessment',
+        'advance directly to maximal loading because moderate-high irritability should be challenged early',
+        'base the whole plan on imaging findings alone and defer functional progression'
+      ],
+      explanation: `Expert-level management requires balancing risk, irritability, and function. For ${topic.title}, the strongest approach is to begin with ${topic.initialManagement}, use short-cycle reassessment, and watch for referral thresholds such as ${topic.precaution}.`
+    })
   }
 ];
 
