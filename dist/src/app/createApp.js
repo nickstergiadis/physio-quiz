@@ -15,18 +15,12 @@ import {
   saveQuizResult,
   clearQuizResult,
   saveAttemptDetails,
-  loadAttemptDetails,
-  buildPersistedSnapshot,
-  persistSnapshotToLocal,
-  saveLinkedResumeCode,
-  saveProfileStatus
+  loadAttemptDetails
 } from '../utils/storage.js';
 import { createInitialState } from './state.js';
-import { ROUTES, parseRouteFromHash, readRoute, readResumeCodeFromLocation, writeRoute } from './router.js';
+import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
 import { createZonedTimestamp } from '../utils/dateTime.js';
-import { createProgressProfileService } from '../services/progressProfileService.js';
-import { chooseSourceSnapshot } from '../services/progressSync.js';
 
 function navLink(path, label) {
   const link = document.createElement('a');
@@ -42,7 +36,6 @@ function combinedQuestionBank(devQuestions) {
 }
 
 const ADMIN_NAV_FLAG_KEY = 'physio_quiz_admin_nav_enabled';
-const REMOTE_SAVE_DEBOUNCE_MS = 700;
 
 function shouldShowAdminNavLink() {
   const hashQuery = location.hash.split('?')[1];
@@ -74,20 +67,6 @@ function shouldShowAdminNavLink() {
   }
 }
 
-function isRecord(value) {
-  return !!value && typeof value === 'object' && !Array.isArray(value);
-}
-
-function buildProfileMessage(prefix, error, fallback) {
-  const details = error?.message || '';
-  if (details.includes('Remote save is not configured in this environment')) {
-    console.error(details);
-    return `${prefix}: Remote save is unavailable on this deployment. Local progress still works on this device.`;
-  }
-
-  return `${prefix}: ${details || fallback}`;
-}
-
 export function createApp(root) {
   if (!root) {
     console.error('App root element not found.');
@@ -95,11 +74,6 @@ export function createApp(root) {
   }
 
   const state = createInitialState();
-  const profileService = createProgressProfileService();
-  let resumeInputValue = readResumeCodeFromLocation();
-  let pendingAutosaveTimer = null;
-  let profileMessage = '';
-  let hasBootstrappedRemoteProfile = false;
 
   const appShell = document.createElement('div');
   appShell.className = 'app-shell';
@@ -127,96 +101,10 @@ export function createApp(root) {
   appShell.append(header, main);
   root.appendChild(appShell);
 
-  function collectAttemptDetailsMap() {
-    const map = {};
-    state.history.forEach((attempt) => {
-      const details = loadAttemptDetails(attempt.id);
-      if (details) {
-        map[attempt.id] = details;
-      }
-    });
-    return map;
-  }
-
-  function buildSnapshot() {
-    return buildPersistedSnapshot({
-      filters: state.filters,
-      questions: state.questions,
-      currentIndex: state.currentIndex,
-      answers: state.answers,
-      quizCompleted: state.quizCompleted,
-      latestResult: state.latestResult,
-      history: state.history,
-      attemptDetails: collectAttemptDetailsMap(),
-      profile: state.profile
-    });
-  }
-
-  function applySnapshot(snapshot) {
-    if (!isRecord(snapshot)) return;
-
-    const profile = isRecord(snapshot.profile) ? snapshot.profile : {};
-    state.profile.resumeCode = typeof profile.resumeCode === 'string' ? profile.resumeCode : state.profile.resumeCode;
-    state.profile.status = typeof profile.status === 'string' ? profile.status : state.profile.status;
-
-    if (isRecord(snapshot.filters)) {
-      state.filters = {
-        mode: snapshot.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
-        category: typeof snapshot.filters.category === 'string' ? snapshot.filters.category : 'all',
-        difficulty: typeof snapshot.filters.difficulty === 'string' ? snapshot.filters.difficulty : 'all',
-        length: Number.isInteger(snapshot.filters.length) && snapshot.filters.length > 0 ? snapshot.filters.length : 10,
-        order: snapshot.filters.order === 'fixed' ? 'fixed' : 'shuffled'
-      };
-    }
-
-    const session = isRecord(snapshot.session) ? snapshot.session : {};
-    state.questions = Array.isArray(session.questions) ? session.questions : [];
-    state.currentIndex = Math.max(
-      0,
-      Math.min(Number.isInteger(session.currentIndex) ? session.currentIndex : 0, Math.max(state.questions.length - 1, 0))
-    );
-    state.answers = isRecord(session.answers) ? session.answers : {};
-    state.quizCompleted = Boolean(session.quizCompleted);
-
-    state.latestResult = isRecord(snapshot.latestResult) ? snapshot.latestResult : null;
-    state.history = Array.isArray(snapshot.history) ? snapshot.history : [];
-
-    if (isRecord(snapshot.attemptDetails)) {
-      Object.entries(snapshot.attemptDetails).forEach(([attemptId, details]) => {
-        saveAttemptDetails(attemptId, details);
-      });
-    }
-
-    persistSnapshotToLocal(snapshot);
-  }
-
-  async function runRemoteSave(reason) {
-    if (!state.profile.resumeCode || !profileService.isAvailable()) return;
-
-    const snapshot = buildSnapshot();
-    snapshot.saveReason = reason;
-
-    try {
-      await profileService.saveProfileByCode(state.profile.resumeCode, snapshot);
-      profileMessage = 'Saved to your profile.';
-      state.profile.status = 'remote-linked';
-      saveProfileStatus(state.profile.status);
-    } catch (error) {
-      profileMessage = buildProfileMessage(
-        'Save error',
-        error,
-        'Could not save to remote profile. Local progress is still available.'
-      );
-    }
-  }
-
-  function queueRemoteSave(reason = 'state-change') {
-    if (pendingAutosaveTimer) {
-      clearTimeout(pendingAutosaveTimer);
-    }
-    pendingAutosaveTimer = setTimeout(() => {
-      runRemoteSave(reason);
-    }, REMOTE_SAVE_DEBOUNCE_MS);
+  function setRoute(route) {
+    state.route = route;
+    writeRoute(route);
+    render();
   }
 
   function persistSession() {
@@ -226,139 +114,6 @@ export function createApp(root) {
       currentIndex: state.currentIndex,
       answers: state.answers
     });
-    queueRemoteSave('session-update');
-  }
-
-  async function createOrRefreshProfile() {
-    const payload = buildSnapshot();
-
-    if (state.profile.resumeCode) {
-      try {
-        await profileService.saveProfileByCode(state.profile.resumeCode, payload);
-        profileMessage = 'Saved progress to your existing resume code.';
-      } catch (error) {
-        profileMessage = buildProfileMessage('Save error', error, 'Unable to save progress right now.');
-      }
-      render();
-      return;
-    }
-
-    try {
-      const profileRecord = await profileService.createProfile(payload);
-      state.profile.resumeCode = profileRecord.resumeCode;
-      state.profile.status = 'remote-linked';
-      saveLinkedResumeCode(profileRecord.resumeCode);
-      saveProfileStatus('remote-linked');
-      profileMessage = `Your resume code: ${profileRecord.resumeCode}. Save it somewhere safe.`;
-      render();
-    } catch (error) {
-      profileMessage = buildProfileMessage('Save error', error, 'Unable to create a profile right now.');
-      render();
-    }
-  }
-
-  async function resumeSavedProgress(resumeCodeInput) {
-    const resumeCode = profileService.normalizeResumeCode(resumeCodeInput);
-    resumeInputValue = resumeCode;
-
-    try {
-      const profileRecord = await profileService.loadProfileByCode(resumeCode);
-      const nextSnapshot = isRecord(profileRecord.payload) ? profileRecord.payload : {};
-      nextSnapshot.profile = {
-        resumeCode: profileRecord.resumeCode,
-        status: 'remote-linked'
-      };
-
-      applySnapshot(nextSnapshot);
-      state.profile.resumeCode = profileRecord.resumeCode;
-      state.profile.status = 'remote-linked';
-      saveLinkedResumeCode(profileRecord.resumeCode);
-      saveProfileStatus('remote-linked');
-      profileMessage = 'Saved progress loaded successfully.';
-
-      if (state.questions.length && !state.quizCompleted) {
-        setRoute(ROUTES.quiz);
-        return;
-      }
-
-      if (state.quizCompleted && state.latestResult) {
-        setRoute(ROUTES.results);
-        return;
-      }
-
-      setRoute(ROUTES.home);
-    } catch (error) {
-      profileMessage = buildProfileMessage('Resume error', error, 'Could not load saved progress. Please try again.');
-      render();
-    }
-  }
-
-  async function copyResumeCode() {
-    if (!state.profile.resumeCode) return;
-
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(state.profile.resumeCode);
-        profileMessage = 'Resume code copied to clipboard.';
-      } else {
-        profileMessage = 'Copy not supported in this browser. Please copy the code manually.';
-      }
-    } catch {
-      profileMessage = 'Copy failed. Please copy the code manually.';
-    }
-    render();
-  }
-
-  async function copyResumeLink() {
-    if (!state.profile.resumeCode) return;
-    const resumeUrl = `${location.origin}${location.pathname}?resume=${encodeURIComponent(state.profile.resumeCode)}`;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(resumeUrl);
-        profileMessage = 'Resume link copied to clipboard.';
-      } else {
-        profileMessage = 'Copy not supported in this browser. Please copy the link manually.';
-      }
-    } catch {
-      profileMessage = 'Copy failed. Please copy the link manually.';
-    }
-    render();
-  }
-
-  async function bootstrapRemoteProfileIfLinked() {
-    if (hasBootstrappedRemoteProfile) return;
-    hasBootstrappedRemoteProfile = true;
-    if (!state.profile.resumeCode || !profileService.isAvailable()) return;
-
-    try {
-      const profileRecord = await profileService.loadProfileByCode(state.profile.resumeCode);
-      const remoteSnapshot = isRecord(profileRecord.payload) ? profileRecord.payload : {};
-      const localSnapshot = buildSnapshot();
-      const decision = chooseSourceSnapshot({ localSnapshot, remoteSnapshot });
-
-      if (decision.winner === 'local') {
-        await profileService.saveProfileByCode(state.profile.resumeCode, localSnapshot);
-        profileMessage = 'Local changes were newer, so they were synced to your saved profile.';
-      } else {
-        const restored = isRecord(decision.snapshot) ? decision.snapshot : {};
-        restored.profile = {
-          resumeCode: profileRecord.resumeCode,
-          status: 'remote-linked'
-        };
-        applySnapshot(restored);
-        profileMessage = decision.reason;
-      }
-      render();
-    } catch {
-      profileMessage = 'Could not refresh saved profile. Local progress is still available on this device.';
-      render();
-    }
-  }
-
-  function setRoute(route) {
-    state.route = route;
-    writeRoute(route);
-    render();
   }
 
   function startQuiz(filters) {
@@ -441,7 +196,6 @@ export function createApp(root) {
     setQuizCompleted(true);
     saveQuizResult(state.latestResult);
     clearSession();
-    queueRemoteSave('quiz-completed');
     setRoute(ROUTES.results);
   }
 
@@ -468,7 +222,6 @@ export function createApp(root) {
     clearQuizResult();
     state.startError = '';
     clearSession();
-    queueRemoteSave('restart');
     setRoute(ROUTES.home);
   }
 
@@ -545,14 +298,7 @@ export function createApp(root) {
         onStart: startQuiz,
         initialFilters: state.filters,
         startError: state.startError,
-        questionSource: combinedQuestionBank(state.devQuestions),
-        profile: state.profile,
-        profileMessage,
-        resumeInputValue,
-        onCreateProfile: createOrRefreshProfile,
-        onResumeProfile: resumeSavedProgress,
-        onCopyResumeCode: copyResumeCode,
-        onCopyResumeLink: copyResumeLink
+        questionSource: combinedQuestionBank(state.devQuestions)
       })
     );
   }
@@ -574,15 +320,5 @@ export function createApp(root) {
     state.route = readRoute();
   }
 
-  if (shouldShowAdminNavLink() && !nav.querySelector('[data-route="/admin-dev"]')) {
-    nav.appendChild(navLink(ROUTES.admin, 'Admin (Dev)'));
-  }
-
   render();
-  bootstrapRemoteProfileIfLinked();
-
-  const resumeCodeFromLocation = readResumeCodeFromLocation();
-  if (resumeCodeFromLocation) {
-    resumeSavedProgress(resumeCodeFromLocation);
-  }
 }
