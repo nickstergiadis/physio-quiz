@@ -251,3 +251,80 @@ test('quiz submission works for multiple mode/category/difficulty combinations',
     }
   });
 });
+
+test('home page can create and display a generated resume code', async () => {
+  global.fetch = async (url) => {
+    if (String(url).includes('/create_progress_profile')) {
+      return {
+        ok: true,
+        async json() {
+          return { resume_code: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX', payload_json: {} };
+        }
+      };
+    }
+
+    return { ok: false, status: 500, async json() { return {}; } };
+  };
+
+  installAppDom();
+  global.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://demo.supabase.co',
+    supabaseAnonKey: 'anon-demo-key'
+  };
+  window.__PHYSIO_QUIZ_CONFIG__ = global.__PHYSIO_QUIZ_CONFIG__;
+
+  clickByText('Save progress');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.ok(document.body.textContent.includes('Your resume code: ABCD-EFGH-IJKL-MNOP-QRST-UVWX'));
+});
+
+test('resume flow handles invalid code input gracefully', async () => {
+  installAppDom();
+  global.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://demo.supabase.co',
+    supabaseAnonKey: 'anon-demo-key'
+  };
+  window.__PHYSIO_QUIZ_CONFIG__ = global.__PHYSIO_QUIZ_CONFIG__;
+
+  const input = document.querySelector('#resume-code-input');
+  assert.ok(input, 'Expected resume input to render on home page');
+  input.value = 'abc';
+
+  clickByText('Resume saved progress');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.ok(document.body.textContent.includes('Resume error: Enter a valid resume code.'));
+});
+
+test('linked profiles autosave after answer selection', async () => {
+  const calls = [];
+  global.fetch = async (url) => {
+    calls.push(String(url));
+    return {
+      ok: true,
+      async json() {
+        return { resume_code: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX', payload_json: {} };
+      }
+    };
+  };
+
+  installAppDom({
+    storage: {
+      physio_quiz_resume_code_v1: 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX',
+      physio_quiz_profile_status_v1: 'remote-linked'
+    }
+  });
+  global.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://demo.supabase.co',
+    supabaseAnonKey: 'anon-demo-key'
+  };
+  window.__PHYSIO_QUIZ_CONFIG__ = global.__PHYSIO_QUIZ_CONFIG__;
+
+  clickByText('Start Quiz');
+  document.querySelector('.option-btn')?.click();
+
+  await new Promise((resolve) => setTimeout(resolve, 900));
+
+  assert.ok(calls.some((url) => url.includes('/save_progress_profile_by_code')));
+});

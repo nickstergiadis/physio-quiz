@@ -355,3 +355,29 @@ textarea.input {
     font-size: 1rem;
   }
 }
+
+.profile-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: #fbfdff;
+}
+
+.profile-title {
+  margin: 0;
+}
+
+.profile-code-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.resume-code {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  background: #eef3f8;
+  padding: 0.3rem 0.45rem;
+  border-radius: 8px;
+}

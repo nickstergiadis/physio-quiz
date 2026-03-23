@@ -1,158 +1,163 @@
 # Physio Quiz
 
-## App summary
+Physio Quiz is a lightweight vanilla JavaScript SPA for physiotherapy MCQ practice. Users can start immediately (no signup), and can now optionally create an **anonymous saved progress profile** backed by Supabase using a generated resume code.
 
-Physio Quiz is a lightweight, static single-page physiotherapy training app built with vanilla JavaScript. Learners can run quick MCQ sessions, review explanations, and track progress locally in the browser without a backend.
+## What’s new: anonymous saveable progress
 
-## Feature list
+- Start quizzes with no authentication.
+- Click **Save progress** to create a remote anonymous profile.
+- Receive a generated **resume code** (copy + store safely).
+- Later, enter the code in **Resume saved progress** (or via URL) to restore:
+  - in-progress quiz session
+  - selected answers + current question index
+  - completion state + latest result
+  - attempt history + attempt review details
+- Local storage remains active as fallback/cache.
+- Once linked, remote profile becomes source of truth for restore across devices.
 
-- Quiz setup with filters for:
-  - mode (`normal` or `clinical-reasoning`)
-  - category
-  - difficulty
-  - quiz length
-  - question order (`shuffled` or `fixed`)
-- Guided question flow with Previous/Next navigation
-- End-of-quiz scoring and per-question review with explanation text
-- Progress dashboard with:
-  - overall average score
-  - strongest and weakest categories
-  - streak and recent activity metrics
-  - recent attempt history
-- Local dev/admin screen for drafting questions in browser storage
-- Schema validation and duplicate-id filtering for question safety
+## Features
 
-## Local setup
+- Quiz setup filters: mode, category, difficulty, length, order
+- Question-by-question flow with Previous/Next controls
+- Scoring + explanation review at completion
+- Progress dashboard with history and metrics
+- Dev/admin draft-question page (`#/admin-dev`)
+- Local-first behavior with optional Supabase remote resume profiles
+
+## Quick start
 
 ### Requirements
 
 - Node.js 18+
 - npm 9+
 
-### Install dependencies
+### Install
 
 ```bash
 npm install
 ```
 
-## Run and build steps
-
-### Static checks
+### Validate + test + build
 
 ```bash
 npm run check
-```
-
-### Test suite
-
-```bash
 npm test
-```
-
-### Production build
-
-```bash
 npm run build
 ```
 
-Build output is written to `dist/`.
+Build output is in `dist/`.
 
-### Run the built app locally
+### Run built app locally
 
 ```bash
 npx serve dist
 ```
 
-Then open the local URL printed by `serve` (often `http://localhost:3000`).
+## Supabase setup (anonymous resume codes)
 
-## Deployment steps
+1. Create a Supabase project.
+2. Open SQL Editor and run:
 
-1. Install dependencies: `npm install`
-2. Run validation: `npm run check && npm test`
-3. Build: `npm run build`
-4. Deploy the contents of `dist/` to any static host (Netlify, Vercel static, GitHub Pages, Cloudflare Pages, S3/CloudFront, etc.)
-5. Smoke test in production:
-   - start a quiz
-   - answer and submit
-   - confirm results/progress pages render
+```sql
+-- from this repo
+-- supabase/anonymous_progress_profiles.sql
+```
 
-> Routing note: the app uses hash routes (`#/quiz`, `#/progress`), so deep-link rewrite rules are not required.
+3. Copy your project values:
+   - Project URL
+   - anon public API key
 
+4. Configure runtime values in `index.html` (or inject at deploy time):
 
-### GitHub Pages (recommended for this repo)
+```html
+<meta name="physio-quiz-supabase-url" content="https://YOUR_PROJECT.supabase.co" />
+<meta name="physio-quiz-supabase-anon-key" content="YOUR_ANON_KEY" />
+```
 
-1. Commit and push this repository to the `main` branch on GitHub.
-2. Ensure the workflow `.github/workflows/deploy-pages.yml` is present (it builds from `dist/`).
-3. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
-4. Push to `main` (or run the workflow manually from **Actions**).
-5. After the deploy job succeeds, the live URL appears in:
-   - **Settings → Pages**
-   - the **deploy** workflow job summary
+Alternative runtime injection:
 
-Typical URL format is `https://<owner>.github.io/physio-quiz/`.
+```html
+<script>
+  window.__PHYSIO_QUIZ_CONFIG__ = {
+    supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
+    supabaseAnonKey: 'YOUR_ANON_KEY'
+  };
+</script>
+```
 
-## Environment and configuration requirements
+> Do not hardcode service-role keys. Use only the Supabase anon key in the browser.
 
-The app currently requires **no runtime environment variables**.
+## Database schema + policy model
 
-Configuration lives in source code:
+`supabase/anonymous_progress_profiles.sql` creates:
 
-- app shell/router/state: `src/app/`
-- question schema/constants: `src/data/schema/quizSchema.js`
-- question content: `src/data/questions/`
-- build pipeline: `scripts/build.mjs`
+- `public.anonymous_progress_profiles`
+  - `id` (UUID)
+  - `resume_code_hash` (SHA-256 hash of normalized code)
+  - `payload_json` (JSONB state blob)
+  - `created_at`, `updated_at`, `last_active_at`
+- Security-definer RPC functions:
+  - `create_progress_profile`
+  - `get_progress_profile_by_code`
+  - `save_progress_profile_by_code`
 
-### Browser storage keys
+Direct anon table access is revoked. Browser clients use RPC only.
+
+## Resume code flow
+
+1. User starts quiz normally.
+2. User clicks **Save progress**.
+3. App generates a long random code and sends payload to Supabase.
+4. App shows **Your resume code** with copy button.
+5. User resumes later by entering code or by URL:
+   - `#/` with hash query: `#/??resume=CODE` (or `code=`)
+   - page query: `?resume=CODE`
+6. App loads remote payload, writes local cache, and routes user to quiz/results/home based on restored state.
+
+## Autosave behavior
+
+When linked to a resume code, remote autosave runs (debounced) after key state changes:
+
+- starting a quiz
+- selecting/changing answers
+- moving previous/next
+- completing a quiz
+- restart/new quiz transition
+
+If network fails, app keeps local progress and shows a non-destructive status message.
+
+## Static hosting / GitHub Pages notes
+
+- App uses hash routes (`#/quiz`, `#/progress`) so rewrite rules are not required.
+- For GitHub Pages, ensure runtime Supabase config is injected into deployed `index.html`.
+- CI/CD should run:
+
+```bash
+npm run check && npm test && npm run build
+```
+
+## Security limitations and notes
+
+- Resume code is a bearer credential: anyone with it can access that profile.
+- Store it like a password.
+- The app normalizes + validates code input and includes lightweight client-side attempt throttling.
+- Server-side hash storage is implemented (`resume_code_hash`) so raw code is not stored in table rows.
+- For stronger brute-force defense, add edge rate-limiting/CAPTCHA/WAF controls at the platform layer.
+
+## Local storage keys
 
 - `physio_quiz_session`
+- `physio_quiz_completed`
+- `physio_quiz_result_v1`
 - `physio_quiz_progress_v1`
+- `physio_quiz_attempt_details_v1`
+- `physio_quiz_resume_code_v1`
+- `physio_quiz_profile_status_v1`
 - `physio_quiz_dev_questions_v1`
 
-Clear these keys if you need a clean local test state.
+## Follow-up improvements (recommended)
 
-## How to add new questions
-
-Use either method below.
-
-### Method A: via dev/admin page (quickest)
-
-1. Open `#/admin-dev`.
-2. Complete all fields (category, difficulty, mode, question, options, explanation, tags).
-3. Click **Preview question**.
-4. Click **Save question**.
-
-Saved questions persist in localStorage on that browser only.
-
-### Method B: commit to source-controlled question bank
-
-1. Add question objects to:
-   - `src/data/questions/normalQuestions.js` (normal mode), or
-   - `src/data/questions/clinicalReasoningQuestions.js` (case-based mode)
-2. Ensure each object satisfies `isValidQuestion` in `src/data/schema/quizSchema.js`.
-3. Ensure each `id` is unique.
-4. Run `npm run check && npm test && npm run build`.
-
-## Accessibility basics (current baseline)
-
-- Proper label/input associations in setup/admin forms
-- Visible keyboard focus styles via `:focus-visible`
-- Live regions for setup availability and error feedback
-- Active navigation state announced with `aria-current`
-- Answer options expose pressed state with `aria-pressed`
-
-## Performance basics (current baseline)
-
-- Fully static bundle (no runtime API calls)
-- Small module graph and direct DOM rendering
-- Graceful localStorage guards for restricted-storage environments
-- Built output is plain static assets for CDN caching
-
-## Future roadmap
-
-- Authentication + role-based admin controls
-- Import/export for question banks
-- Timed quiz mode and adaptive selection
-- Keyboard shortcuts and richer accessibility support
-- Optional analytics hooks (privacy-conscious)
-- Expanded automated tests (UI and integration)
-- Optional TypeScript migration for stricter safety
+- Move code generation fully server-side in RPC for single-source security.
+- Add Supabase Edge Function for stronger request throttling/IP-based controls.
+- Add optional encrypted payload-at-rest model for sensitive deployments.
+- Add explicit “unlink device” and “rotate resume code” controls.

@@ -4,6 +4,8 @@ import {
   loadHistory,
   loadQuizResult,
   loadSession,
+  loadLinkedResumeCode,
+  loadProfileStatus,
   setQuizCompleted
 } from '../utils/storage.js';
 import { ROUTES, resolveRoute } from './router.js';
@@ -32,6 +34,10 @@ export function createInitialState() {
     latestResult: loadQuizResult(),
     history: loadHistory(),
     devQuestions: loadDevQuestions().filter(isValidQuestion),
+    profile: {
+      resumeCode: loadLinkedResumeCode(),
+      status: loadProfileStatus()
+    },
     startError: routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : ''
   };
 
