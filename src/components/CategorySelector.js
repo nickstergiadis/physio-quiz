@@ -83,6 +83,50 @@ export function categorySelector({
     difficultySelect.appendChild(option);
   });
 
+  function getDifficultyCounts(selection) {
+    const counts = Object.fromEntries(difficultyLevels.map((level) => [level, 0]));
+    const availableQuestions = getQuestionPool({
+      mode: selection.mode,
+      category: selection.category,
+      difficulty: 'all',
+      questionSource
+    });
+
+    availableQuestions.forEach((question) => {
+      if (counts[question.difficulty] !== undefined) {
+        counts[question.difficulty] += 1;
+      }
+    });
+
+    return { availableQuestions, counts };
+  }
+
+  function updateDifficultyOptions(counts) {
+    const currentValue = difficultySelect.value;
+    let hasActiveSelection = currentValue === 'all';
+
+    Array.from(difficultySelect.children).forEach((option) => {
+      if (option.value === 'all') {
+        option.disabled = false;
+        option.hidden = false;
+        return;
+      }
+
+      const count = counts[option.value] || 0;
+      const isEnabled = count > 0;
+      option.disabled = !isEnabled;
+      option.hidden = !isEnabled;
+
+      if (isEnabled && option.value === currentValue) {
+        hasActiveSelection = true;
+      }
+    });
+
+    if (!hasActiveSelection) {
+      difficultySelect.value = 'all';
+    }
+  }
+
   const lengthLabel = createLabel('Quiz Length', 'length');
   const lengthSelect = createSelect('length', 'length');
   QUIZ_LENGTH_OPTIONS.forEach((value) => {
@@ -134,8 +178,15 @@ export function categorySelector({
     }
 
     const selection = resolveSelection();
-    const available = getQuestionPool({ ...selection, questionSource }).length;
-    const requested = selection.length;
+    const { availableQuestions, counts } = getDifficultyCounts(selection);
+    updateDifficultyOptions(counts);
+
+    const updatedSelection = resolveSelection();
+    const available =
+      updatedSelection.difficulty === 'all'
+        ? availableQuestions.length
+        : counts[updatedSelection.difficulty] || 0;
+    const requested = updatedSelection.length;
     const questionWord = available === 1 ? 'question' : 'questions';
 
     if (available === 0) {
