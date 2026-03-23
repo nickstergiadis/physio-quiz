@@ -42,7 +42,8 @@ export function createInitialState() {
           mode: restored.filters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
           category: typeof restored.filters.category === 'string' ? restored.filters.category : 'all',
           difficulty: typeof restored.filters.difficulty === 'string' ? restored.filters.difficulty : 'all',
-          length: [5, 10, 15, 20].includes(restored.filters.length) ? restored.filters.length : 10,
+          length:
+            Number.isInteger(restored.filters.length) && restored.filters.length > 0 ? restored.filters.length : 10,
           order: restored.filters.order === 'fixed' ? 'fixed' : 'shuffled'
         }
       : state.filters;

@@ -2,7 +2,26 @@ import { quizCategories, difficultyLevels } from '../data/questionBank.js';
 import { titleCase } from '../utils/format/titleCase.js';
 import { getQuestionPool } from '../utils/quizEngine.js';
 
-const QUIZ_LENGTH_OPTIONS = [5, 10, 15, 20];
+function getQuizLengthOptions(availableQuestions) {
+  if (availableQuestions <= 0) {
+    return [];
+  }
+
+  if (availableQuestions <= 5) {
+    return [availableQuestions];
+  }
+
+  const options = [];
+  for (let value = 5; value < availableQuestions; value += 5) {
+    options.push(value);
+  }
+
+  if (options[options.length - 1] !== availableQuestions) {
+    options.push(availableQuestions);
+  }
+
+  return options;
+}
 
 function getCategoryOptions(mode = 'normal') {
   if (mode === 'clinical-reasoning') {
@@ -129,12 +148,34 @@ export function categorySelector({
 
   const lengthLabel = createLabel('Quiz Length', 'length');
   const lengthSelect = createSelect('length', 'length');
-  QUIZ_LENGTH_OPTIONS.forEach((value) => {
-    const option = document.createElement('option');
-    option.value = String(value);
-    option.textContent = `${value} questions`;
-    lengthSelect.appendChild(option);
-  });
+  let preferredLength = Number.isInteger(initialFilters.length) && initialFilters.length > 0 ? initialFilters.length : 10;
+
+  function updateLengthOptions(availableQuestions) {
+    const options = getQuizLengthOptions(availableQuestions);
+    const currentLength = Number(lengthSelect.value);
+    const desiredLength = Number.isInteger(currentLength) && currentLength > 0 ? currentLength : preferredLength;
+    lengthSelect.innerHTML = '';
+
+    options.forEach((value) => {
+      const option = document.createElement('option');
+      option.value = String(value);
+      option.textContent = `${value} questions`;
+      lengthSelect.appendChild(option);
+    });
+
+    if (options.length === 0) {
+      lengthSelect.disabled = true;
+      return 0;
+    }
+
+    lengthSelect.disabled = false;
+    const selectedLength = options.includes(desiredLength)
+      ? desiredLength
+      : options.filter((value) => value <= desiredLength).at(-1) ?? options[options.length - 1];
+    lengthSelect.value = String(selectedLength);
+    preferredLength = selectedLength;
+    return selectedLength;
+  }
 
   const orderLabel = createLabel('Question Order', 'order');
   const orderSelect = createSelect('order', 'order');
@@ -181,12 +222,9 @@ export function categorySelector({
     const { availableQuestions, counts } = getDifficultyCounts(selection);
     updateDifficultyOptions(counts);
 
-    const updatedSelection = resolveSelection();
-    const available =
-      updatedSelection.difficulty === 'all'
-        ? availableQuestions.length
-        : counts[updatedSelection.difficulty] || 0;
-    const requested = updatedSelection.length;
+    const selectedDifficulty = difficultySelect.value;
+    const available = selectedDifficulty === 'all' ? availableQuestions.length : counts[selectedDifficulty] || 0;
+    const requested = updateLengthOptions(available);
     const questionWord = available === 1 ? 'question' : 'questions';
 
     if (available === 0) {
@@ -208,7 +246,6 @@ export function categorySelector({
   modeSelect.value = initialFilters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal';
   renderCategoryOptions(modeSelect.value, typeof initialFilters.category === 'string' ? initialFilters.category : 'all');
   difficultySelect.value = typeof initialFilters.difficulty === 'string' ? initialFilters.difficulty : 'all';
-  lengthSelect.value = String(QUIZ_LENGTH_OPTIONS.includes(initialFilters.length) ? initialFilters.length : 10);
   orderSelect.value = initialFilters.order === 'fixed' ? 'fixed' : 'shuffled';
 
   const fields = [

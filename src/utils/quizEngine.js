@@ -27,7 +27,7 @@ export function buildQuizSession(config = {}) {
     mode: config.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal',
     category: typeof config.category === 'string' ? config.category : 'all',
     difficulty: typeof config.difficulty === 'string' ? config.difficulty : 'all',
-    length: [5, 10, 15, 20].includes(config.length) ? config.length : 10,
+    length: Number.isInteger(config.length) && config.length > 0 ? config.length : 10,
     order: config.order === 'fixed' ? 'fixed' : 'shuffled'
   };
   const pool = getQuestionPool({
