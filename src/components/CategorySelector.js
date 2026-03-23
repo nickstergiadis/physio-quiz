@@ -4,6 +4,14 @@ import { getQuestionPool } from '../utils/quizEngine.js';
 
 const QUIZ_LENGTH_OPTIONS = [5, 10, 15, 20];
 
+function getCategoryOptions(mode = 'normal') {
+  if (mode === 'clinical-reasoning') {
+    return ['all', 'clinical reasoning'];
+  }
+
+  return ['all', ...quizCategories];
+}
+
 function createLabel(text, htmlFor) {
   const label = document.createElement('label');
   label.className = 'field-label';
@@ -46,12 +54,25 @@ export function categorySelector({
 
   const categoryLabel = createLabel('Category', 'category');
   const categorySelect = createSelect('category', 'category');
-  ['all', ...quizCategories].forEach((value) => {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = value === 'all' ? 'All Categories' : titleCase(value);
-    categorySelect.appendChild(option);
-  });
+
+  function renderCategoryOptions(mode, selectedCategory) {
+    const nextOptions = getCategoryOptions(mode);
+    categorySelect.innerHTML = '';
+
+    nextOptions.forEach((value) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value === 'all' ? 'All Categories' : titleCase(value);
+      categorySelect.appendChild(option);
+    });
+
+    if (nextOptions.includes(selectedCategory)) {
+      categorySelect.value = selectedCategory;
+      return;
+    }
+
+    categorySelect.value = mode === 'clinical-reasoning' ? 'clinical reasoning' : 'all';
+  }
 
   const difficultyLabel = createLabel('Difficulty', 'difficulty');
   const difficultySelect = createSelect('difficulty', 'difficulty');
@@ -134,7 +155,7 @@ export function categorySelector({
   }
 
   modeSelect.value = initialFilters.mode === 'clinical-reasoning' ? 'clinical-reasoning' : 'normal';
-  categorySelect.value = typeof initialFilters.category === 'string' ? initialFilters.category : 'all';
+  renderCategoryOptions(modeSelect.value, typeof initialFilters.category === 'string' ? initialFilters.category : 'all');
   difficultySelect.value = typeof initialFilters.difficulty === 'string' ? initialFilters.difficulty : 'all';
   lengthSelect.value = String(QUIZ_LENGTH_OPTIONS.includes(initialFilters.length) ? initialFilters.length : 10);
   orderSelect.value = initialFilters.order === 'fixed' ? 'fixed' : 'shuffled';
@@ -156,7 +177,12 @@ export function categorySelector({
 
   form.append(grid, availability, errorText, submit);
 
-  [modeSelect, categorySelect, difficultySelect, lengthSelect, orderSelect].forEach((select) => {
+  modeSelect.addEventListener('change', () => {
+    renderCategoryOptions(modeSelect.value, categorySelect.value);
+    updateAvailability({ clearError: true });
+  });
+
+  [categorySelect, difficultySelect, lengthSelect, orderSelect].forEach((select) => {
     select.addEventListener('change', () => updateAvailability({ clearError: true }));
   });
 

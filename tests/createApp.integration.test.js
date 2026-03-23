@@ -176,22 +176,22 @@ test('invalid hash route falls back to home with a user-facing notice', () => {
   assert.ok(document.body.textContent.includes('Choose quiz mode, category, and difficulty'));
 });
 
-test('no-questions-available state is shown in setup and blocks start', () => {
+test('clinical reasoning mode limits category choices and resets invalid selections', () => {
   installAppDom();
 
   const mode = document.querySelector('#mode');
   const category = document.querySelector('#category');
   assert.ok(mode && category, 'Expected quiz setup controls to exist');
 
-  mode.value = 'clinical-reasoning';
-  mode.dispatchEvent(new Event('change', { bubbles: true }));
-  category.value = 'cervical spine';
+  category.value = 'knee';
   category.dispatchEvent(new Event('change', { bubbles: true }));
 
-  assert.ok(document.body.textContent.includes('No matching questions. Change filters to continue.'));
+  mode.value = 'clinical-reasoning';
+  mode.dispatchEvent(new Event('change', { bubbles: true }));
 
-  const startButton = [...document.querySelectorAll('button')].find((el) => el.textContent.trim() === 'Start Quiz');
-  assert.ok(startButton?.disabled);
+  const categoryValues = Array.from(category.querySelectorAll('option'), (option) => option.value);
+  assert.deepEqual(categoryValues, ['all', 'clinical reasoning']);
+  assert.equal(category.value, 'clinical reasoning');
 });
 
 test('admin link is hidden from nav after hardening but direct route still renders admin page', () => {
