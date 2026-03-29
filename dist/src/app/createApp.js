@@ -21,6 +21,7 @@ import { createInitialState } from './state.js';
 import { ROUTES, parseRouteFromHash, readRoute, writeRoute } from './router.js';
 import { questionBank } from '../data/questionBank.js';
 import { createZonedTimestamp } from '../utils/dateTime.js';
+import { initializeTheme } from '../utils/theme.js';
 
 function navLink(path, label) {
   const link = document.createElement('a');
@@ -36,6 +37,42 @@ function combinedQuestionBank(devQuestions) {
 }
 
 const ADMIN_NAV_FLAG_KEY = 'physio_quiz_admin_nav_enabled';
+
+
+function buildThemeControl(themeManager) {
+  const wrap = document.createElement('div');
+  wrap.className = 'theme-control stack';
+
+  const label = document.createElement('label');
+  label.className = 'field-label';
+  label.setAttribute('for', 'theme-mode');
+  label.textContent = 'Theme';
+
+  const select = document.createElement('select');
+  select.id = 'theme-mode';
+  select.className = 'input theme-select';
+  select.setAttribute('aria-label', 'Theme mode');
+
+  [
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+    { value: 'system', label: 'System' }
+  ].forEach((optionDef) => {
+    const option = document.createElement('option');
+    option.value = optionDef.value;
+    option.textContent = optionDef.label;
+    select.appendChild(option);
+  });
+
+  select.value = themeManager.getMode();
+  select.addEventListener('change', (event) => {
+    themeManager.setMode(event.target.value);
+  });
+
+  wrap.append(label, select);
+  return wrap;
+}
+
 
 function shouldShowAdminNavLink() {
   const hashQuery = location.hash.split('?')[1];
@@ -74,6 +111,7 @@ export function createApp(root) {
   }
 
   const state = createInitialState();
+  const themeManager = initializeTheme();
 
   const appShell = document.createElement('div');
   appShell.className = 'app-shell';
@@ -93,7 +131,9 @@ export function createApp(root) {
   ];
   nav.append(...primaryNavLinks);
 
-  header.append(title, nav);
+  const themeControl = buildThemeControl(themeManager);
+
+  header.append(title, nav, themeControl);
 
   const main = document.createElement('main');
   main.className = 'main';

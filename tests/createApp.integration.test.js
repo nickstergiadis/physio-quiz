@@ -5,7 +5,7 @@ import { createApp } from '../src/app/createApp.js';
 import { ROUTES } from '../src/app/router.js';
 import { createMiniDom } from './helpers/miniDom.js';
 
-function installAppDom({ hash = `#${ROUTES.home}`, storage = {} } = {}) {
+function installAppDom({ hash = `#${ROUTES.home}`, storage = {}, prefersDark = false } = {}) {
   const dom = createMiniDom();
   const root = dom.document.createElement('div');
   root.id = 'app';
@@ -28,6 +28,21 @@ function installAppDom({ hash = `#${ROUTES.home}`, storage = {} } = {}) {
     }
   };
 
+
+  const mediaListeners = new Set();
+  const mediaQuery = {
+    media: '(prefers-color-scheme: dark)',
+    matches: prefersDark,
+    addEventListener(type, listener) {
+      if (type === 'change') mediaListeners.add(listener);
+    },
+    removeEventListener(type, listener) {
+      if (type === 'change') mediaListeners.delete(listener);
+    }
+  };
+
+  dom.window.matchMedia = () => mediaQuery;
+
   global.window = dom.window;
   global.document = dom.document;
   global.location = dom.window.location;
@@ -37,7 +52,15 @@ function installAppDom({ hash = `#${ROUTES.home}`, storage = {} } = {}) {
   const appRoot = document.querySelector('#app');
   createApp(appRoot);
 
-  return { dom, root: appRoot, storageState };
+  return {
+    dom,
+    root: appRoot,
+    storageState,
+    setSystemTheme(isDark) {
+      mediaQuery.matches = isDark;
+      mediaListeners.forEach((listener) => listener({ matches: isDark }));
+    }
+  };
 }
 
 function clickByText(text) {
@@ -267,4 +290,33 @@ test('quiz submission works for multiple mode/category/difficulty combinations',
       assert.equal(window.location.hash, ROUTES.home);
     }
   });
+});
+
+
+test('theme selector defaults to system and follows system preference', () => {
+  const { setSystemTheme } = installAppDom({ prefersDark: true });
+
+  const themeSelect = document.querySelector('#theme-mode');
+  assert.ok(themeSelect, 'Expected theme selector to exist');
+  assert.equal(themeSelect.value, 'system');
+  assert.equal(document.body.dataset.theme, 'dark');
+
+  setSystemTheme(false);
+  assert.equal(document.body.dataset.theme, 'light');
+});
+
+test('theme selector persists explicit mode and ignores system changes when overridden', () => {
+  const { storageState, setSystemTheme } = installAppDom({ prefersDark: false });
+
+  const themeSelect = document.querySelector('#theme-mode');
+  assert.ok(themeSelect, 'Expected theme selector to exist');
+
+  themeSelect.value = 'dark';
+  themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+  assert.equal(storageState.get('physio_quiz_theme_mode'), 'dark');
+  assert.equal(document.body.dataset.theme, 'dark');
+
+  setSystemTheme(false);
+  assert.equal(document.body.dataset.theme, 'dark');
 });

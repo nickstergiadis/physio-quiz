@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Physio Quiz</title>
     <meta name="description" content="A modern physiotherapy quiz app for students and clinicians." />
+    <script>
+      (() => {
+        const STORAGE_KEY = 'physio_quiz_theme_mode';
+        const VALID_MODES = new Set(['light', 'dark', 'system']);
+
+        try {
+          const storedMode = localStorage.getItem(STORAGE_KEY);
+          const mode = VALID_MODES.has(storedMode) ? storedMode : 'system';
+          const theme = mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : mode === 'system'
+              ? 'light'
+              : mode;
+
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.setAttribute('data-theme-mode', mode);
+          document.documentElement.style.colorScheme = theme;
+        } catch {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute('data-theme-mode', 'system');
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="./src/styles/global.css" />
   </head>
   <body>
