@@ -62,7 +62,7 @@ body {
 .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
 }
 
 .topbar {
@@ -102,6 +102,20 @@ body {
   margin: 0 auto;
   width: 100%;
   padding: 1rem;
+}
+
+.app-footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
+  padding: 0.75rem 1rem 1rem;
+}
+
+.footer-nav {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .card {

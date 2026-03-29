@@ -2,11 +2,10 @@ import { card } from '../components/ui/card.js';
 import { button } from '../components/ui/button.js';
 import { titleCase } from '../utils/format/titleCase.js';
 import { computeProgressMetrics } from '../utils/progress.js';
-import { USER_TIME_ZONE } from '../utils/dateTime.js';
 
 function formatDateTime(value) {
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? 'Unknown date' : parsed.toLocaleString('en-CA', { timeZone: USER_TIME_ZONE });
+  return Number.isNaN(parsed.getTime()) ? 'Unknown date' : parsed.toLocaleString('en-CA');
 }
 
 function formatDateOnly(dayKey) {
@@ -15,7 +14,7 @@ function formatDateOnly(dayKey) {
   if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return 'N/A';
 
   const parsed = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString('en-CA', { timeZone: USER_TIME_ZONE });
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString('en-CA');
 }
 
 function metricBlock(label, value) {

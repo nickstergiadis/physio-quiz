@@ -30,7 +30,7 @@ After `npm run build`, confirm `dist/` exists and includes at minimum:
 - `dist/index.html`
 - `dist/src/main.js`
 - `dist/src/app/` (router/app shell modules)
-- `dist/src/pages/` (home/quiz/results/progress/admin pages)
+- `dist/src/pages/` (home/quiz/results/progress/legal pages)
 - `dist/src/data/` (question bank + schema)
 - `dist/src/utils/` (storage/progress/engine helpers)
 - `dist/src/styles/global.css`
@@ -68,20 +68,19 @@ Run these checks on the live URL:
 - Refresh the browser and confirm progress remains.
 - Start a new quiz and verify active session resumes across refresh while in-progress.
 
-## 5) Browser storage reset instructions (three keys)
+## 5) Browser storage reset instructions
 
 Reset these localStorage keys when you need a clean browser state:
 
 - `physio_quiz_session`
 - `physio_quiz_progress_v1`
-- `physio_quiz_dev_questions_v1`
 
 ### Option A: DevTools UI
 
 1. Open browser DevTools.
 2. Go to **Application** (Chrome/Edge) or **Storage** (Firefox).
 3. Open **Local Storage** for the site origin.
-4. Delete the three keys above.
+4. Delete the keys above.
 5. Refresh the page.
 
 ### Option B: Console
@@ -89,22 +88,19 @@ Reset these localStorage keys when you need a clean browser state:
 ```js
 localStorage.removeItem('physio_quiz_session');
 localStorage.removeItem('physio_quiz_progress_v1');
-localStorage.removeItem('physio_quiz_dev_questions_v1');
 location.reload();
 ```
 
-## 6) Dev/admin access model (after nav hardening)
+## 6) Public route hardening checks
 
-- The learner-facing primary nav should expose only Home, Quiz, and Progress.
-- Dev/admin should be treated as a non-public utility route (`#/admin-dev`) for local/internal use.
-- There is no authentication/authorization layer in this app; route obscurity is not security.
-- Operational expectation: only trusted developers/testers should use `#/admin-dev`.
-- Any production use requiring true admin controls must add authentication + role-based access before relying on this route.
+- The learner-facing top nav should expose Home, Quiz, and Progress.
+- Footer links should expose Privacy, Terms, and Disclaimer.
+- Opening `#/admin-dev` must not render any editor/admin UI; it should use the same friendly Home fallback as unknown routes.
+- There is no authentication/authorization layer in this app. No write/edit admin surface should be reachable in production.
 
 ## 7) Known limitations / risks
 
 - No backend or user accounts: data is browser-local only (device/browser specific).
 - localStorage can be cleared by users, browser policy, private mode, or quota limits.
-- Dev/admin tooling is intentionally lightweight and not auth-protected.
 - Hash routing is SPA-friendly but can expose route states in URL/history.
 - Question content quality and schema validity still depend on review discipline and tests.

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { computeProgressMetrics } from '../src/utils/progress.js';
 
 const TORONTO = 'America/Toronto';
+const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
 function asIsoDayOffset(daysAgo, baseNow = '2026-03-21T16:00:00.000Z') {
   const stamp = new Date(new Date(baseNow).getTime() - daysAgo * 24 * 60 * 60 * 1000);
@@ -108,4 +109,26 @@ test('last activity and streak day keys are resolved in the configured timezone'
   assert.equal(metrics.streak.lastAttemptDate, '2026-03-20');
   assert.equal(metrics.streak.current, 1);
   assert.equal(metrics.streak.activeToday, false);
+});
+
+test('progress metrics use runtime local timezone by default', () => {
+  const history = [
+    {
+      id: 'local-zone',
+      completedAt: '2026-03-20T23:30:00-04:00',
+      score: { correct: 3, total: 5 },
+      categoryStats: {}
+    }
+  ];
+
+  const localDefault = computeProgressMetrics(history, {
+    now: new Date('2026-03-21T16:00:00.000Z')
+  });
+  const explicitLocal = computeProgressMetrics(history, {
+    now: new Date('2026-03-21T16:00:00.000Z'),
+    timeZone: LOCAL_TIME_ZONE
+  });
+
+  assert.equal(localDefault.streak.lastAttemptDate, explicitLocal.streak.lastAttemptDate);
+  assert.equal(localDefault.streak.current, explicitLocal.streak.current);
 });

@@ -3,7 +3,9 @@ export const ROUTES = {
   quiz: '/quiz',
   results: '/results',
   progress: '/progress',
-  admin: '/admin-dev'
+  privacy: '/privacy',
+  terms: '/terms',
+  disclaimer: '/disclaimer'
 };
 
 export function isKnownRoute(route) {

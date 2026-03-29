@@ -1,6 +1,5 @@
 import {
   isQuizCompleted,
-  loadDevQuestions,
   loadHistory,
   loadQuizResult,
   loadSession,
@@ -31,7 +30,6 @@ export function createInitialState() {
     quizCompleted: isQuizCompleted(),
     latestResult: loadQuizResult(),
     history: loadHistory(),
-    devQuestions: loadDevQuestions().filter(isValidQuestion),
     startError: routeState.unknownHash ? 'That page wasn’t found; you were redirected to Home.' : ''
   };
 
