@@ -2,7 +2,7 @@ import { homePage } from '../pages/HomePage.js';
 import { quizPage } from '../pages/QuizPage.js';
 import { resultsPage } from '../pages/ResultsPage.js';
 import { progressPage } from '../pages/ProgressPage.js';
-import { adminPage } from '../pages/AdminPage.js';
+import { legalPage } from '../pages/LegalPage.js';
 import { createAttemptId } from '../utils/id.js';
 import { buildQuizSession, calculateScore, buildQuestionReview, calculateCategoryScore } from '../utils/quizEngine.js';
 import {
@@ -10,7 +10,6 @@ import {
   clearSession,
   pushHistory,
   loadHistory,
-  saveDevQuestions,
   setQuizCompleted,
   saveQuizResult,
   clearQuizResult,
@@ -32,12 +31,57 @@ function navLink(path, label) {
   return link;
 }
 
-function combinedQuestionBank(devQuestions) {
-  return [...questionBank, ...devQuestions];
-}
-
-const ADMIN_NAV_FLAG_KEY = 'physio_quiz_admin_nav_enabled';
-
+const LEGAL_PAGE_CONTENT = {
+  [ROUTES.privacy]: {
+    title: 'Privacy Policy',
+    intro: 'Physio Quiz is a static app that runs entirely in your browser.',
+    sections: [
+      {
+        title: 'What we store',
+        paragraphs: [
+          'Quiz progress, attempt history, and theme preference are saved locally in your browser storage on this device.'
+        ]
+      },
+      {
+        title: 'Accounts and cloud storage',
+        paragraphs: [
+          'No account is required and no personal profile is created.',
+          'This app does not guarantee cloud backup or cross-device sync. If local browser data is cleared, your history may be lost.'
+        ]
+      }
+    ]
+  },
+  [ROUTES.terms]: {
+    title: 'Terms of Use',
+    intro: 'By using Physio Quiz, you agree to these basic terms.',
+    sections: [
+      {
+        title: 'Educational use',
+        paragraphs: ['Physio Quiz is provided as-is for education and self-review purposes.']
+      },
+      {
+        title: 'Service availability',
+        paragraphs: [
+          'We may update, limit, or remove content at any time without notice.',
+          'Use of this app is at your own discretion.'
+        ]
+      }
+    ]
+  },
+  [ROUTES.disclaimer]: {
+    title: 'Medical/Educational Disclaimer',
+    intro: 'Physio Quiz supports learning and revision only.',
+    sections: [
+      {
+        title: 'Not medical advice',
+        paragraphs: [
+          'Content in this app is not medical advice, diagnosis, or treatment guidance.',
+          'It should not replace clinical judgment, formal education, supervision, or local policy requirements.'
+        ]
+      }
+    ]
+  }
+};
 
 function buildThemeControl(themeManager) {
   const wrap = document.createElement('div');
@@ -74,36 +118,6 @@ function buildThemeControl(themeManager) {
 }
 
 
-function shouldShowAdminNavLink() {
-  const hashQuery = location.hash.split('?')[1];
-  const searchParams = new URLSearchParams(hashQuery || '');
-  const devFlag = searchParams.get('dev');
-
-  if (devFlag === '1') {
-    try {
-      localStorage.setItem(ADMIN_NAV_FLAG_KEY, '1');
-    } catch {
-      // Ignore storage write failures (e.g. private mode / storage disabled).
-    }
-    return true;
-  }
-
-  if (devFlag === '0') {
-    try {
-      localStorage.removeItem(ADMIN_NAV_FLAG_KEY);
-    } catch {
-      // Ignore storage removal failures (e.g. private mode / storage disabled).
-    }
-    return false;
-  }
-
-  try {
-    return localStorage.getItem(ADMIN_NAV_FLAG_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
 export function createApp(root) {
   if (!root) {
     console.error('App root element not found.');
@@ -138,7 +152,19 @@ export function createApp(root) {
   const main = document.createElement('main');
   main.className = 'main';
 
-  appShell.append(header, main);
+  const footer = document.createElement('footer');
+  footer.className = 'app-footer';
+  const legalNav = document.createElement('nav');
+  legalNav.className = 'footer-nav';
+  legalNav.setAttribute('aria-label', 'Legal');
+  legalNav.append(
+    navLink(ROUTES.privacy, 'Privacy'),
+    navLink(ROUTES.terms, 'Terms'),
+    navLink(ROUTES.disclaimer, 'Disclaimer')
+  );
+  footer.appendChild(legalNav);
+
+  appShell.append(header, main, footer);
   root.appendChild(appShell);
 
   function setRoute(route) {
@@ -157,7 +183,7 @@ export function createApp(root) {
   }
 
   function startQuiz(filters) {
-    const session = buildQuizSession({ ...filters, questionSource: combinedQuestionBank(state.devQuestions) });
+    const session = buildQuizSession({ ...filters, questionSource: questionBank });
     if (!session.questions.length) {
       state.startError = 'No questions match this setup. Try broader filters or a different mode.';
       render();
@@ -175,12 +201,6 @@ export function createApp(root) {
     clearQuizResult();
     persistSession();
     setRoute(ROUTES.quiz);
-  }
-
-  function addDevQuestion(question) {
-    state.devQuestions.unshift(question);
-    saveDevQuestions(state.devQuestions);
-    render();
   }
 
   function selectAnswer(questionId, optionIndex) {
@@ -323,13 +343,8 @@ export function createApp(root) {
       return;
     }
 
-    if (route === ROUTES.admin) {
-      main.appendChild(
-        adminPage({
-          onSaveQuestion: addDevQuestion,
-          existingQuestions: state.devQuestions
-        })
-      );
+    if (LEGAL_PAGE_CONTENT[route]) {
+      main.appendChild(legalPage(LEGAL_PAGE_CONTENT[route]));
       return;
     }
 
@@ -338,7 +353,7 @@ export function createApp(root) {
         onStart: startQuiz,
         initialFilters: state.filters,
         startError: state.startError,
-        questionSource: combinedQuestionBank(state.devQuestions)
+        questionSource: questionBank
       })
     );
   }

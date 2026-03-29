@@ -1,12 +1,19 @@
-const USER_TIME_ZONE = 'America/Toronto';
-
 function partsToObject(parts) {
   return Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
 }
 
-function getDateTimeParts(date, timeZone = USER_TIME_ZONE) {
+function resolveTimeZone(timeZone) {
+  if (typeof timeZone === 'string' && timeZone) return timeZone;
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return 'UTC';
+  }
+}
+
+function getDateTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
+    timeZone: resolveTimeZone(timeZone),
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -19,7 +26,7 @@ function getDateTimeParts(date, timeZone = USER_TIME_ZONE) {
   return partsToObject(formatter.formatToParts(date));
 }
 
-function getTimeZoneOffsetMinutes(date, timeZone = USER_TIME_ZONE) {
+function getTimeZoneOffsetMinutes(date, timeZone) {
   const parts = getDateTimeParts(date, timeZone);
   const asUtcTimestamp = Date.UTC(
     Number(parts.year),
@@ -41,7 +48,7 @@ function formatOffset(offsetMinutes) {
   return `${sign}${hours}:${minutes}`;
 }
 
-export function createZonedTimestamp(dateValue = new Date(), timeZone = USER_TIME_ZONE) {
+export function createZonedTimestamp(dateValue = new Date(), timeZone) {
   const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
   if (Number.isNaN(date.getTime())) return new Date().toISOString();
 
@@ -53,12 +60,12 @@ export function createZonedTimestamp(dateValue = new Date(), timeZone = USER_TIM
   )}`;
 }
 
-export function getLocalDateKey(dateValue, timeZone = USER_TIME_ZONE) {
+export function getLocalDateKey(dateValue, timeZone) {
   const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
   if (Number.isNaN(date.getTime())) return null;
 
   const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
+    timeZone: resolveTimeZone(timeZone),
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -67,5 +74,4 @@ export function getLocalDateKey(dateValue, timeZone = USER_TIME_ZONE) {
   const values = partsToObject(parts);
   return `${values.year}-${values.month}-${values.day}`;
 }
-
-export { USER_TIME_ZONE };
+export { resolveTimeZone };

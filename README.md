@@ -20,7 +20,7 @@ Physio Quiz is a lightweight, static single-page physiotherapy training app buil
   - streak and recent activity metrics
   - recent attempt history
 - Local-only persistence (browser `localStorage`) for session and history; no cloud sync or resume codes
-- Local dev/admin screen for drafting questions in browser storage
+- Built-in legal pages (Privacy, Terms, Medical/Educational Disclaimer)
 - Schema validation and duplicate-id filtering for question safety
 
 ## Local setup
@@ -108,24 +108,13 @@ Configuration lives in source code:
 
 - `physio_quiz_session`
 - `physio_quiz_progress_v1`
-- `physio_quiz_dev_questions_v1`
 
 Clear these keys if you need a clean local test state.
 
 ## How to add new questions
 
-Use either method below.
-
-### Method A: via dev/admin page (quickest)
-
-1. Open `#/admin-dev`.
-2. Complete all fields (category, difficulty, mode, question, options, explanation, tags).
-3. Click **Preview question**.
-4. Click **Save question**.
-
-Saved questions persist in localStorage on that browser only.
-
-### Method B: commit to source-controlled question bank
+Physio Quiz no longer exposes any public in-app admin/editor route in production.
+Add questions by committing to the source-controlled question bank:
 
 1. Add question objects to:
    - `src/data/questions/normalQuestions.js` (normal mode), or
@@ -136,7 +125,7 @@ Saved questions persist in localStorage on that browser only.
 
 ## Accessibility basics (current baseline)
 
-- Proper label/input associations in setup/admin forms
+- Proper label/input associations in setup forms
 - Visible keyboard focus styles via `:focus-visible`
 - Live regions for setup availability and error feedback
 - Active navigation state announced with `aria-current`
@@ -149,12 +138,10 @@ Saved questions persist in localStorage on that browser only.
 - Graceful localStorage guards for restricted-storage environments
 - Built output is plain static assets for CDN caching
 
-## Future roadmap
+## Launch-ready MVP constraints (current)
 
-- Authentication + role-based admin controls
-- Import/export for question banks
-- Timed quiz mode and adaptive selection
-- Keyboard shortcuts and richer accessibility support
-- Optional analytics hooks (privacy-conscious)
-- Expanded automated tests (UI and integration)
-- Optional TypeScript migration for stricter safety
+- No public `#/admin-dev` route (unknown routes, including that hash, fall back to Home)
+- Browser-local persistence only (no account, no cloud sync guarantee)
+- Date/streak logic follows the user runtime/browser timezone by default
+- Legal pages are available at `#/privacy`, `#/terms`, and `#/disclaimer`
+- App remains fully static and GitHub Pages compatible (hash routing)

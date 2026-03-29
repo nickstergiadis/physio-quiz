@@ -1,5 +1,5 @@
 import { titleCase } from './format/titleCase.js';
-import { USER_TIME_ZONE, getLocalDateKey } from './dateTime.js';
+import { getLocalDateKey } from './dateTime.js';
 
 function formatCategoryLabel(category) {
   if (!category) return 'N/A';
@@ -97,7 +97,7 @@ function calculateRecentActivity(history) {
   );
 }
 
-export function computeProgressMetrics(history, { recentLimit = 5, now = new Date(), timeZone = USER_TIME_ZONE } = {}) {
+export function computeProgressMetrics(history, { recentLimit = 5, now = new Date(), timeZone } = {}) {
   const totalQuizzes = history.length;
   const cumulative = history.reduce(
     (totals, attempt) => {

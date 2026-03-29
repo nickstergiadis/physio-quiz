@@ -237,16 +237,47 @@ test('clinical reasoning mode limits category choices and resets invalid selecti
   assert.equal(category.value, 'clinical reasoning');
 });
 
-test('admin link is hidden from nav after hardening but direct route still renders admin page', () => {
+test('admin-dev hash route is blocked and uses home fallback messaging', () => {
+  installAppDom({ hash: '#/admin-dev' });
+
+  assert.equal(window.location.hash, '#/admin-dev');
+  assert.ok(document.body.textContent.includes('That page was not found. You were redirected to Home.'));
+  assert.ok(document.body.textContent.includes('Choose quiz mode, category, and difficulty'));
+});
+
+test('footer legal links are present and each route renders', () => {
   installAppDom();
 
-  const navText = document.querySelector('nav')?.textContent ?? '';
-  assert.equal(navText.includes('Admin (Dev)'), false);
+  const footerNav = document.querySelector('.footer-nav');
+  assert.ok(footerNav, 'Expected footer legal navigation');
+  const footerLinks = [...footerNav.querySelectorAll('a')];
+  assert.deepEqual(
+    footerLinks.map((link) => link.textContent.trim()),
+    ['Privacy', 'Terms', 'Disclaimer']
+  );
 
-  window.location.hash = `#${ROUTES.admin}`;
+  assert.deepEqual(
+    footerLinks.map((link) => link.href),
+    ['#/privacy', '#/terms', '#/disclaimer']
+  );
+
+  window.location.hash = '#/privacy';
   window.dispatchEvent(new Event('hashchange'));
+  assert.equal(window.location.hash, '#/privacy');
+  assert.ok(document.body.textContent.includes('Privacy Policy'));
+  assert.ok(document.body.textContent.includes('saved locally in your browser storage'));
 
-  assert.ok(document.body.textContent.includes('Dev/Admin page (local only).'));
+  window.location.hash = '#/terms';
+  window.dispatchEvent(new Event('hashchange'));
+  assert.equal(window.location.hash, '#/terms');
+  assert.ok(document.body.textContent.includes('Terms of Use'));
+  assert.ok(document.body.textContent.includes('provided as-is for education and self-review purposes'));
+
+  window.location.hash = '#/disclaimer';
+  window.dispatchEvent(new Event('hashchange'));
+  assert.equal(window.location.hash, '#/disclaimer');
+  assert.ok(document.body.textContent.includes('Medical/Educational Disclaimer'));
+  assert.ok(document.body.textContent.includes('not medical advice, diagnosis, or treatment guidance'));
 });
 
 test('quiz submission works for multiple mode/category/difficulty combinations', () => {
