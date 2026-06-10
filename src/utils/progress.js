@@ -80,10 +80,10 @@ function calculateStreak(history, now, timeZone) {
   };
 }
 
-function calculateRecentActivity(history) {
-  const now = Date.now();
-  const sevenDayCutoff = now - 7 * 24 * 60 * 60 * 1000;
-  const thirtyDayCutoff = now - 30 * 24 * 60 * 60 * 1000;
+function calculateRecentActivity(history, now) {
+  const ts = now instanceof Date ? now.getTime() : Date.now();
+  const sevenDayCutoff = ts - 7 * 24 * 60 * 60 * 1000;
+  const thirtyDayCutoff = ts - 30 * 24 * 60 * 60 * 1000;
 
   return history.reduce(
     (totals, attempt) => {
@@ -113,10 +113,10 @@ export function computeProgressMetrics(history, { recentLimit = 5, now = new Dat
 
   const categories = resolveCategoryStats(history);
   const strongestCategory = categories[0] || null;
-  const weakestCategory = categories.length ? categories[categories.length - 1] : null;
+  const weakestCategory = categories.length > 1 ? categories[categories.length - 1] : null;
 
   const streak = calculateStreak(history, now, timeZone);
-  const recentActivity = calculateRecentActivity(history);
+  const recentActivity = calculateRecentActivity(history, now);
 
   return {
     totalQuizzes,

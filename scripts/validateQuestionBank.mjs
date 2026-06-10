@@ -47,7 +47,7 @@ for (const question of questionBank) {
   }
 
   const normalizedExplanation = normalize(question.explanation);
-  if (explanationMap.has(normalizedExplanation) && !question.id.startsWith('reasoning-')) {
+  if (explanationMap.has(normalizedExplanation)) {
     warnings.push(`Potential duplicate explanation: ${question.id} and ${explanationMap.get(normalizedExplanation)}`);
   } else {
     explanationMap.set(normalizedExplanation, question.id);
