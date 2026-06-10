@@ -181,18 +181,16 @@ function migrateLegacyHistory() {
   const legacyV2Raw = safeGetItem(LEGACY_QUIZ_HISTORY_KEY_V2);
   if (legacyV2Raw) {
     const migrated = readLegacyHistory(legacyV2Raw);
-    if (migrated) {
-      saveHistory(migrated);
-    }
+    if (migrated) saveHistory(migrated);
     safeRemoveItem(LEGACY_QUIZ_HISTORY_KEY_V2);
+    safeRemoveItem(LEGACY_QUIZ_HISTORY_KEY);
+    return;
   }
 
   const legacyRaw = safeGetItem(LEGACY_QUIZ_HISTORY_KEY);
   if (legacyRaw) {
     const migrated = readLegacyHistory(legacyRaw);
-    if (migrated) {
-      saveHistory(migrated);
-    }
+    if (migrated) saveHistory(migrated);
     safeRemoveItem(LEGACY_QUIZ_HISTORY_KEY);
   }
 }
